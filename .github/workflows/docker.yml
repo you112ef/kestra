@@ -61,10 +61,10 @@ jobs:
         id: vars
         run: |
           if [[ "${{ inputs.release-tag }}" == "" ]]; then
-            TAG=${{ inputs.release-tag }}
+            TAG=${GITHUB_REF#refs/*/}
             echo "tag=${TAG}" >> $GITHUB_OUTPUT
           else 
-            TAG=${GITHUB_REF#refs/*/}
+            TAG="${{ inputs.release-tag }}"
             echo "tag=${TAG}" >> $GITHUB_OUTPUT
           fi 
          
