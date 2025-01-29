@@ -1,4 +1,4 @@
-name: Create Docker images on tag
+name: Create Docker images on Release
 
 on:
   workflow_dispatch:
@@ -69,7 +69,7 @@ jobs:
           fi 
          
           if [[ "${{ env.PLUGIN_VERSION }}" == *"-SNAPSHOT" ]]; then
-            echo "plugins=--repositories=https://s01.oss.sonatype.org/content/repositories/snapshots $PLUGINS" >> $GITHUB_OUTPUT;
+            echo "plugins=--repositories=https://s01.oss.sonatype.org/content/repositories/snapshots ${{ matrix.image.plugins }}" >> $GITHUB_OUTPUT;
           else
             echo "plugins=${{ matrix.image.plugins }}" >> $GITHUB_OUTPUT
           fi
