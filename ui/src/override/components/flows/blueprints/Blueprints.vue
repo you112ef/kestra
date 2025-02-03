@@ -122,6 +122,11 @@
                 this.embeddedTab = newTab.name;
             },
 
+        },
+        watch: {
+            tab(newVal) {
+                this.embeddedTab = newVal;
+            }
         }
     };
 </script>
