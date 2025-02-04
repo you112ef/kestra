@@ -1157,7 +1157,8 @@
       "label": "Skróty klawiaturowe",
       "fold_unfold": "Zwiń/Rozwiń kod",
       "comment": "Komentarz",
-      "move_line": "Przenieś linię"
+      "move_line": "Przenieś linię",
+      "command_palette": "Pokaż paletę poleceń"
     }
   }
 }

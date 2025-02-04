@@ -1157,7 +1157,8 @@
       "label": "キーボードショートカット",
       "fold_unfold": "コードを折りたたむ/展開する",
       "comment": "コメント",
-      "move_line": "行を移動"
+      "move_line": "行を移動",
+      "command_palette": "コマンドパレットを表示"
     }
   }
 }

@@ -1157,7 +1157,8 @@
       "label": "Scorciatoie da tastiera",
       "fold_unfold": "Piega/Spiega codice",
       "comment": "Commento",
-      "move_line": "Sposta linea"
+      "move_line": "Sposta linea",
+      "command_palette": "Mostra la palette dei comandi"
     }
   }
 }

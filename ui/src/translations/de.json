@@ -1157,7 +1157,8 @@
       "label": "Tastenkombinationen",
       "fold_unfold": "Code ein-/ausklappen",
       "comment": "Kommentar",
-      "move_line": "Zeile verschieben"
+      "move_line": "Zeile verschieben",
+      "command_palette": "Befehlsübersicht anzeigen"
     }
   }
 }

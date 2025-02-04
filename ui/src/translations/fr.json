@@ -1157,7 +1157,8 @@
       "label": "Raccourcis clavier",
       "fold_unfold": "Plier/Déplier le code",
       "comment": "Commentaire",
-      "move_line": "Déplacer la ligne"
+      "move_line": "Déplacer la ligne",
+      "command_palette": "Afficher la palette de commandes"
     }
   }
 }

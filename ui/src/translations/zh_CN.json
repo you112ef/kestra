@@ -1157,7 +1157,8 @@
       "label": "键盘快捷键",
       "fold_unfold": "折叠/展开代码",
       "comment": "评论",
-      "move_line": "移动行"
+      "move_line": "移动行",
+      "command_palette": "显示命令面板"
     }
   }
 }

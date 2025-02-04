@@ -1157,7 +1157,8 @@
       "label": "Atajos de teclado",
       "fold_unfold": "Plegar/Desplegar código",
       "comment": "Comentario",
-      "move_line": "Mover línea"
+      "move_line": "Mover línea",
+      "command_palette": "Mostrar paleta de comandos"
     }
   }
 }
