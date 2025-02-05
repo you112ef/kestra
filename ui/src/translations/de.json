@@ -1070,7 +1070,8 @@
         "tasks": "Aufgaben",
         "advanced": "Erweiterte Konfiguration",
         "finally": "Schließlich",
-        "other": "Andere Eigenschaften"
+        "other": "Andere Eigenschaften",
+        "optional": "Optionale Eigenschaften"
       },
       "creation": {
         "select": "Wählen Sie einen {section} aus",

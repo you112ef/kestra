@@ -1070,7 +1070,8 @@
         "tasks": "Attività",
         "advanced": "Configurazione avanzata",
         "finally": "Infine",
-        "other": "Altre proprietà"
+        "other": "Altre proprietà",
+        "optional": "Proprietà opzionali"
       },
       "creation": {
         "select": "Seleziona una {section}",

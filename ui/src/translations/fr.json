@@ -1070,7 +1070,8 @@
         "tasks": "Tâches",
         "advanced": "Configuration avancée",
         "finally": "Enfin",
-        "other": "Autres propriétés"
+        "other": "Autres propriétés",
+        "optional": "Propriétés optionnelles"
       },
       "creation": {
         "select": "Sélectionnez une {section}",

@@ -1070,7 +1070,8 @@
         "tasks": "任务",
         "advanced": "高级配置",
         "finally": "最后",
-        "other": "其他属性"
+        "other": "其他属性",
+        "optional": "可选属性"
       },
       "creation": {
         "select": "选择一个{section}",

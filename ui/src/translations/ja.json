@@ -1070,7 +1070,8 @@
         "tasks": "タスク",
         "advanced": "高度な設定",
         "finally": "最後に",
-        "other": "その他のプロパティ"
+        "other": "その他のプロパティ",
+        "optional": "オプションのプロパティ"
       },
       "creation": {
         "select": "{section}を選択してください",

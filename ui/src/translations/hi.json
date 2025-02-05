@@ -1070,7 +1070,8 @@
         "tasks": "कार्य",
         "advanced": "उन्नत कॉन्फ़िगरेशन",
         "finally": "अंत में",
-        "other": "अन्य गुण"
+        "other": "अन्य गुण",
+        "optional": "वैकल्पिक गुण"
       },
       "creation": {
         "select": "किसी {section} का चयन करें",

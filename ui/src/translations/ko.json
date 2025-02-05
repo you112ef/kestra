@@ -1070,7 +1070,8 @@
         "tasks": "작업",
         "advanced": "고급 구성",
         "finally": "마지막으로",
-        "other": "기타 속성"
+        "other": "기타 속성",
+        "optional": "선택적 속성"
       },
       "creation": {
         "select": "{section}을 선택하십시오",
