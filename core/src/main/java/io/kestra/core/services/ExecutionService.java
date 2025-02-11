@@ -3,6 +3,7 @@ package io.kestra.core.services;
 import io.kestra.core.events.CrudEvent;
 import io.kestra.core.events.CrudEventType;
 import io.kestra.core.exceptions.InternalException;
+import io.kestra.core.models.Label;
 import io.kestra.core.models.executions.Execution;
 import io.kestra.core.models.executions.ExecutionKilled;
 import io.kestra.core.models.executions.ExecutionKilledExecution;
@@ -26,6 +27,7 @@ import io.kestra.core.storages.StorageContext;
 import io.kestra.core.storages.StorageInterface;
 import io.kestra.core.utils.GraphUtils;
 import io.kestra.core.utils.IdUtils;
+import io.kestra.core.utils.ListUtils;
 import io.kestra.plugin.core.flow.Pause;
 import io.kestra.plugin.core.flow.WorkingDirectory;
 import io.micronaut.context.event.ApplicationEventPublisher;
@@ -213,7 +215,8 @@ public class ExecutionService {
                 execution.withState(State.Type.RESTARTED).getState()
             );
 
-        newExecution = newExecution.withMetadata(execution.getMetadata().nextAttempt());
+        List<Label> newLabels = new ArrayList<>(ListUtils.emptyOnNull(execution.getLabels()));
+        newExecution = newExecution.withMetadata(execution.getMetadata().nextAttempt()).withLabels(newLabels);
 
         return revision != null ? newExecution.withFlowRevision(revision) : newExecution;
     }
@@ -292,7 +295,8 @@ public class ExecutionService {
             taskRunId == null ? new State() : execution.withState(State.Type.RESTARTED).getState()
         );
 
-        newExecution = newExecution.withMetadata(execution.getMetadata().nextAttempt());
+        List<Label> newLabels = new ArrayList<>(ListUtils.emptyOnNull(execution.getLabels()));
+        newExecution = newExecution.withMetadata(execution.getMetadata().nextAttempt()).withLabels(newLabels);
 
         return revision != null ? newExecution.withFlowRevision(revision) : newExecution;
     }
@@ -308,7 +312,7 @@ public class ExecutionService {
             taskRun -> taskRun.getId().equals(taskRunId)
         );
 
-        Execution newExecution = execution;
+        Execution newExecution = execution.withMetadata(execution.getMetadata().nextAttempt());
 
         for (String s : taskRunToRestart) {
             TaskRun originalTaskRun = newExecution.findTaskRunByTaskRunId(s);
