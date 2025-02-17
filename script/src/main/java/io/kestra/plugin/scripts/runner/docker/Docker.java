@@ -429,11 +429,13 @@ public class Docker extends TaskRunner<Docker.DockerTaskRunnerDetailResult> {
             // start container
             dockerClient.startContainerCmd(exec.getId()).exec();
 
+            List<String> renderedCommands = runContext.render(taskCommands.getCommands()).asList(String.class);
+
             if (logger.isDebugEnabled()) {
                 logger.debug(
                     "Starting command with container id {} [{}]",
                     exec.getId(),
-                    String.join(" ", taskCommands.getCommands())
+                    String.join(" ", renderedCommands)
                 );
             }
 
@@ -641,7 +643,7 @@ public class Docker extends TaskRunner<Docker.DockerTaskRunnerDetailResult> {
         return DockerService.client(dockerClientConfig);
     }
 
-    private CreateContainerCmd configure(TaskCommands taskCommands, DockerClient dockerClient, RunContext runContext, Map<String, Object> additionalVars) throws IllegalVariableEvaluationException {
+    private CreateContainerCmd configure(TaskCommands taskCommands, DockerClient dockerClient, RunContext runContext, Map<String, Object> additionalVars) throws IllegalVariableEvaluationException, IOException {
         Optional<Boolean> volumeEnabledConfig = runContext.pluginConfiguration(VOLUME_ENABLED_CONFIG);
         if (volumeEnabledConfig.isEmpty()) {
             // check the legacy property and emit a warning if used
@@ -779,7 +781,7 @@ public class Docker extends TaskRunner<Docker.DockerTaskRunnerDetailResult> {
 
         return container
             .withHostConfig(hostConfig)
-            .withCmd(taskCommands.getCommands())
+            .withCmd(runContext.render(taskCommands.getCommands()).asList(String.class))
             .withAttachStderr(true)
             .withAttachStdout(true);
     }
