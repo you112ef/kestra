@@ -1,7 +1,6 @@
 package io.kestra.core.models.tasks.runners;
 
 import io.kestra.core.exceptions.IllegalVariableEvaluationException;
-import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContext;
 import io.kestra.core.runners.RunContextFactory;
 import io.micronaut.context.ApplicationContext;
@@ -150,17 +149,7 @@ public class TaskRunnerTest {
         }
 
         @Override
-        public Property<List<String>> getInterpreter() {
-            return null;
-        }
-
-        @Override
-        public Property<List<String>> getBeforeCommands() {
-            return null;
-        }
-
-        @Override
-        public Property<List<String>> getCommands() {
+        public List<String> getCommands() {
             return null;
         }
 

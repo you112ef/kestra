@@ -1,9 +1,7 @@
 package io.kestra.plugin.core.runner;
 
-import io.kestra.core.exceptions.IllegalVariableEvaluationException;
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
-import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.runners.*;
 import io.kestra.core.runners.RunContext;
 import io.micronaut.core.annotation.Introspected;
@@ -16,7 +14,6 @@ import lombok.experimental.SuperBuilder;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -136,14 +133,11 @@ public class Process extends TaskRunner<TaskRunnerDetailResult> {
         environment.putAll(this.env(runContext, taskCommands));
 
         processBuilder.directory(taskCommands.getWorkingDirectory().toFile());
-
-        List<String> renderedCommands = runContext.render(taskCommands.getCommands()).asList(String.class);
-
-        processBuilder.command(renderedCommands);
+        processBuilder.command(taskCommands.getCommands());
 
         java.lang.Process process = processBuilder.start();
         long pid = process.pid();
-        logger.debug("Starting command with pid {} [{}]", pid, String.join(" ", renderedCommands));
+        logger.debug("Starting command with pid {} [{}]", pid, String.join(" ", taskCommands.getCommands()));
 
         LogRunnable stdOutRunnable = new LogRunnable(process.getInputStream(), defaultLogConsumer, false);
         LogRunnable stdErrRunnable = new LogRunnable(process.getErrorStream(), defaultLogConsumer, true);

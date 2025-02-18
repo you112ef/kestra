@@ -1,7 +1,6 @@
 package io.kestra.plugin.scripts.exec.scripts.runners;
 
 import io.kestra.core.exceptions.IllegalVariableEvaluationException;
-import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.RunnableTaskException;
 import io.kestra.core.models.tasks.runners.DefaultLogConsumer;
 import io.kestra.core.models.tasks.runners.*;
@@ -30,7 +29,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Getter
@@ -44,13 +42,7 @@ public class CommandsWrapper implements TaskCommands {
     private Map<String, Object> additionalVars;
 
     @With
-    private Property<List<String>> interpreter;
-
-    @With
-    private Property<List<String>> beforeCommands;
-
-    @With
-    private Property<List<String>> commands;
+    private List<String> commands;
 
     private Map<String, String> env;
 
@@ -104,8 +96,6 @@ public class CommandsWrapper implements TaskCommands {
             workingDirectory,
             getOutputDirectory(),
             additionalVars,
-            interpreter,
-            beforeCommands,
             commands,
             envs,
             logConsumer,
@@ -165,18 +155,7 @@ public class CommandsWrapper implements TaskCommands {
         RunContextInitializer initializer = ((DefaultRunContext) runContext).getApplicationContext().getBean(RunContextInitializer.class);
 
         RunContext taskRunnerRunContext = initializer.forPlugin(((DefaultRunContext) runContext).clone(), realTaskRunner);
-
-        List<String> renderedCommands = this.renderCommands(runContext, commands);
-        List<String> renderedBeforeCommands = this.renderCommands(runContext, beforeCommands);
-        List<String> renderedInterpreter = this.renderCommands(runContext, interpreter);
-
-        List<String> finalCommands = ScriptService.scriptCommands(
-            renderedInterpreter,
-            renderedBeforeCommands,
-            renderedCommands,
-            Optional.ofNullable(targetOS).orElse(TargetOS.AUTO)
-        );
-        this.commands = Property.of(finalCommands);
+        this.commands = this.render(runContext, commands);
 
         ScriptOutput.ScriptOutputBuilder scriptOutputBuilder = ScriptOutput.builder()
             .warningOnStdErr(this.warningOnStdErr);
@@ -265,7 +244,7 @@ public class CommandsWrapper implements TaskCommands {
         );
     }
 
-    public List<String> renderCommands(RunContext runContext, Property<List<String>> commands) throws IllegalVariableEvaluationException, IOException {
+    public List<String> render(RunContext runContext, List<String> commands) throws IllegalVariableEvaluationException, IOException {
         TaskRunner<?> taskRunner = this.getTaskRunner();
         return ScriptService.replaceInternalStorage(
             this.runContext,

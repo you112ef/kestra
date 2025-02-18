@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.kestra.core.exceptions.IllegalVariableEvaluationException;
 import io.kestra.core.models.Plugin;
 import io.kestra.core.models.WorkerJobLifecycle;
-import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.core.runner.Process;
 import jakarta.validation.constraints.NotBlank;
@@ -17,11 +16,11 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.SystemUtils;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
 import static io.kestra.core.utils.WindowsUtils.windowsToUnixPath;
 
@@ -129,24 +128,6 @@ public abstract class TaskRunner<T extends TaskRunnerDetailResult> implements Pl
         }
 
         return windowsToUnixPath(workingDir + "/" + relativePath);
-    }
-
-    public List<String> renderCommands(RunContext runContext, TaskCommands taskCommands) throws IllegalVariableEvaluationException, IOException {
-        List<String> renderedCommands = this.renderCommandsFromList(runContext, taskCommands, taskCommands.getCommands());
-        List<String> renderedBeforeCommands = this.renderCommandsFromList(runContext, taskCommands, taskCommands.getBeforeCommands());
-        List<String> renderedInterpreter = this.renderCommandsFromList(runContext, taskCommands, taskCommands.getInterpreter());
-
-        return Stream.of(renderedInterpreter, renderedBeforeCommands, renderedCommands)
-            .flatMap(Collection::stream).toList();
-    }
-
-    private List<String> renderCommandsFromList(RunContext runContext, TaskCommands taskCommands, Property<List<String>> commands) throws IllegalVariableEvaluationException, IOException {
-        return ScriptService.replaceInternalStorage(
-            runContext,
-            this.additionalVars(runContext, taskCommands),
-            commands,
-            this instanceof RemoteRunnerInterface
-        );
     }
 
     /** {@inheritDoc} **/
