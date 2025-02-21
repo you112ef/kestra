@@ -177,11 +177,11 @@ public class RegisteredPlugin {
                     pluginSubGroup = null;
                 }
 
-                if (pluginSubGroup != null && clazz.getPackageName().startsWith(this.group()) ) {
-                    return this.group() + "." + clazz.getPackageName().substring(this.group().length() + 1);
-                } else {
+                if (pluginSubGroup == null) {
                     return null;
                 }
+
+                return clazz.getPackageName();
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
