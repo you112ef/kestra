@@ -1,3 +1,49 @@
+# 0.21.4
+
+**Full Changelog**: [v0.21.3...v0.21.4](https://github.com/kestra-io/kestra/compare/v0.21.3...v0.21.4)
+
+### 🩹 Fixes
+
+- **core:** Http proxy was not passed to configuration ([6929ca196](https://github.com/kestra-io/kestra/commit/6929ca196))
+- **ci:** QEMU issue ([38ba665ef](https://github.com/kestra-io/kestra/commit/38ba665ef))
+- **tasks:** Remove useless format metrics on return ([#7486](https://github.com/kestra-io/kestra/pull/7486))
+- **core:** Add package-info.java to dashboard package ([bed0470b7](https://github.com/kestra-io/kestra/commit/bed0470b7))
+- **core:** Handle http request with no content type ([6966779f3](https://github.com/kestra-io/kestra/commit/6966779f3))
+- **core:** Add package-info.java to script + handle subgroups properly ([035d9a56d](https://github.com/kestra-io/kestra/commit/035d9a56d))
+- **core:** Try to log message for unhandled realtime trigger exception ([f3c3c6537](https://github.com/kestra-io/kestra/commit/f3c3c6537))
+- **core:** Move package-info.java to proper dashboard packages ([6f24dac81](https://github.com/kestra-io/kestra/commit/6f24dac81))
+- **core:** Rename dashboards subgroups ([01e4f7f8c](https://github.com/kestra-io/kestra/commit/01e4f7f8c))
+- **core:** Camel to snake-case for app-blocks in RegisteredPlugin ([fffac0f90](https://github.com/kestra-io/kestra/commit/fffac0f90))
+- **core:** Missing content type on http client ([e312ece25](https://github.com/kestra-io/kestra/commit/e312ece25))
+- **core:** Content type encoding should not be mandatory ([82ef34c08](https://github.com/kestra-io/kestra/commit/82ef34c08))
+- **core:** #172 add reactor into classloader blacklist ([#172](https://github.com/kestra-io/kestra/issues/172))
+- **core:** Handle space in HTTP request URI ([51e5d35e6](https://github.com/kestra-io/kestra/commit/51e5d35e6))
+- **core:** Subflow using the old task name never ends ([9aeda7160](https://github.com/kestra-io/kestra/commit/9aeda7160))
+
+### 💅 Refactors
+
+- **ui:** Move changelog file to root ([f866af5ee](https://github.com/kestra-io/kestra/commit/f866af5ee))
+- Migrate CommandsWrapper commands to dynamic properties ([bdf7a1681](https://github.com/kestra-io/kestra/commit/bdf7a1681))
+
+### 🏡 Chore
+
+- **ui:** Improve links inside changelog file ([4c2317ddd](https://github.com/kestra-io/kestra/commit/4c2317ddd))
+- **ui:** Improve the labels behavior ([b0fa3ddd5](https://github.com/kestra-io/kestra/commit/b0fa3ddd5))
+- **ui:** Improve the doughnut chart legend ([#7321](https://github.com/kestra-io/kestra/pull/7321))
+- Bump version ([49cfb8f42](https://github.com/kestra-io/kestra/commit/49cfb8f42))
+
+### ❤️ Contributors
+
+- NKwiatkowski <nkwiatkowski@kestra.io>
+- Loïc Mathieu ([@loicmathieu](http://github.com/loicmathieu))
+- Ludovic DEHON ([@tchiotludo](http://github.com/tchiotludo))
+- Brian.mulier ([@brian-mulier-p](http://github.com/brian-mulier-p))
+- Mathieu Gabelle ([@mgabelle](http://github.com/mgabelle))
+- Shamar ([@Shamar12334](http://github.com/Shamar12334))
+- MilosPaunovic ([@MilosPaunovic](http://github.com/MilosPaunovic))
+
+
+
 # 0.21.3
 
 **Full Changelog**: [v0.21.2...v0.21.3](https://github.com/kestra-io/kestra/compare/v0.21.2...v0.21.3)
