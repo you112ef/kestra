@@ -475,7 +475,9 @@ public class DefaultRunContext extends RunContext {
             logger().warn("Unable to cleanup worker task", ex);
         }
 
-        logger.resetMDC();
+        if (logger != null){
+            logger.resetMDC();
+        }
     }
 
     /**
