@@ -269,7 +269,8 @@ public abstract class AbstractScheduler implements Scheduler, Service {
 
         flows
             .stream()
-            .map(pluginDefaultService::injectDefaults)
+            .map(flow -> pluginDefaultService.injectDefaults(flow, log))
+            .filter(Objects::nonNull)
             .filter(flow -> flow.getTriggers() != null && !flow.getTriggers().isEmpty())
             .flatMap(flow -> flow.getTriggers().stream().filter(trigger -> trigger instanceof WorkerTriggerInterface).map(trigger -> new FlowAndTrigger(flow, trigger)))
             .forEach(flowAndTrigger -> {
@@ -422,7 +423,8 @@ public abstract class AbstractScheduler implements Scheduler, Service {
 
         return flows
             .stream()
-            .map(pluginDefaultService::injectDefaults)
+            .map(flow -> pluginDefaultService.injectDefaults(flow, log))
+            .filter(Objects::nonNull)
             .filter(flow -> flowToKeep.contains(flow.getId()))
             .filter(flow -> flow.getTriggers() != null && !flow.getTriggers().isEmpty())
             .filter(flow -> !flow.isDisabled() && !(flow instanceof FlowWithException))
