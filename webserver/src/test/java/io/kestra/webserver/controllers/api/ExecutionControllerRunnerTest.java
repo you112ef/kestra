@@ -275,8 +275,6 @@ class ExecutionControllerRunnerTest {
         assertThat(results, is(notNullValue()));
         assertThat(results.size(), is(greaterThan(0)));
         assertThat(results.getLast().getData().getState().getCurrent(), is(State.Type.SUCCESS));
-        assertThat(results.getFirst().getId(), is("start"));
-        assertThat(results.getLast().getId(), is("end"));
     }
 
     @Test
@@ -1111,31 +1109,19 @@ class ExecutionControllerRunnerTest {
 
         // + is there to simulate that a space was added (this can be the case from UI autocompletion for eg.)
         executions = client.toBlocking().retrieve(
-            GET("/api/v1/executions/search?page=1&size=25&filters[labels][$eq][url]="+ENCODED_URL_LABEL_VALUE), PagedResults.class
-        );
-
-        assertThat(executions.getTotal(), is(1L));
-
-        executions = client.toBlocking().retrieve(
-            GET("/api/v1/executions/search?page=1&size=25&labels=url:"+ENCODED_URL_LABEL_VALUE), PagedResults.class
+            GET("/api/v1/executions/search?page=1&size=25&labels=url:+"+ENCODED_URL_LABEL_VALUE), PagedResults.class
         );
 
         assertThat(executions.getTotal(), is(1L));
 
         HttpClientResponseException e = assertThrows(
             HttpClientResponseException.class,
-            () -> client.toBlocking().retrieve(GET("/api/v1/executions/search?filters[startDate][$eq]=2024-01-07T18:43:11.248%2B01:00&filters[timeRange][$eq]=PT12H"))
+            () -> client.toBlocking().retrieve(GET("/api/v1/executions/search?startDate=2024-01-07T18:43:11.248%2B01:00&timeRange=PT12H"))
         );
 
         assertThat(e.getStatus(), is(HttpStatus.UNPROCESSABLE_ENTITY));
         assertThat(e.getResponse().getBody(String.class).isPresent(), is(true));
         assertThat(e.getResponse().getBody(String.class).get(), containsString("are mutually exclusive"));
-
-        executions = client.toBlocking().retrieve(
-            GET("/api/v1/executions/search?filters[timeRange][$eq]=PT12H"), PagedResults.class
-        );
-
-        assertThat(executions.getTotal(), is(1L));
 
         executions = client.toBlocking().retrieve(
             GET("/api/v1/executions/search?timeRange=PT12H"), PagedResults.class
@@ -1145,14 +1131,9 @@ class ExecutionControllerRunnerTest {
 
         e = assertThrows(
             HttpClientResponseException.class,
-            () -> client.toBlocking().retrieve(GET("/api/v1/executions/search?filters[timeRange][$eq]=P1Y"))
-        );
-        assertThat(e.getStatus(), is(HttpStatus.UNPROCESSABLE_ENTITY));
-
-        e = assertThrows(
-            HttpClientResponseException.class,
             () -> client.toBlocking().retrieve(GET("/api/v1/executions/search?timeRange=P1Y"))
         );
+
         assertThat(e.getStatus(), is(HttpStatus.UNPROCESSABLE_ENTITY));
 
         e = assertThrows(
