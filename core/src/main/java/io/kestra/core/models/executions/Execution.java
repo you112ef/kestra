@@ -21,6 +21,7 @@ import io.kestra.core.runners.RunContextLogger;
 import io.kestra.core.serializers.ListOrMapOfLabelDeserializer;
 import io.kestra.core.serializers.ListOrMapOfLabelSerializer;
 import io.kestra.core.services.LabelService;
+import io.kestra.core.test.flow.TaskFixture;
 import io.kestra.core.utils.IdUtils;
 import io.kestra.core.utils.MapUtils;
 import io.micronaut.core.annotation.Nullable;
@@ -110,6 +111,10 @@ public class Execution implements DeletedInterface, TenantInterface {
     @NonFinal
     @Setter
     String traceParent;
+
+    @With
+    @Nullable
+    List<TaskFixture> fixtures;
 
     /**
      * Factory method for constructing a new {@link Execution} object for the given {@link Flow}.
@@ -205,7 +210,8 @@ public class Execution implements DeletedInterface, TenantInterface {
             this.deleted,
             this.metadata,
             this.scheduleDate,
-            this.traceParent
+            this.traceParent,
+            this.fixtures
         );
     }
 
@@ -229,7 +235,8 @@ public class Execution implements DeletedInterface, TenantInterface {
             this.deleted,
             this.metadata,
             this.scheduleDate,
-            this.traceParent
+            this.traceParent,
+            this.fixtures
         );
     }
 
@@ -266,7 +273,8 @@ public class Execution implements DeletedInterface, TenantInterface {
             this.deleted,
             this.metadata,
             this.scheduleDate,
-            this.traceParent
+            this.traceParent,
+            this.fixtures
         );
     }
 
@@ -290,7 +298,8 @@ public class Execution implements DeletedInterface, TenantInterface {
             this.deleted,
             this.metadata,
             this.scheduleDate,
-            this.traceParent
+            this.traceParent,
+            this.fixtures
         );
     }
 
@@ -721,6 +730,16 @@ public class Execution implements DeletedInterface, TenantInterface {
                     RunContextLogger.logEntries(loggingEventFromException(e), LogEntry.of(this))
                 )
             );
+    }
+
+    public Optional<TaskFixture> getFixtureForTaskRun(TaskRun taskRun) {
+        if (this.fixtures == null) {
+            return Optional.empty();
+        }
+
+        return this.fixtures.stream()
+            .filter(fixture -> Objects.equals(fixture.getId(), taskRun.getTaskId()) && Objects.equals(fixture.getValue(), taskRun.getValue()))
+            .findFirst();
     }
 
     /**
