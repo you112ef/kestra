@@ -367,7 +367,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
                         workerJobRunningRepository.deleteByKey(workerTaskRunning.uid());
                     } else {
                         try {
-                            workerTaskQueue.emit(WorkerTask.builder()
+                            workerTaskQueue.emit(workerTaskRunning.getWorkerInstance().workerGroup(), WorkerTask.builder()
                                 .taskRun(workerTaskRunning.getTaskRun().onRunningResend())
                                 .task(workerTaskRunning.getTask())
                                 .runContext(workerTaskRunning.getRunContext())
@@ -394,7 +394,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
                 // WorkerTriggerRunning
                 if (workerJobRunning instanceof WorkerTriggerRunning workerTriggerRunning) {
                     try {
-                        workerTaskQueue.emit(WorkerTrigger.builder()
+                        workerTaskQueue.emit(workerTriggerRunning.getWorkerInstance().workerGroup(), WorkerTrigger.builder()
                             .trigger(workerTriggerRunning.getTrigger())
                             .conditionContext(workerTriggerRunning.getConditionContext())
                             .triggerContext(workerTriggerRunning.getTriggerContext())
