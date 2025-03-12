@@ -1,3 +1,38 @@
+# 0.21.6
+
+**Full Changelog**: [v0.21.5...v0.21.6](https://github.com/kestra-io/kestra/compare/v0.21.5...v0.21.6)
+
+### 🚀 Enhancements
+
+- **core:** Allow reading file from any namespaces ([4bb2de219](https://github.com/kestra-io/kestra/commit/4bb2de219))
+
+### 🩹 Fixes
+
+- **core:** Avoid duplicates in plugins subgroups + properly retrieve subgroup title ([33ac1ac53](https://github.com/kestra-io/kestra/commit/33ac1ac53))
+- align to EE ([YannC](https://github.com/kestra-io/kestra/commit/3d29077a99c209a1f30c369618c29ad52c46a5a6))
+- **runner-memory:** Delete MemorySchedulerTriggerState back due to cherry-pick ([27c876262](https://github.com/kestra-io/kestra/commit/27c876262))
+- **core:** Possible NPE when an execution has no labels ([67e415406](https://github.com/kestra-io/kestra/commit/67e415406))
+- **jdbc:** Resubmit worker job to the good worker group ([49a8d13b8](https://github.com/kestra-io/kestra/commit/49a8d13b8))
+- **core:** #7740 http configuration bearer token may change to basic because of allowFailed ([#7788](https://github.com/kestra-io/kestra/pull/7788), [#7740](https://github.com/kestra-io/kestra/issues/7740))
+- **core:** Use AbstractFileFunction in file functions ([3f7c385ab](https://github.com/kestra-io/kestra/commit/3f7c385ab))
+- **cli:** Fix binding for plugin repository config ([368f4f22d](https://github.com/kestra-io/kestra/commit/368f4f22d))
+
+### 🏡 Chore
+
+- Update the CHANGELOG.MD with details for 0.21.5 ([eec8fb9fb](https://github.com/kestra-io/kestra/commit/eec8fb9fb))
+- **version:** Update to version 'v0.21.6' ([2aeb11e2d](https://github.com/kestra-io/kestra/commit/2aeb11e2d))
+
+### ❤️ Contributors
+
+- Brian.mulier ([@brian-mulier-p](https://github.com/brian-mulier-p))
+- Florian Hussonnois ([@fhussonnois](https://github.com/fhussonnois))
+- Nicolas K. <nk_mikmak@hotmail.com>
+- Loïc Mathieu ([@loicmathieu](https://github.com/loicmathieu))
+- YannC <ycoornaert@kestra.io>
+- MilosPaunovic ([@MilosPaunovic](https://github.com/MilosPaunovic))
+
+
+
 # 0.21.5
 
 **Full Changelog**: [v0.21.4...v0.21.5](https://github.com/kestra-io/kestra/compare/v0.21.4...v0.21.5)
