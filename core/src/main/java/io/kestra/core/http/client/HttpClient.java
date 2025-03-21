@@ -8,6 +8,7 @@ import io.kestra.core.http.client.apache.*;
 import io.kestra.core.http.client.configurations.HttpConfiguration;
 import io.kestra.core.runners.RunContext;
 import io.kestra.core.serializers.JacksonMapper;
+import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,6 @@ import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.Timeout;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
