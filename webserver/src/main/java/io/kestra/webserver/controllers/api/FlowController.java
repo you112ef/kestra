@@ -252,7 +252,7 @@ public class FlowController {
     public HttpResponse<FlowWithSource> create(
         @Parameter(description = "The flow") @Body String flow
     ) throws ConstraintViolationException {
-        Flow flowParsed = yamlParser.parse(flow, Flow.class);
+        Flow flowParsed = parseFlow(flow);
 
         return HttpResponse.ok(doCreate(flowParsed, flow));
     }
@@ -425,7 +425,7 @@ public class FlowController {
 
             return HttpResponse.status(HttpStatus.NOT_FOUND);
         }
-        Flow flowParsed = yamlParser.parse(flow, Flow.class);
+        Flow flowParsed = parseFlow(flow);
         flowService.checkValidSubflows(flowParsed, tenantService.resolveTenant());
         return HttpResponse.ok(update(flowParsed, existingFlow.get(), flow));
     }
@@ -574,7 +574,7 @@ public class FlowController {
                 validateConstraintViolationBuilder.index(index.getAndIncrement());
 
                 try {
-                    Flow flowParse = yamlParser.parse(flow, Flow.class);
+                    Flow flowParse = parseFlow(flow);
                     Integer sentRevision = flowParse.getRevision();
                     if (sentRevision != null) {
                         Integer lastRevision = Optional.ofNullable(flowRepository.lastRevision(tenantService.resolveTenant(), flowParse.getNamespace(), flowParse.getId()))
@@ -602,6 +602,10 @@ public class FlowController {
                 return validateConstraintViolationBuilder.build();
             })
             .collect(Collectors.toList());
+    }
+
+    protected Flow parseFlow(String flow) {
+        return yamlParser.parse(flow, Flow.class);
     }
 
     // This endpoint is not used by the Kestra UI nor our CLI but is provided for the API users for convenience
