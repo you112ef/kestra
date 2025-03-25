@@ -67,6 +67,33 @@ class IsFileEmptyFunctionTest {
     }
 
     @Test
+    void findFileNamespaceFileWhitInheritance() throws IllegalVariableEvaluationException, IOException {
+        String namespace = "my.parent.namespace";
+        String inheritedNamespace = "my.parent";
+        String firstLevelNamespace = "my";
+        String filePath = "file.txt";
+        storageInterface.createDirectory(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace)));
+        storageInterface.put(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace) + "/" + filePath), new ByteArrayInputStream("Hello from inherited namespace".getBytes()));
+
+        storageInterface.createDirectory(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(firstLevelNamespace)));
+        storageInterface.put(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(firstLevelNamespace) + "/" + filePath), new ByteArrayInputStream("".getBytes()));
+
+        boolean render = Boolean.parseBoolean(variableRenderer.render("{{ isFileEmpty('" + filePath + "') }}", Map.of("flow", Map.of("namespace", namespace))));
+        assertFalse(render);
+    }
+
+    @Test
+    void shouldNotFindFileNamespaceFileWhitInheritanceWhenNamespaceSpecified() throws IOException {
+        String namespace = "my.specified.namespace";
+        String inheritedNamespace = "my.specified";
+        String filePath = "file.txt";
+        storageInterface.createDirectory(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace)));
+        storageInterface.put(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace) + "/" + filePath), new ByteArrayInputStream("Hello from inherited specified namespace".getBytes()));
+
+        assertThrows(IllegalVariableEvaluationException.class, () -> variableRenderer.render("{{ isFileEmpty('" + filePath + "', namespace='" + namespace + "') }}", Map.of("flow", Map.of("namespace", "my.current.namespace"))));
+    }
+
+    @Test
     void shouldReturnTrueForEmpty() throws IOException, IllegalVariableEvaluationException {
         String executionId = IdUtils.create();
         URI internalStorageURI = getInternalStorageURI(executionId);

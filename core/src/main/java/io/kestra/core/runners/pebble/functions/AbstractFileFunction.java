@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 abstract class AbstractFileFunction implements Function {
@@ -66,8 +65,23 @@ abstract class AbstractFileFunction implements Function {
                     fileUri = URI.create(str);
                     namespace = checkAllowedFileAndReturnNamespace(context, fileUri);
                 } else {
-                    namespace = (String) Optional.ofNullable(args.get(NAMESPACE)).orElse(flow.get(NAMESPACE));
-                    fileUri = URI.create(StorageContext.namespaceFilePrefix(namespace) + "/" + str);
+                    if (args.get(NAMESPACE) != null){
+                        namespace = (String) args.get(NAMESPACE);
+                        fileUri = URI.create(StorageContext.namespaceFilePrefix(namespace) + "/" + str);
+                    } else {
+                        namespace = flow.get(NAMESPACE);
+                        fileUri = URI.create(StorageContext.namespaceFilePrefix(namespace) + "/" + str);
+                        String inheritedNamespace = namespace;
+                        URI inheritedFilePath = fileUri;
+                        while (!storageInterface.exists(tenantId, inheritedNamespace, inheritedFilePath) && inheritedNamespace.contains(".")){
+                            inheritedNamespace = inheritedNamespace.substring(0, inheritedNamespace.lastIndexOf('.'));
+                            inheritedFilePath = URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace) + "/" + str);
+                        }
+                        if (storageInterface.exists(tenantId, inheritedNamespace, inheritedFilePath)){
+                            namespace = inheritedNamespace;
+                            fileUri = inheritedFilePath;
+                        }
+                    }
                     flowService.checkAllowedNamespace(tenantId, namespace, tenantId, flow.get(NAMESPACE));
                 }
             } else {

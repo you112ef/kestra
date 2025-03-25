@@ -52,7 +52,7 @@ public class FileSizeFunctionTest {
     }
 
     @Test
-    void readNamespaceFileWithNamespace() throws IllegalVariableEvaluationException, IOException {
+    void readSizeNamespaceFileWithNamespace() throws IllegalVariableEvaluationException, IOException {
         String namespace = "io.kestra.tests";
         String filePath = "file.txt";
         storageInterface.createDirectory(null, namespace, URI.create(StorageContext.namespaceFilePrefix(namespace)));
@@ -60,6 +60,33 @@ public class FileSizeFunctionTest {
 
         String render = variableRenderer.render("{{ fileSize('" + filePath + "', namespace='" + namespace + "') }}", Map.of("flow", Map.of("namespace", "flow.namespace")));
         assertThat(render, is(FILE_SIZE));
+    }
+
+    @Test
+    void readNamespaceFileWhitInheritance() throws IllegalVariableEvaluationException, IOException {
+        String namespace = "my.parent.namespace";
+        String inheritedNamespace = "my.parent";
+        String firstLevelNamespace = "my";
+        String filePath = "file.txt";
+        storageInterface.createDirectory(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace)));
+        storageInterface.put(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace) + "/" + filePath), new ByteArrayInputStream("Hello from inherited namespace".getBytes()));
+
+        storageInterface.createDirectory(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(firstLevelNamespace)));
+        storageInterface.put(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(firstLevelNamespace) + "/" + filePath), new ByteArrayInputStream("Hello from first level".getBytes()));
+
+        String render = variableRenderer.render("{{ fileSize('" + filePath + "') }}", Map.of("flow", Map.of("namespace", namespace)));
+        assertThat(render, is(String.valueOf("Hello from inherited namespace".getBytes().length)));
+    }
+
+    @Test
+    void shouldNotReadSizeNamespaceFileWhitInheritanceWhenNamespaceSpecified() throws IOException {
+        String namespace = "my.specified.namespace";
+        String inheritedNamespace = "my.specified";
+        String filePath = "file.txt";
+        storageInterface.createDirectory(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace)));
+        storageInterface.put(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace) + "/" + filePath), new ByteArrayInputStream("Hello from inherited specified namespace".getBytes()));
+
+        assertThrows(IllegalVariableEvaluationException.class, () -> variableRenderer.render("{{ fileSize('" + filePath + "', namespace='" + namespace + "') }}", Map.of("flow", Map.of("namespace", "my.current.namespace"))));
     }
 
     @Test

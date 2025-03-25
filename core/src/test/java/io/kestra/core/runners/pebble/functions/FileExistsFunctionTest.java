@@ -67,6 +67,35 @@ class FileExistsFunctionTest {
     }
 
     @Test
+    void findNamespaceFileWhitInheritance() throws IllegalVariableEvaluationException, IOException {
+        String namespace = "my.parent.namespace";
+        String inheritedNamespace = "my.parent";
+        String firstLevelNamespace = "my";
+        String filePath = "file.txt";
+        storageInterface.createDirectory(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace)));
+        storageInterface.put(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace) + "/" + filePath), new ByteArrayInputStream("Hello from inherited namespace".getBytes()));
+
+        storageInterface.createDirectory(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(firstLevelNamespace)));
+        storageInterface.put(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(firstLevelNamespace) + "/" + filePath), new ByteArrayInputStream("Hello from first level".getBytes()));
+
+        boolean render = Boolean.parseBoolean(variableRenderer.render("{{ fileExists('" + filePath + "') }}", Map.of("flow", Map.of("namespace", namespace))));
+        assertTrue(render);
+    }
+
+    @Test
+    void shouldNotFindNamespaceFileWhitInheritanceWhenNamespaceSpecified()
+        throws IOException, IllegalVariableEvaluationException {
+        String namespace = "my.specified.namespace";
+        String inheritedNamespace = "my.specified";
+        String filePath = "file.txt";
+        storageInterface.createDirectory(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace)));
+        storageInterface.put(null, inheritedNamespace, URI.create(StorageContext.namespaceFilePrefix(inheritedNamespace) + "/" + filePath), new ByteArrayInputStream("Hello from inherited specified namespace".getBytes()));
+
+        boolean render = Boolean.parseBoolean(variableRenderer.render("{{ fileExists('" + filePath + "', namespace='" + namespace + "') }}", Map.of("flow", Map.of("namespace", "my.current.namespace"))));
+        assertFalse(render);
+    }
+
+    @Test
     void shouldReturnFalseForNonExistentFile() throws IllegalVariableEvaluationException {
         String executionId = IdUtils.create();
         URI internalStorageURI = getInternalStorageURI(executionId);
