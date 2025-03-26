@@ -22,6 +22,8 @@ import java.util.stream.Stream;
 
 public abstract class AbstractJdbcRepository {
 
+    protected static final int FETCH_SIZE = 100;
+    
     protected Condition defaultFilter() {
         return field("deleted", Boolean.class).eq(false);
     }
