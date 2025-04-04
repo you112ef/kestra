@@ -1,5 +1,6 @@
 import {apiUrl, apiUrlWithoutTenants} from "override/utils/route";
 import {YamlUtils} from "@kestra-io/ui-libs";
+import useApiStore from "@/stores/api";
 
 export default {
     namespaced: true,
@@ -76,9 +77,10 @@ export default {
             })
         },
         icons({commit}) {
+            const apiStore = useApiStore();
             return Promise.all([
                 this.$http.get(`${apiUrl(this)}/plugins/icons`, {}),
-                this.dispatch("api/pluginIcons")
+                apiStore.pluginIcons()
             ]).then(responses => {
                 const icons = responses[0].data;
 

@@ -10,6 +10,8 @@ import action from "../models/action";
 import permission from "../models/permission";
 import {pageFromRoute} from "../utils/eventsRouter";
 import {apiUrl} from "override/utils/route";
+import {mapStores} from "pinia";
+import {useApiStore} from "../../stores/api";
 
 export default {
     mixins: [RouteContext],
@@ -34,6 +36,7 @@ export default {
         ...mapGetters("core", ["isUnsaved"]),
         ...mapState("core", ["guidedProperties"]),
         ...mapState("plugin", ["pluginSingleList","pluginsDocumentation"]),
+        ...mapStores(useApiStore),
         isEdit() {
             return (
                 this.$route.name === `${this.dataType}s/update` &&
@@ -183,7 +186,7 @@ export default {
         },
         save() {
             if (this.$tours["guidedTour"]?.isRunning?.value && !this.guidedProperties.saveFlow) {
-                this.$store.dispatch("api/events", {
+                this.apiStore.events({
                     type: "ONBOARDING",
                     onboarding: {
                         step: this.$tours["guidedTour"]?.currentStep?._value,

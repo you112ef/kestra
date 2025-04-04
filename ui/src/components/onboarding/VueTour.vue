@@ -155,9 +155,12 @@
     import ArrowRight from "../../assets/onboarding/icons/arrow-right.svg";
 
     import {editorViewTypes} from "../../utils/constants";
+    import {useApiStore} from "../../stores/api";
 
     const router = useRouter();
     const store = useStore();
+
+    const apiStore = useApiStore();
 
     const icons = computed(() => store.state.plugin.icons);
 
@@ -165,7 +168,7 @@
 
     const updateStatus = () => localStorage.setItem("tourDoneOrSkip", "true");
     const dispatchEvent = (step, action) =>
-        store.dispatch("api/events", {
+        apiStore.events({
             type: "ONBOARDING",
             onboarding: {
                 step,
