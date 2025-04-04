@@ -63,7 +63,8 @@ public class JdbcWorkerTriggerResultQueueService implements Closeable {
                 }
                 consumer.accept(either);
             });
-        }));
+        },
+            true));
 
         return disposable.get();
     }

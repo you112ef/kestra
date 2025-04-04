@@ -99,6 +99,20 @@ public class PostgresQueue<T> extends JdbcQueue<T> {
     }
 
     @Override
+    protected void deleteGroupOffsets(DSLContext ctx, String consumerGroup, String queueType, List<Integer> offsets) {
+        var update = ctx.delete(DSL.table(table.getName()))
+            .where(AbstractJdbcRepository.field("offset").in(offsets));
+
+        if (consumerGroup != null) {
+            update = update.and(AbstractJdbcRepository.field("consumer_group").eq(consumerGroup));
+        } else {
+            update = update.and(AbstractJdbcRepository.field("consumer_group").isNull());
+        }
+
+        update.execute();
+    }
+
+    @Override
     protected List<Either<T, DeserializationException>> map(Result<Record> fetch) {
         return fetch
             .map(record -> {

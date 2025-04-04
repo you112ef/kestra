@@ -76,4 +76,18 @@ public class H2Queue<T> extends JdbcQueue<T> {
 
         update.execute();
     }
+
+    @Override
+    protected void deleteGroupOffsets(DSLContext ctx, String consumerGroup, String queueType, List<Integer> offsets) {
+        var update = ctx.delete(DSL.table(table.getName()))
+            .where(AbstractJdbcRepository.field("offset").in(offsets.toArray(Integer[]::new)));
+
+        if (consumerGroup != null) {
+            update = update.and(AbstractJdbcRepository.field("consumer_group").eq(consumerGroup));
+        } else {
+            update = update.and(AbstractJdbcRepository.field("consumer_group").isNull());
+        }
+
+        update.execute();
+    }
 }

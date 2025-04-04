@@ -255,6 +255,8 @@ public abstract class JdbcQueue<T> implements QueueInterface<T> {
 
     abstract protected void updateGroupOffsets(DSLContext ctx, String consumerGroup, String queueType, List<Integer> offsets);
 
+    abstract protected void deleteGroupOffsets(DSLContext ctx, String consumerGroup, String queueType, List<Integer> offsets);
+
     protected abstract Condition buildTypeCondition(String type);
 
     @Override
@@ -302,7 +304,7 @@ public abstract class JdbcQueue<T> implements QueueInterface<T> {
     }
 
     @Override
-    public Runnable receive(String consumerGroup, Class<?> queueType, Consumer<Either<T, DeserializationException>> consumer, boolean forUpdate) {
+    public Runnable receive(String consumerGroup, Class<?> queueType, Consumer<Either<T, DeserializationException>> consumer, boolean forUpdate, boolean delete) {
         return this.receiveImpl(
             consumerGroup,
             queueType,
@@ -310,7 +312,8 @@ public abstract class JdbcQueue<T> implements QueueInterface<T> {
                 eithers.forEach(consumer);
             },
             false,
-            forUpdate
+            forUpdate,
+            delete
         );
     }
 
@@ -330,17 +333,23 @@ public abstract class JdbcQueue<T> implements QueueInterface<T> {
                 consumer.accept(eithers);
             },
             false,
-            forUpdate
+            forUpdate,
+            false
         );
     }
 
     public Runnable receiveTransaction(String consumerGroup, Class<?> queueType, BiConsumer<DSLContext, List<Either<T, DeserializationException>>> consumer) {
+        return this.receiveTransaction(consumerGroup, queueType, consumer, false);
+    }
+
+    public Runnable receiveTransaction(String consumerGroup, Class<?> queueType, BiConsumer<DSLContext, List<Either<T, DeserializationException>>> consumer, boolean delete) {
         return this.receiveImpl(
             consumerGroup,
             queueType,
             consumer,
             true,
-            true
+            true,
+            delete
         );
     }
 
@@ -349,7 +358,8 @@ public abstract class JdbcQueue<T> implements QueueInterface<T> {
         Class<?> queueType,
         BiConsumer<DSLContext, List<Either<T, DeserializationException>>> consumer,
         Boolean inTransaction,
-        boolean forUpdate
+        boolean forUpdate,
+        boolean delete
     ) {
         String queueName = queueName(queueType);
 
@@ -364,12 +374,21 @@ public abstract class JdbcQueue<T> implements QueueInterface<T> {
                         consumer.accept(ctx, this.map(result));
                     }
 
-                    this.updateGroupOffsets(
-                        ctx,
-                        consumerGroup,
-                        queueName,
-                        result.map(record -> record.get("offset", Integer.class))
-                    );
+                    if (delete) {
+                        this.deleteGroupOffsets(
+                            ctx,
+                            consumerGroup,
+                            queueName,
+                            result.map(record -> record.get("offset", Integer.class))
+                        );
+                    } else {
+                        this.updateGroupOffsets(
+                            ctx,
+                            consumerGroup,
+                            queueName,
+                            result.map(record -> record.get("offset", Integer.class))
+                        );
+                    }
                 }
 
                 return result;

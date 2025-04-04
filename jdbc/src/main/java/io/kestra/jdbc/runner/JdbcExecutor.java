@@ -186,9 +186,6 @@ public class JdbcExecutor implements ExecutorInterface, Service {
     @Value("${kestra.jdbc.executor.clean.execution-queue:true}")
     private boolean cleanExecutionQueue;
 
-    @Value("${kestra.jdbc.executor.clean.worker-queue:true}")
-    private boolean cleanWorkerJobQueue;
-
     private final Tracer tracer;
 
     private final FlowRepositoryInterface flowRepository;
@@ -251,7 +248,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
         int numberOfThreads = threadCount != 0 ? threadCount : Math.max(2, Runtime.getRuntime().availableProcessors() / 2);
         for (int i = 0; i < numberOfThreads; i++) {
             this.receiveCancellations.addFirst(this.executionQueue.receive(Executor.class, this::executionQueue));
-            this.receiveCancellations.addFirst(this.workerTaskResultQueue.receive(Executor.class, this::workerTaskResultQueue));
+            this.receiveCancellations.addFirst(this.workerTaskResultQueue.receive(null, Executor.class, this::workerTaskResultQueue, true, true));
         }
         this.receiveCancellations.addFirst(this.killQueue.receive(Executor.class, this::killQueue));
         this.receiveCancellations.addFirst(this.subflowExecutionResultQueue.receive(Executor.class, this::subflowExecutionResultQueue));
@@ -1037,18 +1034,6 @@ public class JdbcExecutor implements ExecutorInterface, Service {
                         .ifPresent(trigger -> {
                             this.triggerState.update(executionService.resetExecution(flow, execution, trigger));
                         });
-                }
-
-                // Purge the workerTaskResultQueue and the workerJobQueue
-                // IMPORTANT: this is safe as only the executor is listening to WorkerTaskResult,
-                // and we are sure at this stage that all WorkerJob has been listened and processed by the Worker.
-                // If any of these assumptions changed, this code would not be safe anymore.
-                if (cleanWorkerJobQueue && !ListUtils.isEmpty(executor.getExecution().getTaskRunList())) {
-                    List<String> taskRunKeys = executor.getExecution().getTaskRunList().stream()
-                        .map(taskRun -> taskRun.getId())
-                        .toList();
-                    ((JdbcQueue<WorkerTaskResult>) workerTaskResultQueue).deleteByKeys(taskRunKeys);
-                    ((JdbcQueue<WorkerJob>) workerJobQueue).deleteByKeys(taskRunKeys);
                 }
             }
         } catch (QueueException e) {

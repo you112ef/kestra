@@ -44,5 +44,9 @@ public interface QueueInterface<T> extends Closeable, Pauseable {
         return receive(consumerGroup, queueType, consumer, true);
     }
 
-    Runnable receive(String consumerGroup, Class<?> queueType, Consumer<Either<T, DeserializationException>> consumer, boolean forUpdate);
+    default Runnable receive(String consumerGroup, Class<?> queueType, Consumer<Either<T, DeserializationException>> consumer, boolean forUpdate) {
+        return receive(consumerGroup, queueType, consumer, forUpdate, false);
+    }
+
+    Runnable receive(String consumerGroup, Class<?> queueType, Consumer<Either<T, DeserializationException>> consumer, boolean forUpdate, boolean delete);
 }

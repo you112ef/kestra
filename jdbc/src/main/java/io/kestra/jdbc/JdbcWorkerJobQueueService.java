@@ -80,7 +80,8 @@ public class JdbcWorkerJobQueueService implements Closeable, Pauseable {
             });
 
             eithers.forEach(consumer);
-        }));
+        },
+            true));
 
         return this.disposable.get();
     }
