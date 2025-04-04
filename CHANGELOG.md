@@ -1,3 +1,44 @@
+# 0.22.1
+
+**Full Changelog**: [v0.22.0....v0.22.1](https://github.com/kestra-io/kestra/compare/v0.22.0...v0.22.1)
+
+### 🚀 Enhancements
+
+- Add afterExecution to basic.md ([#8126](https://github.com/kestra-io/kestra/pull/8126))
+
+### 🩹 Fixes
+
+- **cli**: prevent FlowUpdatesCommand to crash due to plugin loader ([YannC](https://github.com/kestra-io/kestra/commit/3ce2cdaeb915d98debfb635215d8604abbc869c2))
+- **core:** Use a stable flow logger name ([7cfbb91e7](https://github.com/kestra-io/kestra/commit/7cfbb91e7))
+- **core:** HttpClient log the URL even if it's a secret" ([ae223c8d7](https://github.com/kestra-io/kestra/commit/ae223c8d7))
+- **core:** Mask secrets on log attributes ([94dcba126](https://github.com/kestra-io/kestra/commit/94dcba126))
+- **ui:** Keep fetching if filtered kvs & secrets have no elements after fetch ([5757b576e](https://github.com/kestra-io/kestra/commit/5757b576e))
+- **gradle:** Windows selfrun.bat ([9cb51ba0e](https://github.com/kestra-io/kestra/commit/9cb51ba0e))
+- **jdbc:** Possible deadlock on service instance ([6ead4e63c](https://github.com/kestra-io/kestra/commit/6ead4e63c))
+- **cli:** Fix NPE for commands not requiring plugins ([#8212](https://github.com/kestra-io/kestra/pull/8212))
+- **core:** Be tolerant of decryption issue ([38f68dae5](https://github.com/kestra-io/kestra/commit/38f68dae5))
+- **jdbc:** #8219 unquoted timestamp field breaking query ([#8222](https://github.com/kestra-io/kestra/pull/8222), [#8219](https://github.com/kestra-io/kestra/issues/8219))
+
+### 🏡 Chore
+
+- **version:** Update the CHANGELOG.MD with details for 0.22.0 ([b78748ebf](https://github.com/kestra-io/kestra/commit/b78748ebf))
+- **ci:** Modify publish docker to align on EE ([fedbffbdf](https://github.com/kestra-io/kestra/commit/fedbffbdf))
+- **ci:** Align plugins handle for docker publish on EE CI ([632c5836d](https://github.com/kestra-io/kestra/commit/632c5836d))
+- ae223c8: Revert "fix(core): HttpClient log the URL even if it's a secret" (Loïc Mathieu)
+- Upgrade to 0.22.1 ([9857930da](https://github.com/kestra-io/kestra/commit/9857930da))
+
+### ❤️ Contributors
+
+- Loïc Mathieu ([@loicmathieu](https://github.com/loicmathieu))
+- Nicolas K. <nk_mikmak@hotmail.com>
+- YannC <ycoornaert@kestra.io>
+- Florian Hussonnois ([@fhussonnois](https://github.com/fhussonnois))
+- Shruti Mantri <shruti1810@gmail.com>
+- MilosPaunovic ([@MilosPaunovic](https://github.com/MilosPaunovic))
+- Brian.mulier ([@brian-mulier-p](https://github.com/brian-mulier-p))
+
+
+
 # 0.22.0
 
 **Full Changelog**: [v0.21.0...v0.22.0](https://github.com/kestra-io/kestra/compare/v0.21.0...v0.22.0)
