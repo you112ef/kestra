@@ -1,5 +1,5 @@
 import {apiUrl} from "override/utils/route";
-import {useApiStore} from "../../stores/api";
+import {useApiStore} from "./api";
 
 export default {
     namespaced: true,

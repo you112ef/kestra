@@ -1,6 +1,6 @@
 import {apiUrl, apiUrlWithoutTenants} from "override/utils/route";
 import {YamlUtils} from "@kestra-io/ui-libs";
-import useApiStore from "@/stores/api";
+import {useApiStore} from "./api";
 
 export default {
     namespaced: true,

@@ -1,6 +1,6 @@
 import {nextTick} from "vue";
 import _isEqual from "lodash/isEqual";
-import useApiStore from "@/store/apiStore";
+import {useApiStore} from "../stores/api";
 
 export const pageFromRoute = (route) => {
     return {
