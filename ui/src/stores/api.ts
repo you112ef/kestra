@@ -6,9 +6,14 @@ import {defineStore} from "pinia";
 export const API_URL = "https://api.kestra.io";
 
 interface Feed {
-    // Add feed properties here based on your data structure
     id: string;
-    // ... other feed properties
+    publicationDate: string;
+    href?: string;
+    title: string;
+    description: string;
+    image?: string;
+    content: string;
+    link: string;
 }
 
 interface FeedResponse {

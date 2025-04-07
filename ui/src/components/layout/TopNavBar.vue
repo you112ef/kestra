@@ -74,7 +74,6 @@
             },
         },
         computed: {
-            ...mapState("api", ["version"]),
             ...mapState("core", ["tutorialFlows"]),
             ...mapState("log", ["logs"]),
             ...mapState("bookmarks", ["pages"]),

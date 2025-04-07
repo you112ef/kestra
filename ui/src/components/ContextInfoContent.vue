@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <div class="title">
-            <h2>{{ props.title }}</h2>
+            <h2>{{ title }}</h2>
         </div>
         <div class="content">
             <slot />
@@ -9,13 +9,8 @@
     </div>
 </template>
 
-<script setup>
-    const props = defineProps({
-        title: {
-            type: String,
-            required: true
-        },
-    });
+<script lang="ts" setup>
+    defineProps<{title:string}>();
 </script>
 
 <style lang="scss" scoped>
