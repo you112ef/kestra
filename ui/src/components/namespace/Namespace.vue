@@ -215,6 +215,7 @@
                             isNamespace: true,
                             namespace: this.$route.params.id,
                             isReadOnly: false,
+                            maximized: true
                         },
                         query: {
                             id: this.$route.query.id
