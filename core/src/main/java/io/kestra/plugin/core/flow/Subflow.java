@@ -6,39 +6,22 @@ import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.executions.Execution;
-import io.kestra.core.models.property.Property;
 import io.kestra.core.models.executions.TaskRun;
 import io.kestra.core.models.executions.TaskRunAttempt;
 import io.kestra.core.models.flows.State;
+import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.ExecutableTask;
 import io.kestra.core.models.tasks.Task;
-import io.kestra.core.runners.ExecutableUtils;
-import io.kestra.core.runners.FlowExecutorInterface;
-import io.kestra.core.runners.FlowInputOutput;
-import io.kestra.core.runners.DefaultRunContext;
-import io.kestra.core.runners.RunContext;
-import io.kestra.core.runners.SubflowExecution;
-import io.kestra.core.runners.SubflowExecutionResult;
+import io.kestra.core.runners.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
-import lombok.experimental.SuperBuilder;
-
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuperBuilder
@@ -147,7 +130,7 @@ public class Subflow extends Task implements ExecutableTask<Subflow.Output>, Chi
 
     @Schema(
         title = "Don't trigger the subflow now but schedule it on a specific date."
-   )
+    )
     private Property<ZonedDateTime> scheduleDate;
 
     @Override
@@ -168,6 +151,7 @@ public class Subflow extends Task implements ExecutableTask<Subflow.Output>, Chi
 
         if (this.labels != null) {
             for (Map.Entry<String, String> entry : this.labels.entrySet()) {
+                labels.removeIf(label -> label.key().equals(entry.getKey()));
                 labels.add(new Label(entry.getKey(), runContext.render(entry.getValue())));
             }
         }
