@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import io.kestra.core.exceptions.IllegalVariableEvaluationException;
 import io.kestra.core.exceptions.InternalException;
 import io.kestra.core.models.Label;
-import io.kestra.core.models.executions.*;
+import io.kestra.core.models.executions.Execution;
+import io.kestra.core.models.executions.ExecutionTrigger;
+import io.kestra.core.models.executions.TaskRun;
+import io.kestra.core.models.executions.TaskRunAttempt;
 import io.kestra.core.models.flows.Flow;
 import io.kestra.core.models.flows.FlowWithException;
 import io.kestra.core.models.flows.State;
@@ -91,7 +94,11 @@ public final class ExecutableUtils {
 
         List<Label> newLabels = inheritLabels ? new ArrayList<>(filterLabels(currentExecution.getLabels(), flow)) : new ArrayList<>(systemLabels(currentExecution));
         if (labels != null) {
-            labels.forEach(throwConsumer(label -> newLabels.add(new Label(runContext.render(label.key()), runContext.render(label.value())))));
+            labels.forEach(throwConsumer(label -> {
+                String renderedKey = runContext.render(label.key());
+                newLabels.removeIf(l -> l.key().equals(renderedKey));
+                newLabels.add(new Label(renderedKey, runContext.render(label.value())));
+            }));
         }
 
         Map<String, Object> variables = ImmutableMap.of(
