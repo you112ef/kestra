@@ -7,6 +7,6 @@ import io.kestra.core.models.tasks.runners.TaskRunner;
 class DockerTaskRunnerTest extends AbstractTaskRunnerTest {
     @Override
     protected TaskRunner taskRunner() {
-        return DockerTaskRunner.builder().image("centos").build();
+        return DockerTaskRunner.builder().image("rockylinux:9.3-minimal").build();
     }
 }
