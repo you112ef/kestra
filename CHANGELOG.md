@@ -1,3 +1,50 @@
+# 0.21.13
+
+**Full Changelog**: [v0.21.12...v0.21.13](https://github.com/kestra-io/kestra/compare/v0.21.12...v0.21.13)
+
+### 🚀 Enhancements
+
+- **Unit Tests:** Add assertj dependency ([d55246ae5](https://github.com/kestra-io/kestra/commit/d55246ae5))
+
+### 🩹 Fixes
+
+- **core:**  Prevent failing execution in case of duplicate label upon inheritance ([2e001a694](https://github.com/kestra-io/kestra/commit/2e001a694))
+
+### 🏡 Chore
+
+- Upgrade to v0.21.13 ([1c6c13ea0](https://github.com/kestra-io/kestra/commit/1c6c13ea0))
+
+### ❤️ Contributors
+
+- Brian.mulier ([@brian-mulier-p](https://github.com/brian-mulier-p))
+- NKwiatkowski <nkwiatkowski@kestra.io>
+
+
+
+# 0.21.12
+
+**Full Changelog**: [v0.21.11...v0.21.12](https://github.com/kestra-io/kestra/compare/v0.21.11...v0.21.12)
+
+### 🩹 Fixes
+
+- Changing language should work with providers too ([cfeea41ab](https://github.com/kestra-io/kestra/commit/cfeea41ab))
+- **jdbc:** Possible deadlock on service instance ([2db6424eb](https://github.com/kestra-io/kestra/commit/2db6424eb))
+- **core:** Be tolerant of decryption issue ([ad3161b51](https://github.com/kestra-io/kestra/commit/ad3161b51))
+
+### 🏡 Chore
+
+- **version:** Update the CHANGELOG.MD with details for 0.21.11 ([2553fb9a0](https://github.com/kestra-io/kestra/commit/2553fb9a0))
+- Upgrade to v0.21.12 ([d6a345a0a](https://github.com/kestra-io/kestra/commit/d6a345a0a))
+
+### ❤️ Contributors
+
+- Brian.mulier ([@brian-mulier-p](https://github.com/brian-mulier-p))
+- Loïc Mathieu ([@loicmathieu](https://github.com/loicmathieu))
+- Bart Ledoux <bledoux@kestra.io>
+- MilosPaunovic ([@MilosPaunovic](https://github.com/MilosPaunovic))
+
+
+
 # 0.21.11
 
 **Full Changelog**: [v0.21.10...v0.21.11](https://github.com/kestra-io/kestra/compare/v0.21.10...v0.21.11)
