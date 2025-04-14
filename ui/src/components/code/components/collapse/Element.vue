@@ -69,7 +69,7 @@
     }
 
     & > .label {
-        color: initial;
+        color: inherit;
         font-size: $code-font-sm;
     }
 }
