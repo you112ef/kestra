@@ -208,7 +208,7 @@ public class ExecutionController {
                 query,
                 namespace,
                 flowId,
-                triggerExecutionId,
+                null,
                 null,
                 startDate,
                 endDate,
@@ -217,10 +217,9 @@ public class ExecutionController {
                 timeRange,
                 childFilter,
                 state,
-                null);
+                null,
+                triggerExecutionId);
         }
-        final ZonedDateTime now = ZonedDateTime.now();
-
         TimeLineSearch timeLineSearch = TimeLineSearch.extractFrom(filters);
         validateTimeline(timeLineSearch.getStartDate(), timeLineSearch.getEndDate());
 
