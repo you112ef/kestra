@@ -111,9 +111,9 @@ class NamespaceFilesUtilsTest {
         List<LogEntry> logEntry = TestsUtils.awaitLogs(logs, 1);
         receive.blockLast();
 
-        assertThat(logEntry.getFirst().getMessage()).contains("Loaded 3 namespace files");
-        assertThat(runContext.metrics().stream().filter(m -> m.getName().equals("namespacefiles.count")).findFirst().orElseThrow().getValue()).isEqualTo(3D);
-        assertThat((Duration) runContext.metrics().stream().filter(m -> m.getName().equals("namespacefiles.duration")).findFirst().orElseThrow().getValue()).isInstanceOf(Duration.class);
+        org.assertj.core.api.Assertions.assertThat(logEntry.getFirst().getMessage()).contains("Loaded 3 namespace files");
+        org.assertj.core.api.Assertions.assertThat(runContext.metrics().stream().filter(m -> m.getName().equals("namespacefiles.count")).findFirst().orElseThrow().getValue()).isEqualTo(3D);
+        org.assertj.core.api.Assertions.assertThat((Duration) runContext.metrics().stream().filter(m -> m.getName().equals("namespacefiles.duration")).findFirst().orElseThrow().getValue()).isInstanceOf(Duration.class);
     }
 
     private URI toNamespacedStorageUri(String namespace, @Nullable URI relativePath) {
