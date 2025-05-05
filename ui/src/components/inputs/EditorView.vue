@@ -236,7 +236,7 @@
                 </div>
             </template>
             <NoCode
-                v-else
+                v-else-if="isFlow"
                 :flow="flowYaml"
                 @update-metadata="(e) => onUpdateMetadata(e, true)"
                 @update-task="(e) => editorUpdate(e)"
