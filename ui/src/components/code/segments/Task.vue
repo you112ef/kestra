@@ -34,7 +34,7 @@
     import {onBeforeMount, ref, watch, computed, inject} from "vue";
     import {useStore} from "vuex";
     import {YamlUtils as YAML_UTILS, SECTIONS} from "@kestra-io/ui-libs";
-    import {PLUGIN_DEFAULTS_SECTION} from "../../../utils/constants";
+    import {PLUGIN_DEFAULTS_SECTION, SECTIONS_MAP} from "../../../utils/constants";
     import {
         BREADCRUMB_INJECTION_KEY, CLOSE_TASK_FUNCTION_INJECTION_KEY,
         FLOW_INJECTION_KEY, PARENT_TASKID_INJECTION_KEY, POSITION_INJECTION_KEY,
@@ -172,15 +172,6 @@
     const lastValidatedValue = ref(null);
 
     const errors = computed(() => store.getters["flow/taskError"]);
-
-    const SECTIONS_MAP: Record<SectionKey, string> = {
-        tasks: "task",
-        triggers: "triggers",
-        "error handlers": "errors",
-        finally: "finally",
-        "after execution": "afterExecution",
-        [PLUGIN_DEFAULTS_SECTION]: "pluginDefaults",
-    };
 
     const saveTask = () => {
         if (lastBreadcrumb.value.shown && saveMode === "button") {

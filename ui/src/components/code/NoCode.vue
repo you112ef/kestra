@@ -30,7 +30,7 @@
     } from "./injectionKeys";
     import Breadcrumbs from "./components/Breadcrumbs.vue";
     import Editor from "./segments/Editor.vue";
-    import {Breadcrumb} from "./utils/types";
+    import {Breadcrumb, SectionKey} from "./utils/types";
 
     const store = useStore();
 
@@ -77,7 +77,7 @@
 
     const metadata = computed(() => YAML_UTILS.getMetadata(props.flow));
 
-    const injectedSection = ref<string>(props.section)
+    const injectedSection = ref<SectionKey>(props.section as SectionKey);
     const injectedTaskId = ref<string>(props.taskId)
 
     const creatingTaskRef = ref(props.creatingTask)

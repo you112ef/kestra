@@ -31,13 +31,14 @@
 <script setup lang="ts">
     import {inject, ref} from "vue";
 
-    import {YamlUtils as YAML_UTILS, SECTIONS} from "@kestra-io/ui-libs";
+    import {YamlUtils as YAML_UTILS} from "@kestra-io/ui-libs";
 
     import {CollapseItem} from "../../utils/types";
 
     import Creation from "./buttons/Creation.vue";
     import Element from "./Element.vue";
     import {FLOW_INJECTION_KEY} from "../../injectionKeys";
+    import {SECTIONS_MAP} from "../../../../utils/constants";
 
     const emits = defineEmits(["remove", "reorder"]);
 
@@ -57,10 +58,10 @@
             if(props.elements?.[index]?.id === undefined) return;
             emits(
                 "remove",
-                YAML_UTILS.deleteTask(
+                YAML_UTILS.deleteSection(
                     flow.value,
+                    SECTIONS_MAP[title.toLowerCase() as keyof typeof SECTIONS_MAP],
                     props.elements[index].id,
-                    title === "Tasks" ? SECTIONS.TASKS : SECTIONS.TRIGGERS,
                 ),
             );
         }
