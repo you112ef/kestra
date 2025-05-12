@@ -4,6 +4,9 @@ import type {RouteRecordName, RouteParams} from "vue-router";
 export type Schemas = {
     $ref?: string;
     $schema?: string;
+    properties?: {
+        [key: string]: any;
+    };
     definitions?: {
         [key: string]: object;
     };
@@ -51,7 +54,6 @@ export type Fields = {
     outputs: EditorField;
     variables: PairField;
     concurrency: ConcurrencyField;
-    pluginDefaults: EditorField;
     disabled: Field;
 };
 
@@ -77,3 +79,10 @@ export type Breadcrumb = {
 };
 
 export type Component = ReturnType<typeof defineComponent>;
+
+export type SectionKey = "tasks"
+    |    "triggers"
+    |    "error handlers"
+    |    "finally"
+    |    "after execution"
+    |    "plugin defaults"
