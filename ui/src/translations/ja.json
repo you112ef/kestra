@@ -39,6 +39,7 @@
     "add flow": "Flowを追加",
     "add task": "taskを追加",
     "add-trigger-in-editor": "最初にFlowにTriggerを追加してください",
+    "add_new_item": "新しいアイテムを追加",
     "administration": "管理",
     "advanced configuration": "他のプロパティ",
     "after": "後",
@@ -56,6 +57,8 @@
     "back_to_dashboard": "ダッシュボードに戻る",
     "backfill": "Backfill",
     "backfill executions": "backfill実行",
+    "backfill paused": "バックフィル PAUSED",
+    "backfill running": "バックフィル実行中",
     "before": "前",
     "behavior": "動作",
     "blueprints": {
@@ -130,6 +133,9 @@
     "close sidebar": "サイドバーを閉じる",
     "collapse": "折りたたむ",
     "collapse all": "すべて折りたたむ",
+    "common": {
+      "back": "戻る"
+    },
     "concurrency": "並行性",
     "conditions": "条件",
     "configure basic auth": "基本認証を設定",
@@ -400,6 +406,10 @@
         "content": "詳細については、<strong><a href=\"https://kestra.io/docs/workflow-components/plugin-defaults\" target=\"_blank\">Concurrency Limits</a></strong>に関するドキュメントをご覧ください。",
         "title": "このNamespaceにはプラグインのデフォルトが設定されていません。"
       },
+      "testSuites": {
+        "content": "テストスイートを作成して、flowをテストし始めましょう。",
+        "title": "テストスイートがまだありません！"
+      },
       "triggers": {
         "content": "<strong><a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a></strong> についての詳細は、ドキュメントをご覧ください。",
         "title": "あなたのflowにはTriggerがありません。"
@@ -513,11 +523,13 @@
         "contains": "含む",
         "ends_with": "で終了します",
         "greater_than": "より大きい",
+        "greater_than_or_equal_to": "以上",
         "in": "内",
         "is": "です",
         "is_not": "ではありません",
         "is_one_of": "のいずれか",
         "less_than": "未満",
+        "less_than_or_equal_to": "以下以下",
         "not_contains": "含まれていない",
         "not_in": "にない",
         "starts_with": "で始まる"
@@ -531,6 +543,7 @@
         "aggregation": "集計",
         "child": "子",
         "details": "詳細",
+        "endDate": "終了日",
         "flow": "フロー",
         "labels": "ラベル",
         "level": "ログレベル",
@@ -540,6 +553,7 @@
         "relative_date": "相対日付",
         "scope": "スコープ",
         "service_type": "タイプ",
+        "startDate": "開始日",
         "state": "状態",
         "status": "ステータス",
         "task": "タスク",
@@ -576,6 +590,7 @@
     "flow export": "<code>{flowCount}</code>件のflowをエクスポートしてもよろしいですか？",
     "flow must have id and namespace": "Flowにはidとnamespaceが必要です。",
     "flow not imported": "一部のflowをインポートできませんでした",
+    "flow source not found": "フローソースが見つかりません",
     "flow-dependencies": "依存関係",
     "flow-no-dependencies": "あなたのflowには依存関係がありません",
     "flow_only": "Flowタブでのみ利用可能です。",
@@ -644,7 +659,9 @@
     "item": "アイテム",
     "items": "アイテム",
     "join community": "コミュニティに参加",
+    "join_slack": "Slackに参加",
     "jump to...": "ジャンプ先...",
+    "kestra": "Kestra",
     "key": "Key",
     "kill": "キル",
     "kill only parents": "親のみをキル",
@@ -795,11 +812,20 @@
     "no_code": {
       "adding": "+ {what}を追加",
       "adding_default": "+ 新しいvalueを追加",
+      "close": {
+        "after execution": "タスクを閉じる",
+        "error handlers": "エラーハンドラーを閉じる",
+        "finally": "タスクを閉じる",
+        "input": "入力を閉じる",
+        "plugin defaults": "プラグインのデフォルトを閉じる",
+        "tasks": "タスクを閉じる",
+        "triggers": "トリガーを閉じる"
+      },
       "creation": {
         "after execution": "実行後ブロックを追加",
         "error handlers": "エラーハンドラーを追加",
         "finally": "finally ブロックを追加",
-        "select": "{section}を選択してください",
+        "plugin defaults": "プラグインのデフォルトを追加",
         "tasks": "タスクを追加",
         "triggers": "トリガーを追加"
       },
@@ -835,20 +861,30 @@
         "triggers": "トリガーを保存"
       },
       "sections": {
-        "after_execution": "実行後",
-        "error_handlers": "エラーハンドラー",
+        "afterExecution": "実行後",
+        "errors": "エラーハンドラー",
         "finally": "最後に",
         "general": "一般プロパティ",
         "main": "メインプロパティ",
         "optional": "オプションのプロパティ",
+        "pluginDefaults": "プラグインデフォルト",
         "tasks": "タスク",
         "triggers": "トリガー"
+      },
+      "select": {
+        "after execution": "タスクを選択",
+        "error handlers": "タスクを選択",
+        "finally": "タスクを選択",
+        "plugin defaults": "プラグインを選択",
+        "tasks": "タスクを選択",
+        "triggers": "トリガーを選択"
       }
     },
     "no_data": "ここにはまだ何もないようです…<br/>フィルターを調整するか、もう一度試してみてください！",
     "no_logs_data": "データなし",
     "no_logs_data_description": "フローが実行中でないか、フィルターを調整する必要があるかもしれません。",
     "no_namespaces": "検索条件に一致するnamespaceはゼロです。",
+    "no_results_found": "結果が見つかりません",
     "no_tasks_running": "タスクはまだ実行されていません。",
     "now": "現在",
     "of": "の",
@@ -1025,6 +1061,8 @@
       "saved": "保存されたフィルター"
     },
     "search term in message": "メッセージ内の検索語",
+    "search_docs": "検索",
+    "searching": "検索中...",
     "seconds": "秒",
     "secret": {
       "add": "新しいシークレット",
@@ -1057,6 +1095,7 @@
       "blocks": {
         "configuration": {
           "fields": {
+            "auto_refresh_interval": "自動更新間隔",
             "default_namespace": "デフォルトNamespace",
             "editor_type": "デフォルトエディタータイプ",
             "execute_default_tab": "デフォルト実行タブ",
@@ -1180,7 +1219,7 @@
     "toggle fullscreen": "フルスクリーンを切り替え",
     "toggle output": "出力を切り替え",
     "toggle output display": "出力表示を切り替え",
-    "toggle periodic refresh each 10 seconds": "10秒ごとに定期的に更新を切り替え",
+    "toggle periodic refresh each x seconds": "{interval}秒ごとに定期的な更新を切り替える",
     "toggle_word_wrap": "ワードラップを切り替え",
     "topology": "トポロジー",
     "topology-graph": {
@@ -1192,6 +1231,7 @@
     },
     "trigger": "Trigger",
     "trigger details": "Triggerの詳細",
+    "trigger disabled": "Flowソース内でTriggerが無効になっています",
     "trigger execution id": "Trigger Execution Id",
     "trigger filter": {
       "options": {
@@ -1276,6 +1316,7 @@
     "worker group": "Workerグループ",
     "worker group fallback": "ワーカーグループフォールバック",
     "worker group key": "ワーカーグループキー",
+    "worker information": "ワーカー情報",
     "workerId": "Worker Id",
     "workers": "Workers",
     "wrong labels": "ラベルには空のkeyまたはvalueを設定できません",

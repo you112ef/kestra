@@ -1,9 +1,9 @@
 <template>
     <Splitpanes class="default-theme" @resize="onResize">
-        <Pane 
-            v-for="(panel, panelIndex) in panels" 
-            min-size="10" 
-            :key="panelIndex" 
+        <Pane
+            v-for="(panel, panelIndex) in panels"
+            min-size="10"
+            :key="panelIndex"
             :size="panel.size"
             @dragover.prevent="(e) => panelDragOver(e, panelIndex)"
             @dragleave.prevent="panelDragLeave"
@@ -11,12 +11,12 @@
             :class="{'d-block': true, 'panel-dragover': panel.dragover}"
         >
             <div class="editor-tabs-container">
-                <el-button 
-                    :icon="DragVertical" 
-                    link 
-                    class="tab-icon drag-handle" 
+                <el-button
+                    :icon="DragVertical"
+                    link
+                    class="tab-icon drag-handle"
                     draggable="true"
-                    @dragstart="(e) => panelDragStart(e, panelIndex)"
+                    @dragstart="(e:DragEvent) => panelDragStart(e, panelIndex)"
                 />
                 <div
                     class="editor-tabs"
@@ -73,13 +73,13 @@
                         />
                     </svg>
                 </button>
-                
+
                 <el-dropdown trigger="click" placement="bottom-end">
                     <el-button :icon="DotsVertical" link class="me-2 tab-icon" />
                     <template #dropdown>
                         <el-dropdown-menu class="m-2">
-                            <el-dropdown-item 
-                                :icon="DockRight" 
+                            <el-dropdown-item
+                                :icon="DockRight"
                                 :disabled="panelIndex === panels.length - 1"
                                 @click="movePanel(panelIndex, 'right')"
                             >
@@ -87,8 +87,8 @@
                                     {{ t("multi_panel_editor.move_right") }}
                                 </span>
                             </el-dropdown-item>
-                            <el-dropdown-item 
-                                :icon="DockLeft" 
+                            <el-dropdown-item
+                                :icon="DockLeft"
                                 :disabled="panelIndex === 0"
                                 @click="movePanel(panelIndex, 'left')"
                             >
@@ -113,7 +113,11 @@
                 @dragleave.prevent="removeAllPotentialTabs"
                 @dragenter.prevent
             >
-                <component :is="panel.activeTab?.component" />
+                <component
+                    :is="panel.activeTab?.component"
+                    :panel-index="panelIndex"
+                    :tab-index="panel.tabs.findIndex(t => t.value === panel.activeTab.value)"
+                />
                 <div
                     v-if="dragging"
                     class="editor-content-overlay"
@@ -125,11 +129,13 @@
 </template>
 
 <script lang="ts" setup>
-    import {nextTick, ref, watch} from "vue";
+    import {nextTick, ref, watch, provide} from "vue";
     import {useI18n} from "vue-i18n";
 
     import "splitpanes/dist/splitpanes.css"
     import {Splitpanes, Pane} from "splitpanes"
+
+    import {VISIBLE_PANELS_INJECTION_KEY} from "./code/injectionKeys";
 
     import CloseIcon from "vue-material-design-icons/Close.vue"
     import CircleMediumIcon from "vue-material-design-icons/CircleMedium.vue"
@@ -183,6 +189,8 @@
     const panels = defineModel<Panel[]>({
         required: true,
     })
+
+    provide(VISIBLE_PANELS_INJECTION_KEY, panels);
 
     const emit = defineEmits<{
         removeTab: [tab: string]
@@ -419,7 +427,7 @@
 
     function panelDragOver(e: DragEvent, panelIndex: number) {
         if (draggingPanel.value === null || draggingPanel.value === panelIndex) return;
-        
+
         panels.value.forEach(panel => panel.dragover = false);
         panels.value[panelIndex].dragover = true;
     }
@@ -434,9 +442,9 @@
         const panelsCopy = [...panels.value];
         const [movedPanel] = panelsCopy.splice(draggingPanel.value, 1);
         panelsCopy.splice(targetPanelIndex, 0, movedPanel);
-        
+
         panels.value = panelsCopy;
-        
+
         draggingPanel.value = null;
         panelDragLeave();
     }

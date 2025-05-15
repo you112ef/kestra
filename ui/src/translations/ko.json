@@ -39,6 +39,7 @@
     "add flow": "Flow 추가",
     "add task": "task 추가",
     "add-trigger-in-editor": "먼저 Flow에 Trigger를 추가하세요.",
+    "add_new_item": "새 항목 추가",
     "administration": "관리",
     "advanced configuration": "다른 속성",
     "after": "이후",
@@ -56,6 +57,8 @@
     "back_to_dashboard": "대시보드로 돌아가기",
     "backfill": "Backfill",
     "backfill executions": "backfill 실행",
+    "backfill paused": "백필 일시 중지됨",
+    "backfill running": "백필 실행 중",
     "before": "이전",
     "behavior": "동작",
     "blueprints": {
@@ -130,6 +133,9 @@
     "close sidebar": "사이드바 닫기",
     "collapse": "축소",
     "collapse all": "모두 축소",
+    "common": {
+      "back": "뒤로"
+    },
     "concurrency": "동시성",
     "conditions": "조건들",
     "configure basic auth": "기본 인증 구성",
@@ -400,6 +406,10 @@
         "content": "우리 문서에서 <strong><a href=\"https://kestra.io/docs/workflow-components/plugin-defaults\" target=\"_blank\">Concurrency Limits</a></strong>에 대해 더 읽어보세요.",
         "title": "이 Namespace에 대한 플러그인 기본값이 설정되지 않았습니다."
       },
+      "testSuites": {
+        "content": "테스트 스위트를 생성하여 flow를 테스트하기 시작하세요.",
+        "title": "아직 Test suite가 없습니다!"
+      },
       "triggers": {
         "content": "<strong><a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a></strong>에 대한 자세한 내용은 문서를 참조하세요.",
         "title": "flow에 Triggers가 없습니다."
@@ -513,11 +523,13 @@
         "contains": "포함합니다",
         "ends_with": "끝남",
         "greater_than": "보다 큼",
+        "greater_than_or_equal_to": "크거나 같음",
         "in": "안에",
         "is": "입니다",
         "is_not": "아님",
         "is_one_of": "중 하나입니다.",
         "less_than": "보다 작음",
+        "less_than_or_equal_to": "작거나 같음",
         "not_contains": "포함하지 않음",
         "not_in": "에 없음",
         "starts_with": "로 시작합니다"
@@ -531,6 +543,7 @@
         "aggregation": "집계",
         "child": "자식",
         "details": "세부사항",
+        "endDate": "종료 날짜",
         "flow": "플로우",
         "labels": "레이블",
         "level": "로그 레벨",
@@ -540,6 +553,7 @@
         "relative_date": "상대 날짜",
         "scope": "범위",
         "service_type": "유형",
+        "startDate": "시작 날짜",
         "state": "상태",
         "status": "상태",
         "task": "작업",
@@ -576,6 +590,7 @@
     "flow export": "<code>{flowCount}</code> 개의 flow를 내보내시겠습니까?",
     "flow must have id and namespace": "Flow에는 id와 namespace가 있어야 합니다.",
     "flow not imported": "일부 flow를 가져올 수 없습니다.",
+    "flow source not found": "Flow source를 찾을 수 없음",
     "flow-dependencies": "종속성",
     "flow-no-dependencies": "귀하의 flow에는 종속성이 없습니다.",
     "flow_only": "Flow 탭에서만 사용 가능합니다.",
@@ -644,7 +659,9 @@
     "item": "항목",
     "items": "항목",
     "join community": "커뮤니티에 참여하기",
+    "join_slack": "Slack 참여",
     "jump to...": "이동...",
+    "kestra": "Kestra",
     "key": "Key",
     "kill": "종료",
     "kill only parents": "부모만 종료",
@@ -795,11 +812,20 @@
     "no_code": {
       "adding": "+ {what} 추가",
       "adding_default": "+ 새 value 추가",
+      "close": {
+        "after execution": "작업 닫기",
+        "error handlers": "오류 처리기 닫기",
+        "finally": "작업 닫기",
+        "input": "입력 닫기",
+        "plugin defaults": "플러그인 기본값 닫기",
+        "tasks": "작업 닫기",
+        "triggers": "트리거 닫기"
+      },
       "creation": {
         "after execution": "실행 후 블록 추가",
         "error handlers": "오류 처리기 추가",
         "finally": "마지막 블록 추가",
-        "select": "{section}을 선택하십시오",
+        "plugin defaults": "플러그인 기본값 추가",
         "tasks": "작업 추가",
         "triggers": "트리거 추가"
       },
@@ -835,20 +861,30 @@
         "triggers": "트리거 저장"
       },
       "sections": {
-        "after_execution": "실행 후",
-        "error_handlers": "오류 처리기",
+        "afterExecution": "실행 후",
+        "errors": "오류 처리기",
         "finally": "마지막으로",
         "general": "일반 속성",
         "main": "주요 속성",
         "optional": "선택적 속성",
+        "pluginDefaults": "플러그인 기본값",
         "tasks": "작업",
         "triggers": "트리거"
+      },
+      "select": {
+        "after execution": "작업 선택",
+        "error handlers": "작업 선택",
+        "finally": "작업 선택",
+        "plugin defaults": "플러그인 선택",
+        "tasks": "작업 선택",
+        "triggers": "트리거 선택"
       }
     },
     "no_data": "여기에는 아직 아무것도 없는 것 같아요…<br/>필터를 조정하거나 다시 시도해 보세요!",
     "no_logs_data": "데이터 없음",
     "no_logs_data_description": "흐름이 실행 중이지 않거나 필터를 조정해야 할 수 있습니다.",
     "no_namespaces": "검색 기준에 맞는 namespace가 없습니다.",
+    "no_results_found": "결과를 찾을 수 없습니다",
     "no_tasks_running": "아직 실행 중인 task가 없습니다.",
     "now": "지금",
     "of": "의",
@@ -1025,6 +1061,8 @@
       "saved": "저장된 필터"
     },
     "search term in message": "메시지에서 검색어 찾기",
+    "search_docs": "검색",
+    "searching": "검색 중...",
     "seconds": "초",
     "secret": {
       "add": "새 비밀",
@@ -1057,6 +1095,7 @@
       "blocks": {
         "configuration": {
           "fields": {
+            "auto_refresh_interval": "자동 새로고침 간격",
             "default_namespace": "기본 Namespace",
             "editor_type": "기본 편집기 유형",
             "execute_default_tab": "기본 실행 탭",
@@ -1180,7 +1219,7 @@
     "toggle fullscreen": "전체 화면 전환",
     "toggle output": "출력 전환",
     "toggle output display": "출력 표시 전환",
-    "toggle periodic refresh each 10 seconds": "10초마다 주기적으로 새로 고침 전환",
+    "toggle periodic refresh each x seconds": "주기적인 새로 고침을 {interval}초마다 전환",
     "toggle_word_wrap": "자동 줄 바꿈 토글",
     "topology": "토폴로지",
     "topology-graph": {
@@ -1192,6 +1231,7 @@
     },
     "trigger": "Trigger",
     "trigger details": "Trigger 세부 정보",
+    "trigger disabled": "Flow 소스 내에서 Trigger가 비활성화되었습니다.",
     "trigger execution id": "Trigger Execution Id",
     "trigger filter": {
       "options": {
@@ -1276,6 +1316,7 @@
     "worker group": "Worker 그룹",
     "worker group fallback": "작업자 그룹 대체",
     "worker group key": "워크 그룹 key",
+    "worker information": "작업자 정보",
     "workerId": "Worker Id",
     "workers": "Workers",
     "wrong labels": "라벨에 빈 key 또는 value는 허용되지 않습니다",

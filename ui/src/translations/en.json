@@ -19,6 +19,9 @@
     "delete ok": "is deleted",
     "Default page": "Default page",
     "confirmation": "Confirmation",
+    "common": {
+      "back": "Back"
+    },
     "delete confirm": "Are you sure you want to delete <code>{name}</code>?",
     "outdated revision save confirmation": {
       "confirm": "Do you want to overwrite it?",
@@ -50,6 +53,7 @@
     "Select namespace": "Namespace",
     "Add flow": "Add flow",
     "add": "Add",
+    "add_new_item": "Add new item",
     "copy": "Copy",
     "copy_to_clipboard": "Copy to clipboard",
     "Per page": "per page",
@@ -257,7 +261,7 @@
     "parent execution": "Parent execution",
     "original execution": "Original execution",
     "automatic refresh": "Automatic refresh",
-    "toggle periodic refresh each 10 seconds": "Toggle periodic refresh every 10 seconds",
+    "toggle periodic refresh each x seconds": "Toggle periodic refresh every {interval} seconds",
     "trigger refresh": "Trigger refresh",
     "add-trigger-in-editor": "Add a Trigger to your Flow first",
     "refresh": "Refresh",
@@ -567,6 +571,8 @@
     "environment color setting": "Environment color",
     "slack support": "Ask any question via Slack",
     "join community": "Join the Community",
+    "join_slack": "Join Slack",
+    "kestra": "Kestra",
     "reach us": "Talk to us",
     "new version": "New version {version} available!",
     "error detected": "Error(s) detected",
@@ -592,6 +598,8 @@
       "button": "Restart trigger",
       "tooltip": "Restart the trigger"
     },
+    "trigger disabled": "Trigger is disabled within Flow source",
+    "flow source not found": "Flow source not found",
     "date format": "Date format",
     "timezone": "Timezone",
     "add task": "Add a task",
@@ -700,6 +708,8 @@
     "pause backfills": "Pause backfills",
     "backfill executions": "Backfill executions",
     "execute backfill": "Execute backfill",
+    "backfill paused": "Backfill paused",
+    "backfill running": "Backfill running",
     "relative": "Relative",
     "relative start date": "Relative start date",
     "relative end date": "Relative end date",
@@ -760,7 +770,8 @@
             "execute_flow": "Execute the Flow",
             "execute_default_tab": "Default Execution Tab",
             "multi_panel_editor": "Multi Panel Editor",
-            "flow_default_tab": "Default Flow Tab"
+            "flow_default_tab": "Default Flow Tab",
+            "auto_refresh_interval": "Auto Refresh Interval"
           }
         },
         "theme": {
@@ -1110,7 +1121,9 @@
         "relative_date": "Relative date",
         "absolute_date": "Absolute date",
         "labels": "Labels",
-        "text": "text"
+        "text": "text",
+        "startDate": "Start date",
+        "endDate": "End date"
       },
       "comparators": {
         "is": "is",
@@ -1123,7 +1136,9 @@
         "between": "between",
         "starts_with": "starts with",
         "greater_than": "greater than",
+        "greater_than_or_equal_to": "greater than or equal to",
         "less_than": "less than",
+        "less_than_or_equal_to": "less than or equal to",
         "ends_with": "ends with"
       },
       "save": {
@@ -1161,9 +1176,10 @@
         "optional": "Optional properties",
         "tasks": "Tasks",
         "triggers": "Triggers",
-        "error_handlers": "Error Handlers",
+        "errors": "Error Handlers",
+        "afterExecution": "After Execution",
         "finally": "Finally",
-        "after_execution": "After Execution"
+        "pluginDefaults": "Plugin Defaults"
       },
       "fields": {
         "main": {
@@ -1182,12 +1198,20 @@
           "disabled": "Disabled"
         }
       },
+      "select": {
+        "tasks": "Select a task",
+        "triggers": "Select a trigger",
+        "error handlers": "Select a task",
+        "finally": "Select a task",
+        "plugin defaults": "Select a plugin",
+        "after execution": "Select a task"
+      },
       "creation": {
-        "select": "Select a {section}",
         "tasks": "Add a task",
         "triggers": "Add a trigger",
         "error handlers": "Add an error handler",
         "finally": "Add a finally block",
+        "plugin defaults": "Add a plugin default",
         "after execution": "Add an after execution block"
       },
       "save": {
@@ -1197,6 +1221,15 @@
         "finally": "Save task",
         "after execution": "Save task",
         "input": "Save input"
+      },
+      "close": {
+        "tasks": "Close task",
+        "triggers": "Close trigger",
+        "error handlers": "Close error handler",
+        "finally": "Close task",
+        "after execution": "Close task",
+        "input": "Close input",
+        "plugin defaults": "Close plugin default"
       }
     },
     "properties": {
@@ -1268,6 +1301,10 @@
         "title": "You have no apps yet!",
         "content": "Start building Apps to interact with Kestra from the outside world."
       },
+      "testSuites": {
+        "title": "You have no Tests yet!",
+        "content": "Start creating Tests."
+      },
       "concurrency_executions": {
         "title": "No ongoing Executions for this Flow.",
         "content": "Read more about <strong><a href=\"https://kestra.io/docs/workflow-components/execution\" target=\"_blank\">Executions</a></strong> in our documentation."
@@ -1295,6 +1332,10 @@
       "move_right": "Move right",
       "move_left": "Move left",
       "close_all_tabs": "Close all tabs"
-    }
+    },
+    "search_docs": "Search",
+    "no_results_found": "No results found",
+    "searching": "Searching...",
+    "worker information": "Worker Information"
   }
 }

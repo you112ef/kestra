@@ -11,12 +11,13 @@
             :value="input.type"
         />
     </el-select>
-    <task-root
+    <TaskObject
         v-loading="loading"
         name="root"
         :model-value="selectedInput"
         @update:model-value="updateSelected($event, selectedIndex)"
-        :schema="inputSchema?.schema"
+        :schema="inputSchema?.schema?.properties"
+        :properties="inputSchema?.schema?.properties?.properties"
         :definitions="inputSchema?.schema?.definitions"
     />
 
@@ -24,12 +25,13 @@
 </template>
 
 <script setup>
-    import TaskRoot from "./tasks/TaskRoot.vue";
+    import TaskObject from "./tasks/TaskObject.vue";
     import Save from "../code/components/Save.vue";
 </script>
 
 <script>
     import {mapState} from "vuex";
+    import {BREADCRUMB_INJECTION_KEY, PANEL_INJECTION_KEY} from "../code/injectionKeys";
 
     export default {
         emits: ["update:modelValue"],
@@ -68,9 +70,12 @@
                 loading: false,
             };
         },
+        inject:{
+            panel: {from: PANEL_INJECTION_KEY},
+            breadcrumbs: {from: BREADCRUMB_INJECTION_KEY}
+        },
         methods: {
             selectInput(input) {
-                this.loading = true;
                 this.selectedInput = input;
                 this.loadSchema(input.type);
             },
@@ -81,6 +86,8 @@
                 return this.inputsType.find((e) => e.cls === cls).type;
             },
             loadSchema(type) {
+                this.loading = true;
+
                 this.$store
                     .dispatch("plugin/loadInputSchema", {type: type})
                     .then((_) => (this.loading = false));
@@ -96,7 +103,8 @@
                         message: this.$t("duplicate input id"),
                     });
                 } else {
-                    this.$store.commit("code/unsetPanel");
+                    this.panel = undefined;
+                    this.breadcrumbs.pop();
                     this.$emit("update:modelValue", [...this.inputs]);
                 }
             },
@@ -113,7 +121,6 @@
                 this.newInputs.push({type: "STRING"});
             },
             onChangeType(type) {
-                this.loading = true;
                 this.newInputs[this.selectedIndex].type = type;
                 this.loadSchema(type);
             },

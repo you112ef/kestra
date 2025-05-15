@@ -59,7 +59,7 @@ public abstract class AbstractFlowRepositoryTest {
 
     @BeforeEach
     protected void init() throws IOException, URISyntaxException {
-        TestsUtils.loads(repositoryLoader);
+        TestsUtils.loads(null, repositoryLoader);
         FlowListener.reset();
     }
 
@@ -82,11 +82,11 @@ public abstract class AbstractFlowRepositoryTest {
         flow = flowRepository.create(GenericFlow.of(flow));
         try {
             Optional<Flow> full = flowRepository.findById(null, flow.getNamespace(), flow.getId());
-            assertThat(full.isPresent()).isEqualTo(true);
+            assertThat(full.isPresent()).isTrue();
             assertThat(full.get().getRevision()).isEqualTo(1);
 
             full = flowRepository.findById(null, flow.getNamespace(), flow.getId(), Optional.empty());
-            assertThat(full.isPresent()).isEqualTo(true);
+            assertThat(full.isPresent()).isTrue();
         } finally {
             deleteFlow(flow);
         }
@@ -100,11 +100,11 @@ public abstract class AbstractFlowRepositoryTest {
         flow = flowRepository.create(GenericFlow.of(flow));
         try {
             Optional<Flow> full = flowRepository.findByIdWithoutAcl(null, flow.getNamespace(), flow.getId(), Optional.empty());
-            assertThat(full.isPresent()).isEqualTo(true);
+            assertThat(full.isPresent()).isTrue();
             assertThat(full.get().getRevision()).isEqualTo(1);
 
             full = flowRepository.findByIdWithoutAcl(null, flow.getNamespace(), flow.getId(), Optional.empty());
-            assertThat(full.isPresent()).isEqualTo(true);
+            assertThat(full.isPresent()).isTrue();
         } finally {
             deleteFlow(flow);
         }
@@ -120,7 +120,7 @@ public abstract class AbstractFlowRepositoryTest {
 
         try {
             Optional<FlowWithSource> full = flowRepository.findByIdWithSource(null, flow.getNamespace(), flow.getId());
-            assertThat(full.isPresent()).isEqualTo(true);
+            assertThat(full.isPresent()).isTrue();
 
             full.ifPresent(current -> {
                 assertThat(full.get().getRevision()).isEqualTo(1);
@@ -188,7 +188,7 @@ public abstract class AbstractFlowRepositoryTest {
     @Test
     void findByNamespace() {
         List<Flow> save = flowRepository.findByNamespace(null, "io.kestra.tests");
-        assertThat((long) save.size()).isEqualTo(Helpers.FLOWS_COUNT - 20);
+        assertThat((long) save.size()).isEqualTo(Helpers.FLOWS_COUNT - 22);
 
         save = flowRepository.findByNamespace(null, "io.kestra.tests2");
         assertThat((long) save.size()).isEqualTo(1L);
@@ -273,7 +273,7 @@ public abstract class AbstractFlowRepositoryTest {
         FlowWithSource save = flowRepository.create(GenericFlow.of(flow));
 
         try {
-            assertThat(flowRepository.findById(null, save.getNamespace(), save.getId()).isPresent()).isEqualTo(true);
+            assertThat(flowRepository.findById(null, save.getNamespace(), save.getId()).isPresent()).isTrue();
         } catch (Throwable e) {
             deleteFlow(save);
             throw e;
@@ -281,8 +281,8 @@ public abstract class AbstractFlowRepositoryTest {
 
         Flow delete = flowRepository.delete(save);
 
-        assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId()).isPresent()).isEqualTo(false);
-        assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId(), Optional.of(save.getRevision())).isPresent()).isEqualTo(true);
+        assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId()).isPresent()).isFalse();
+        assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId(), Optional.of(save.getRevision())).isPresent()).isTrue();
 
         List<FlowWithSource> revisions = flowRepository.findRevisions(null, flow.getNamespace(), flow.getId());
         assertThat(revisions.getLast().getRevision()).isEqualTo(delete.getRevision());
@@ -302,7 +302,7 @@ public abstract class AbstractFlowRepositoryTest {
         Flow save = flowRepository.create(GenericFlow.of(flow));
 
         try {
-            assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId()).isPresent()).isEqualTo(true);
+            assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId()).isPresent()).isTrue();
 
             Flow update = Flow.builder()
                 .id(IdUtils.create())
@@ -339,7 +339,7 @@ public abstract class AbstractFlowRepositoryTest {
 
         flow = flowRepository.create(GenericFlow.of(flow));
         try {
-            assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId()).isPresent()).isEqualTo(true);
+            assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId()).isPresent()).isTrue();
 
             Flow update = Flow.builder()
                 .id(flowId)
@@ -377,7 +377,7 @@ public abstract class AbstractFlowRepositoryTest {
 
         Flow save = flowRepository.create(GenericFlow.of(flow));
         try {
-            assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId()).isPresent()).isEqualTo(true);
+            assertThat(flowRepository.findById(null, flow.getNamespace(), flow.getId()).isPresent()).isTrue();
         } finally {
             deleteFlow(save);
         }
@@ -390,7 +390,7 @@ public abstract class AbstractFlowRepositoryTest {
     @Test
     void findDistinctNamespace() {
         List<String> distinctNamespace = flowRepository.findDistinctNamespace(null);
-        assertThat((long) distinctNamespace.size()).isEqualTo(7L);
+        assertThat((long) distinctNamespace.size()).isEqualTo(8L);
     }
 
     @SuppressWarnings("deprecation")
@@ -420,8 +420,8 @@ public abstract class AbstractFlowRepositoryTest {
         try {
             Optional<Flow> found = flowRepository.findById(null, flow.getNamespace(), flow.getId());
 
-            assertThat(found.isPresent()).isEqualTo(true);
-            assertThat(found.get() instanceof FlowWithException).isEqualTo(true);
+            assertThat(found.isPresent()).isTrue();
+            assertThat(found.get() instanceof FlowWithException).isTrue();
             assertThat(((FlowWithException) found.get()).getException()).contains("Templates are disabled");
         } finally {
             deleteFlow(flow);

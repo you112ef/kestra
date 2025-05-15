@@ -39,6 +39,7 @@
     "add flow": "Aggiungi flow",
     "add task": "Aggiungi un task",
     "add-trigger-in-editor": "Aggiungi un Trigger al tuo Flow prima",
+    "add_new_item": "Aggiungi nuovo elemento",
     "administration": "Amministrazione",
     "advanced configuration": "Altre proprietà",
     "after": "dopo",
@@ -56,6 +57,8 @@
     "back_to_dashboard": "Torna alla dashboard",
     "backfill": "Backfill",
     "backfill executions": "Esecuzioni di backfill",
+    "backfill paused": "Backfill PAUSED",
+    "backfill running": "Esecuzione del backfill",
     "before": "prima",
     "behavior": "Comportamento",
     "blueprints": {
@@ -130,6 +133,9 @@
     "close sidebar": "chiudi barra laterale",
     "collapse": "Comprimi",
     "collapse all": "Comprimi tutto",
+    "common": {
+      "back": "Indietro"
+    },
     "concurrency": "Concurrency",
     "conditions": "condizioni",
     "configure basic auth": "Configura Autenticazione di Base",
@@ -400,6 +406,10 @@
         "content": "Leggi di più sui <strong><a href=\"https://kestra.io/docs/workflow-components/plugin-defaults\" target=\"_blank\">limiti di Concurrency</a></strong> nella nostra documentazione.",
         "title": "Nessun valore predefinito del plugin è impostato per questo Namespace."
       },
+      "testSuites": {
+        "content": "Inizia a creare suite di test per testare i tuoi flow.",
+        "title": "Non hai ancora Test suite!"
+      },
       "triggers": {
         "content": "Leggi di più sui <strong><a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Trigger</a></strong> nella nostra documentazione.",
         "title": "Il tuo flow non ha alcun trigger."
@@ -513,11 +523,13 @@
         "contains": "contiene",
         "ends_with": "termina con",
         "greater_than": "maggiore di",
+        "greater_than_or_equal_to": "maggiore o uguale a",
         "in": "nel",
         "is": "è",
         "is_not": "non è",
         "is_one_of": "è uno di",
         "less_than": "minore di",
+        "less_than_or_equal_to": "minore o uguale a",
         "not_contains": "non contiene",
         "not_in": "non in",
         "starts_with": "inizia con"
@@ -531,6 +543,7 @@
         "aggregation": "Aggregazione",
         "child": "Bambino",
         "details": "Dettagli",
+        "endDate": "Data di fine",
         "flow": "Flusso",
         "labels": "Etichette",
         "level": "Livello di Log",
@@ -540,6 +553,7 @@
         "relative_date": "Data relativa",
         "scope": "Ambito",
         "service_type": "Tipo",
+        "startDate": "Data di inizio",
         "state": "Stato",
         "status": "Stato",
         "task": "Compito",
@@ -576,6 +590,7 @@
     "flow export": "Sei sicuro di voler esportare <code>{flowCount}</code> flow?",
     "flow must have id and namespace": "Il flow deve avere un id e un namespace.",
     "flow not imported": "Alcuni flow non possono essere importati",
+    "flow source not found": "Sorgente del flow non trovata",
     "flow-dependencies": "dipendenze",
     "flow-no-dependencies": "Il tuo flow non ha dipendenze",
     "flow_only": "Disponibile solo nella scheda Flow.",
@@ -644,7 +659,9 @@
     "item": "elemento",
     "items": "elementi",
     "join community": "Unisciti alla Community",
+    "join_slack": "Unisciti a Slack",
     "jump to...": "Vai a...",
+    "kestra": "Kestra",
     "key": "Key",
     "kill": "Termina",
     "kill only parents": "Termina solo genitori",
@@ -795,11 +812,20 @@
     "no_code": {
       "adding": "+ Aggiungi un {what}",
       "adding_default": "+ Aggiungi un nuovo value",
+      "close": {
+        "after execution": "Chiudi task",
+        "error handlers": "Chiudi gestore errori",
+        "finally": "Chiudi task",
+        "input": "Chiudi input",
+        "plugin defaults": "Chiudi plugin predefinito",
+        "tasks": "Chiudi task",
+        "triggers": "Chiudi trigger"
+      },
       "creation": {
         "after execution": "Aggiungi un blocco after execution",
         "error handlers": "Aggiungi un gestore degli errori",
         "finally": "Aggiungi un blocco finally",
-        "select": "Seleziona una {section}",
+        "plugin defaults": "Aggiungi un plugin predefinito",
         "tasks": "Aggiungi un task",
         "triggers": "Aggiungi un trigger"
       },
@@ -835,20 +861,30 @@
         "triggers": "Salva trigger"
       },
       "sections": {
-        "after_execution": "Dopo l'Esecuzione",
-        "error_handlers": "Gestori degli Errori",
+        "afterExecution": "Dopo l'Esecuzione",
+        "errors": "Gestori degli Errori",
         "finally": "Infine",
         "general": "Proprietà generali",
         "main": "Proprietà principali",
         "optional": "Proprietà opzionali",
+        "pluginDefaults": "Predefiniti del Plugin",
         "tasks": "Attività",
         "triggers": "Trigger"
+      },
+      "select": {
+        "after execution": "Seleziona un task",
+        "error handlers": "Seleziona un task",
+        "finally": "Seleziona un task",
+        "plugin defaults": "Seleziona un plugin",
+        "tasks": "Seleziona un task",
+        "triggers": "Seleziona un trigger"
       }
     },
     "no_data": "Sembra che non ci sia ancora nulla qui… per ora!<br/>Modifica i tuoi filtri o riprova!",
     "no_logs_data": "Nessun dato",
     "no_logs_data_description": "O non ci sono flow in esecuzione, oppure potrebbe essere necessario modificare i filtri.",
     "no_namespaces": "Nessun namespace corrisponde ai criteri di ricerca.",
+    "no_results_found": "Nessun risultato trovato",
     "no_tasks_running": "Nessun task è ancora in esecuzione.",
     "now": "Ora",
     "of": "di",
@@ -1025,6 +1061,8 @@
       "saved": "Filtri salvati"
     },
     "search term in message": "Cerca termine nel messaggio",
+    "search_docs": "Cerca",
+    "searching": "Ricerca in corso...",
     "seconds": "Secondi",
     "secret": {
       "add": "Nuovo secret",
@@ -1057,6 +1095,7 @@
       "blocks": {
         "configuration": {
           "fields": {
+            "auto_refresh_interval": "Intervallo di Aggiornamento Automatico",
             "default_namespace": "Namespace predefinito",
             "editor_type": "Tipo Editor Predefinito",
             "execute_default_tab": "Scheda di Esecuzione Predefinita",
@@ -1180,7 +1219,7 @@
     "toggle fullscreen": "Attiva/disattiva schermo intero",
     "toggle output": "Attiva/disattiva outputs",
     "toggle output display": "Attiva/disattiva visualizzazione output",
-    "toggle periodic refresh each 10 seconds": "Attiva/disattiva aggiornamento periodico ogni 10 secondi",
+    "toggle periodic refresh each x seconds": "Attiva/disattiva l'aggiornamento periodico ogni {interval} secondi",
     "toggle_word_wrap": "Attiva/disattiva Word Wrap",
     "topology": "Topologia",
     "topology-graph": {
@@ -1192,6 +1231,7 @@
     },
     "trigger": "Trigger",
     "trigger details": "Dettagli del trigger",
+    "trigger disabled": "Il trigger è disabilitato all'interno della sorgente del flow",
     "trigger execution id": "Trigger Execution Id",
     "trigger filter": {
       "options": {
@@ -1276,6 +1316,7 @@
     "worker group": "Gruppo di Workers",
     "worker group fallback": "Gruppo di Worker di riserva",
     "worker group key": "Chiave del gruppo Worker",
+    "worker information": "Informazioni sul Worker",
     "workerId": "Worker Id",
     "workers": "Workers",
     "wrong labels": "Chiave o valore vuoto non sono ammessi nelle etichette",

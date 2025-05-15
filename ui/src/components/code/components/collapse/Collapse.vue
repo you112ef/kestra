@@ -1,26 +1,23 @@
 <template>
     <el-collapse v-model="expanded" class="collapse">
         <el-collapse-item
-            v-for="(item, index) in props.items"
-            :key="index"
-            :name="item.title"
-            :title="`${item.title}${item.elements ? ` (${item.elements.length})` : ''}`"
-            :class="{creation: props.creation}"
+            :name="title"
+            :title="`${title}${elements ? ` (${elements.length})` : ''}`"
         >
-            <template v-if="creation" #icon>
-                <Creation :section="item.title" />
+            <template #icon>
+                <Creation :section="title" />
             </template>
 
             <Element
-                v-for="(element, elementIndex) in item.elements"
+                v-for="(element, elementIndex) in elements"
                 :key="elementIndex"
-                :section="item.title"
+                :section="title"
                 :element
-                @remove-element="removeElement(item.title, elementIndex)"
+                @remove-element="removeElement(title, elementIndex)"
                 @move-element="
                     (direction: 'up' | 'down') =>
                         moveElement(
-                            item.elements,
+                            elements,
                             element.id,
                             elementIndex,
                             direction,
@@ -32,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-    import {nextTick, PropType, ref} from "vue";
+    import {inject, ref} from "vue";
 
     import {YamlUtils as YAML_UTILS} from "@kestra-io/ui-libs";
 
@@ -40,40 +37,29 @@
 
     import Creation from "./buttons/Creation.vue";
     import Element from "./Element.vue";
+    import {FLOW_INJECTION_KEY} from "../../injectionKeys";
 
     const emits = defineEmits(["remove", "reorder"]);
 
-    const props = defineProps({
-        items: {
-            type: Array as PropType<CollapseItem[]>,
-            required: true,
-        },
-        flow: {type: String, default: undefined},
-        creation: {type: Boolean, default: false},
-    });
-    const expanded = ref<CollapseItem["title"][]>([]);
+    const flow = inject(FLOW_INJECTION_KEY, ref(""));
 
-    if (props.creation) {
-        props.items.forEach((item) => {
-            if (item.elements?.length) expanded.value.push(item.title);
-        });
-    }
+    const props = defineProps<CollapseItem>();
+    const expanded = ref<CollapseItem["title"]>(props.title);
 
     const removeElement = (title: string, index: number) => {
-        props.items.forEach((item) => {
-            if (item.title === title) {
-                nextTick(() => {
-                    const ID = item.elements?.[index].id;
-
-                    item.elements?.splice(index, 1);
-                    emits(
-                        "remove",
-                        YAML_UTILS.deleteTask(props.flow, ID, title.toUpperCase()),
-                    );
-                    expanded.value = expanded.value.filter((v) => v !== title);
-                });
-            }
-        });
+        const isPluginDefaults = title === "Plugin Defaults";
+        // plugin default do not have an id
+        // they have to be deleted separately
+        if (isPluginDefaults) {
+            if(props.elements?.[index]?.type === undefined) return;
+            emits("remove", YAML_UTILS.deletePluginDefaults(flow.value, props.elements[index].type));
+        } else {
+            if(props.elements?.[index]?.id === undefined) return;
+            emits(
+                "remove",
+                YAML_UTILS.deleteTask(flow.value, props.elements[index].id, title),
+            );
+        }
     };
 
     const moveElement = (
@@ -82,7 +68,7 @@
         index: number,
         direction: "up" | "down",
     ) => {
-        if (!items || !props.flow) return;
+        if (!items || !flow) return;
         if (
             (direction === "up" && index === 0) ||
             (direction === "down" && index === items.length - 1)
@@ -92,7 +78,7 @@
         const newIndex = direction === "up" ? index - 1 : index + 1;
         emits(
             "reorder",
-            YAML_UTILS.swapTasks(props.flow, elementID, items[newIndex].id),
+            YAML_UTILS.swapTasks(flow.value, elementID, items[newIndex].id),
         );
     };
 </script>

@@ -12,7 +12,7 @@
             :is-read-only="isReadOnly"
             :can-delete="true"
             :is-allowed-edit="isAllowedEdit"
-            :have-change="tabs.some(t => t.dirty === true)"
+            :have-change="store.state.flow.haveChange || tabs.some(t => t.dirty === true)"
             :flow-have-tasks="Boolean(flowHaveTasks)"
             :errors="flowErrors"
             :warnings="flowWarnings"
@@ -89,9 +89,10 @@
     });
 
     async function save(){
+        const creating = isCreating.value
         await store.dispatch("flow/saveAll")
 
-        if(isCreating.value){
+        if(creating){
             await router.push({
                 name: "flows/update",
                 params: {

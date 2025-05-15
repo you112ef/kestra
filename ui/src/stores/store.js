@@ -16,8 +16,8 @@ import editor from "./editor";
 import doc from "./doc";
 import bookmarks from "./bookmarks";
 import dashboard from "./dashboard";
-import code from "./code";
 import blueprints from "./blueprints";
+import service from "./service"
 
 export default {
     modules: {
@@ -39,7 +39,7 @@ export default {
         doc,
         bookmarks,
         dashboard,
-        code,
         blueprints,
+        service,
     }
 }

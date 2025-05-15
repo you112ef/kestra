@@ -39,6 +39,7 @@
     "add flow": "添加流程",
     "add task": "添加任务",
     "add-trigger-in-editor": "首先为您的Flow添加一个Trigger",
+    "add_new_item": "添加新项目",
     "administration": "管理",
     "advanced configuration": "其他属性",
     "after": "之后",
@@ -56,6 +57,8 @@
     "back_to_dashboard": "返回仪表板",
     "backfill": "回填",
     "backfill executions": "回填执行",
+    "backfill paused": "补数据已暂停",
+    "backfill running": "正在运行Backfill",
     "before": "之前",
     "behavior": "行为",
     "blueprints": {
@@ -130,6 +133,9 @@
     "close sidebar": "关闭侧边栏",
     "collapse": "折叠",
     "collapse all": "折叠所有",
+    "common": {
+      "back": "返回"
+    },
     "concurrency": "并发",
     "conditions": "条件",
     "configure basic auth": "配置基本认证",
@@ -400,6 +406,10 @@
         "content": "在我们的文档中阅读更多关于<strong><a href=\"https://kestra.io/docs/workflow-components/plugin-defaults\" target=\"_blank\">Concurrency Limits</a></strong>的信息。",
         "title": "此Namespace未设置插件默认值。"
       },
+      "testSuites": {
+        "content": "开始创建测试套件以测试您的Flows。",
+        "title": "您还没有测试套件！"
+      },
       "triggers": {
         "content": "在我们的文档中阅读更多关于<strong><a href=\"https://kestra.io/docs/workflow-components/triggers\" target=\"_blank\">Triggers</a></strong>的信息。",
         "title": "您的 flow 没有任何 Triggers。"
@@ -513,11 +523,13 @@
         "contains": "包含",
         "ends_with": "以...结束",
         "greater_than": "大于",
+        "greater_than_or_equal_to": "大于或等于",
         "in": "在",
         "is": "是",
         "is_not": "不是",
         "is_one_of": "是其中之一",
         "less_than": "小于",
+        "less_than_or_equal_to": "小于或等于",
         "not_contains": "不包含",
         "not_in": "不在",
         "starts_with": "以...开始"
@@ -531,6 +543,7 @@
         "aggregation": "聚合",
         "child": "子节点",
         "details": "详情",
+        "endDate": "结束日期",
         "flow": "流程",
         "labels": "标签",
         "level": "日志级别",
@@ -540,6 +553,7 @@
         "relative_date": "相对日期",
         "scope": "范围",
         "service_type": "类型",
+        "startDate": "开始日期",
         "state": "状态",
         "status": "状态",
         "task": "任务",
@@ -576,6 +590,7 @@
     "flow export": "确定要导出 <code>{flowCount}</code> 个流程吗？",
     "flow must have id and namespace": "流程必须有ID和命名空间。",
     "flow not imported": "某些flow无法导入",
+    "flow source not found": "未找到flow源",
     "flow-dependencies": "依赖项",
     "flow-no-dependencies": "您的flow没有任何依赖项",
     "flow_only": "仅在流程标签中可用。",
@@ -644,7 +659,9 @@
     "item": "项目",
     "items": "项目",
     "join community": "加入社区",
+    "join_slack": "加入 Slack",
     "jump to...": "跳转到...",
+    "kestra": "Kestra",
     "key": "键",
     "kill": "终止",
     "kill only parents": "仅终止父流程",
@@ -795,11 +812,20 @@
     "no_code": {
       "adding": "+ 添加{what}",
       "adding_default": "+ 添加新value",
+      "close": {
+        "after execution": "关闭task",
+        "error handlers": "关闭错误处理程序",
+        "finally": "关闭 task",
+        "input": "关闭输入",
+        "plugin defaults": "关闭插件默认",
+        "tasks": "关闭task",
+        "triggers": "关闭 trigger"
+      },
       "creation": {
         "after execution": "添加执行后块",
         "error handlers": "添加错误处理程序",
         "finally": "添加一个finally块",
-        "select": "选择一个{section}",
+        "plugin defaults": "添加插件默认值",
         "tasks": "添加任务",
         "triggers": "添加一个trigger"
       },
@@ -835,20 +861,30 @@
         "triggers": "保存 trigger"
       },
       "sections": {
-        "after_execution": "执行后",
-        "error_handlers": "错误处理程序",
+        "afterExecution": "执行后",
+        "errors": "错误处理程序",
         "finally": "最后",
         "general": "常规属性",
         "main": "主要属性",
         "optional": "可选属性",
+        "pluginDefaults": "插件默认值",
         "tasks": "任务",
         "triggers": "触发器"
+      },
+      "select": {
+        "after execution": "选择一个task",
+        "error handlers": "选择一个task",
+        "finally": "选择一个task",
+        "plugin defaults": "选择插件",
+        "tasks": "选择一个task",
+        "triggers": "选择一个trigger"
       }
     },
     "no_data": "看起来这里还没有内容……<br/>调整您的过滤器，或者再试一次！",
     "no_logs_data": "无数据",
     "no_logs_data_description": "要么没有正在运行的flows，要么您可能需要调整您的筛选器。",
     "no_namespaces": "没有符合搜索条件的命名空间。",
+    "no_results_found": "未找到结果",
     "no_tasks_running": "尚无任务正在运行。",
     "now": "现在",
     "of": "的",
@@ -1025,6 +1061,8 @@
       "saved": "已保存的过滤器"
     },
     "search term in message": "在消息中搜索术语",
+    "search_docs": "搜索",
+    "searching": "搜索中...",
     "seconds": "秒钟",
     "secret": {
       "add": "新密钥",
@@ -1057,6 +1095,7 @@
       "blocks": {
         "configuration": {
           "fields": {
+            "auto_refresh_interval": "自动刷新间隔",
             "default_namespace": "默认命名空间",
             "editor_type": "默认编辑器类型",
             "execute_default_tab": "默认执行选项卡",
@@ -1180,7 +1219,7 @@
     "toggle fullscreen": "切换全屏",
     "toggle output": "切换输出",
     "toggle output display": "切换输出显示",
-    "toggle periodic refresh each 10 seconds": "切换每10秒周期刷新",
+    "toggle periodic refresh each x seconds": "切换每隔 {interval} 秒的定期刷新",
     "toggle_word_wrap": "切换自动换行",
     "topology": "拓扑",
     "topology-graph": {
@@ -1192,6 +1231,7 @@
     },
     "trigger": "触发器",
     "trigger details": "触发器详情",
+    "trigger disabled": "在Flow源中触发器已禁用",
     "trigger execution id": "触发执行ID",
     "trigger filter": {
       "options": {
@@ -1276,6 +1316,7 @@
     "worker group": "工作组",
     "worker group fallback": "工作组回退",
     "worker group key": "工作组 key",
+    "worker information": "工作者信息",
     "workerId": "工作者ID",
     "workers": "工作者",
     "wrong labels": "标签中不允许空键或值",

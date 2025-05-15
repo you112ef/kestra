@@ -3,77 +3,106 @@
         <el-breadcrumb-item
             v-for="(breadcrumb, index) in breadcrumbs"
             :key="index"
-            class="item"
+            :class="{clickable: saveMode === 'button'}"
             @click="
-                (store.commit('code/removeBreadcrumb', {position: index}),
-                 store.commit('code/unsetPanel', false))
+                () => {
+                    if (saveMode === 'button') {
+                        breadcrumbs = breadcrumbs.slice(0, index + 1);
+                        panel = null;
+                        clickBreadCrumb(index)
+                    }
+                }
             "
         >
-            <router-link :to="breadcrumb.to">
-                {{ breadcrumb.label }}
-            </router-link>
+            {{ breadcrumb?.label }}
         </el-breadcrumb-item>
     </el-breadcrumb>
 </template>
 
 <script setup lang="ts">
-    import {computed, onMounted, watch} from "vue";
-
-    import {useRoute} from "vue-router";
-    const route = useRoute();
+    import {computed, inject, onMounted, ref, watch} from "vue";
+    import {YamlUtils as YAML_UTILS} from "@kestra-io/ui-libs";
 
     import {useStore} from "vuex";
     const store = useStore();
 
     import {useI18n} from "vue-i18n";
+    import {
+        BREADCRUMB_INJECTION_KEY, CREATING_TASK_INJECTION_KEY,
+        FLOW_INJECTION_KEY, PANEL_INJECTION_KEY,
+        SECTION_INJECTION_KEY, TASKID_INJECTION_KEY,
+        PARENT_TASKID_INJECTION_KEY,
+        SAVEMODE_INJECTION_KEY,
+        CLOSE_TASK_FUNCTION_INJECTION_KEY
+    } from "../injectionKeys";
     const {t} = useI18n({useScope: "global"});
 
-    const props = defineProps({flow: {type: Object, required: true}});
+    const breadcrumbs = inject(BREADCRUMB_INJECTION_KEY, ref([]));
+    const panel = inject(PANEL_INJECTION_KEY, ref());
+    const flowYaml = inject(FLOW_INJECTION_KEY, ref(""));
+    const taskId = inject(TASKID_INJECTION_KEY, ref(""));
+    const taskCreation = inject(CREATING_TASK_INJECTION_KEY, ref(false));
+    const taskSection = inject(SECTION_INJECTION_KEY, ref(""));
+    const parentTaskId = inject(PARENT_TASKID_INJECTION_KEY, ref(""));
+    const saveMode = inject(SAVEMODE_INJECTION_KEY, "auto");
+    const closeTask = inject(CLOSE_TASK_FUNCTION_INJECTION_KEY, () => {});
 
-    store.commit("code/clearBreadcrumbs");
-
-    const breadcrumbs = computed(() => store.state.code.breadcrumbs);
-
-    const params = {
-        namespace: route.params.namespace,
-        id: props.flow.id ?? "new",
-        tab: "edit",
-    };
+    const flow = computed(() => {
+        return YAML_UTILS.parse(flowYaml.value);
+    });
 
     onMounted(() => {
-        store.commit("code/addBreadcrumbs", {
-            breadcrumb: {
-                label:
-                    route.name === "flows/create"
-                        ? t("create_flow")
-                        : props.flow.id,
-                to: {name: route.name, params, query: {}},
-            },
-            position: 0,
-        });
+        breadcrumbs.value[0] = {
+            label: store.state.flow.isCreating
+                ? t("create_flow")
+                : flow.value.id,
+        }
     });
 
     watch(
-        () => route.query.identifier,
-        (value) => {
-            if (!value) return;
+        [taskCreation, taskId, parentTaskId],
+        ([isCreating, taskIdVal, parentTaskIdVal]) => {
+            const index = parentTaskIdVal ? 2 : 1;
+            if(parentTaskIdVal){
+                breadcrumbs.value[1] = {
+                    label: parentTaskIdVal,
+                }
+            }
+            if(isCreating || taskIdVal.length > 0){
+                breadcrumbs.value[index] = {
+                    label: isCreating
+                        ? t(`no_code.creation.${taskSection.value}`)
+                        : taskIdVal
+                }
+            }
 
-            store.commit("code/addBreadcrumbs", {
-                breadcrumb: {
-                    label:
-                        route.query.identifier === "new"
-                            ? t(`no_code.creation.${route.query.section}`)
-                            : route.query.identifier,
-                    to: {name: route.name, params, query: route.query},
-                },
-                position: 1,
-            });
         },
+        {immediate: true}
     );
+
+    function clickBreadCrumb(breadCrumbIndex: number){
+        // if it's a value, and the task has been clicked,
+        // only remove it from the breadcrumbs
+        // the "lastBreadcrumb.component" will be closed from the breadcrumbs
+        if (breadCrumbIndex === breadcrumbs.value.length - 2) {
+            const lastBreadcrumb = breadcrumbs.value[breadcrumbs.value.length - 1]
+            if(lastBreadcrumb.component){
+                breadcrumbs.value.pop();
+                return
+            }
+        }
+
+        breadcrumbs.value.splice(breadCrumbIndex + 1);
+        closeTask();
+    }
 </script>
 
 <style scoped lang="scss">
 @import "../styles/code.scss";
+
+.clickable{
+    cursor: pointer;
+}
 
 .item:last-child > .el-breadcrumb__inner > a {
     color: $code-primary !important;

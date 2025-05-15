@@ -1,11 +1,11 @@
 <template>
     <div @click="handleClick" class="d-flex my-2 p-2 rounded element">
         <div class="me-2 icon">
-            <TaskIcon :cls="props.element.type" :icons only-icon />
+            <TaskIcon :cls="element.type" :icons only-icon />
         </div>
 
         <div class="flex-grow-1 label">
-            {{ props.element.id }}
+            {{ taskIdentifier }}
         </div>
 
         <el-button
@@ -22,9 +22,10 @@
 </template>
 
 <script setup lang="ts">
-    import {computed} from "vue";
+    import {computed, inject} from "vue";
 
     import {DeleteOutline, ChevronUp, ChevronDown} from "../../utils/icons";
+    import {EDIT_TASK_FUNCTION_INJECTION_KEY} from "../../injectionKeys";
 
     import TaskIcon from "@kestra-io/ui-libs/src/components/misc/TaskIcon.vue";
 
@@ -43,19 +44,21 @@
 
     const icons = computed(() => store.state.plugin.icons);
 
-    import {useRouter, useRoute} from "vue-router";
-    const router = useRouter();
-    const route = useRoute();
+    const editTask = inject(
+        EDIT_TASK_FUNCTION_INJECTION_KEY,
+        () => {},
+    );
+    const taskIdentifier = computed(() => {
+        return props.section === "Plugin Defaults"
+            ? props.element.type
+            : props.element.id
+    });
 
     const handleClick = () => {
-        router.replace({
-            query: {
-                ...route.query,
-                section: props.section.toLowerCase(),
-                identifier: props.element.id,
-                type: props.element.type,
-            },
-        });
+        editTask(
+            props.section.toLowerCase(),
+            taskIdentifier.value
+        );
     };
 </script>
 

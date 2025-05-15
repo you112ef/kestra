@@ -232,9 +232,8 @@ class ExecutionServiceTest {
     }
 
     @Test
-    @LoadFlows({"flows/valids/each-sequential-nested.yaml"})
-    void replayEachSeq() throws Exception {
-        Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "each-sequential-nested");
+    @ExecuteFlow("flows/valids/each-sequential-nested.yaml")
+    void replayEachSeq(Execution execution) throws Exception {
         assertThat(execution.getTaskRunList()).hasSize(23);
         assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
 
@@ -252,9 +251,8 @@ class ExecutionServiceTest {
     }
 
     @Test
-    @LoadFlows({"flows/valids/each-sequential-nested.yaml"})
-    void replayEachSeq2() throws Exception {
-        Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "each-sequential-nested");
+    @ExecuteFlow("flows/valids/each-sequential-nested.yaml")
+    void replayEachSeq2(Execution execution) throws Exception {
         assertThat(execution.getTaskRunList()).hasSize(23);
         assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
 
@@ -392,8 +390,9 @@ class ExecutionServiceTest {
 
     @Test
     @ExecuteFlow("flows/valids/logs.yaml")
-    void deleteExecutionKeepLogs(Execution execution) throws IOException {
+    void deleteExecutionKeepLogs(Execution execution) throws IOException, TimeoutException {
         assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
+        Await.until(() -> logRepository.findByExecutionId(execution.getTenantId(), execution.getId(), Level.TRACE).size() == 5, Duration.ofMillis(10), Duration.ofSeconds(5));
 
         executionService.delete(execution, false, false, false);
 

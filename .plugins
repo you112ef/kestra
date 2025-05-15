@@ -59,6 +59,7 @@
 #plugin-jira:io.kestra.plugin:plugin-jira:LATEST
 #plugin-kafka:io.kestra.plugin:plugin-kafka:LATEST
 #plugin-kubernetes:io.kestra.plugin:plugin-kubernetes:LATEST
+#plugin-ldap:io.kestra.plugin:plugin-langchain4j:LATEST
 #plugin-ldap:io.kestra.plugin:plugin-ldap:LATEST
 #plugin-linear:io.kestra.plugin:plugin-linear:LATEST
 #plugin-malloy:io.kestra.plugin:plugin-malloy:LATEST
@@ -75,6 +76,7 @@
 #plugin-powerbi:io.kestra.plugin:plugin-powerbi:LATEST
 #plugin-pulsar:io.kestra.plugin:plugin-pulsar:LATEST
 #plugin-redis:io.kestra.plugin:plugin-redis:LATEST
+#plugin-scripts:io.kestra.plugin:plugin-script-go:LATEST
 #plugin-scripts:io.kestra.plugin:plugin-script-groovy:LATEST
 #plugin-scripts:io.kestra.plugin:plugin-script-jbang:LATEST
 #plugin-scripts:io.kestra.plugin:plugin-script-julia:LATEST
@@ -101,6 +103,8 @@
 #plugin-weaviate:io.kestra.plugin:plugin-weaviate:LATEST
 #plugin-zendesk:io.kestra.plugin:plugin-zendesk:LATEST
 #plugin-typesense:io.kestra.plugin:plugin-typesense:LATEST
+#plugin-graphql:io.kestra.plugin:plugin-graphql:LATEST
+#plugin-influxdb:io.kestra.plugin:plugin-influxdb:LATEST
 #storage-azure:io.kestra.storage:storage-azure:LATEST
 #storage-gcs:io.kestra.storage:storage-gcs:LATEST
 #storage-minio:io.kestra.storage:storage-minio:LATEST

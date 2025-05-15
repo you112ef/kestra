@@ -1,11 +1,3 @@
-### Keyboard Shortcuts
-
-Use the shortcut `CTRL + SPACE` on Windows/Linux or `fn + control + SPACE` on Mac to trigger **autocompletion** listing available properties.
-
-If you want to **comment out** some part of your code, use the `CTRL or ⌘ + K + C` shortcut, and to uncomment it, use `CTRL or ⌘ + K + U`. To remember it, `C` stands for `comment` and `U` stands for `uncomment`.
-
-If you want to fold all nested properties, use `CTRL or ⌘ + K` and then `CTRL or ⌘ + 0` (note that it's zero, not `O`). To unfold again, use `CTRL or ⌘ + K` and then `CTRL or ⌘ + J`.
-
 ### Flow properties
 
 Kestra allows you to automate complex flows using a simple declarative interface.
@@ -216,8 +208,8 @@ The table below lists common Pebble expressions and functions.
 | `{{ trigger.flowId }}`                                                                             | The ID of the flow that triggers the current flow.                                                                              |
 | `{{ trigger.flowRevision }}`                                                                       | The revision of the flow that triggers the current flow.                                                                        |
 | `{{ envs.foo }}`                                                                                   | Accesses environment variable `KESTRA_FOO`.                                                                                     |
-| `{{ kestra.environment }}`                                                                                   | Accesses Environment variables such as `kestra.environment.name.`                                                                                     |
-| `{{ kestra.url }}`                                                                                   | Accesses Environment URL variable.                                                                                     |
+| `{{ kestra.environment }}`                                                                                   | Accesses Environment variables such as `kestra.environment.name.` Must be set in your [configuration](https://kestra.io/docs/configuration#kestra-url) to be accessible.                                                                                     |
+| `{{ kestra.url }}`                                                                                   | Accesses Environment URL variable. Must be set in your [configuration](https://kestra.io/docs/configuration#kestra-url) to be accessible.                                                                                    |
 | `{{ globals.foo }}`                                                                                | Accesses global variable `foo`.                                                                                                 |
 | `{{ vars.my_variable }}`                                                                           | Accesses flow variable `my_variable`.                                                                                           |
 | `{{ inputs.myInput }}`                                                                             | Accesses flow input `myInput`.                                                                                                  |

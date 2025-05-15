@@ -94,7 +94,7 @@ class IfTest {
         execution = runnerUtils.runOne(null, "io.kestra.tests", "if-without-else", null,
             (f, e) -> Map.of("param", false) , Duration.ofSeconds(120));
         assertThat(execution.getTaskRunList()).hasSize(1);
-        assertThat(execution.findTaskRunsByTaskId("when-true").isEmpty()).isEqualTo(true);
+        assertThat(execution.findTaskRunsByTaskId("when-true").isEmpty()).isTrue();
         assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
     }
 
@@ -114,6 +114,13 @@ class IfTest {
     void ifWithOnlyDisabledTasks(Execution execution) {
         assertThat(execution.getTaskRunList()).hasSize(1);
         assertThat(execution.findTaskRunsByTaskId("if").getFirst().getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
+        assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
+    }
+
+    @Test
+    @ExecuteFlow("flows/valids/if-in-parallel.yaml")
+    void ifOnParallelBranch(Execution execution) {
+        assertThat(execution.getTaskRunList()).hasSize(9);
         assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
     }
 }

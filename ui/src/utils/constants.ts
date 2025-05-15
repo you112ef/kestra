@@ -38,7 +38,8 @@ export const storageKeys = {
     PAGINATION_SIZE: "paginationSize",
     IMPERSONATE: "impersonate",
     EDITOR_VIEW_TYPE: "editorViewType",
-    DASHBORD_SELECTED: "dashboardSelected"
+    DASHBORD_SELECTED: "dashboardSelected",
+    AUTO_REFRESH_INTERVAL: "autoRefreshInterval"
 }
 
 export const executeFlowBehaviours = {
@@ -49,4 +50,6 @@ export const executeFlowBehaviours = {
 export const stateDisplayValues = {
     INPROGRESS: "IN-PROGRESS"
 }
+
+export const PLUGIN_DEFAULTS_SECTION = "plugin defaults"
 

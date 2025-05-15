@@ -1,6 +1,6 @@
 <template>
     <div class="p-4">
-        <template v-if="!route.query.section && !route.query.identifier">
+        <template v-if="!taskSection && !taskId && !creatingTask">
             <template v-if="panel">
                 <component
                     :is="panel.type"
@@ -25,9 +25,9 @@
                 <hr class="my-4">
 
                 <Collapse
-                    :items="sections"
-                    creation
-                    :flow
+                    v-for="(section, index) in sections"
+                    :key="index"
+                    v-bind="section"
                     @remove="(yaml) => emits('updateTask', yaml)"
                     @reorder="(yaml) => emits('reorder', yaml)"
                 />
@@ -47,20 +47,18 @@
 
         <Task
             v-else
-            :key="taskIdentifier"
-            :identifier="taskIdentifier"
-            :flow
-            :creation
-            @update-task="(yaml) => emits('updateTask', yaml)"
+            @exit-task="exitTask"
+            @update-task="onTaskUpdate"
             @update-documentation="(task) => emits('updateDocumentation', task)"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-    import {watch, computed} from "vue";
+    import {onMounted, watch, computed, inject, ref} from "vue";
+    import {YamlUtils as YAML_UTILS} from "@kestra-io/ui-libs";
 
-    import {Field, Fields, CollapseItem} from "../utils/types";
+    import {Field, Fields, CollapseItem, NoCodeElement} from "../utils/types";
 
     import Collapse from "../components/collapse/Collapse.vue";
     import InputText from "../components/inputs/InputText.vue";
@@ -71,24 +69,31 @@
     import MetadataInputs from "../../flows/MetadataInputs.vue";
     import TaskBasic from "../../flows/tasks/TaskBasic.vue";
 
+    import {
+        CREATING_TASK_INJECTION_KEY, FLOW_INJECTION_KEY,
+        PANEL_INJECTION_KEY, SAVEMODE_INJECTION_KEY,
+        SECTION_INJECTION_KEY, TASKID_INJECTION_KEY
+    } from "../injectionKeys";
+
     import Task from "./Task.vue";
 
-    import {useRoute} from "vue-router";
-    const route = useRoute();
 
-    const taskIdentifier = computed(
-        () => route.query.identifier?.toString() ?? "new",
-    );
+    const sectionInjected = inject(SECTION_INJECTION_KEY, ref(""));
+    const taskId = inject(TASKID_INJECTION_KEY, ref(""));
+    const panel = inject(PANEL_INJECTION_KEY, ref());
 
     watch(
-        () => route.query,
-        async (newQuery) => {
-            if (!newQuery?.section && !newQuery?.identifier) {
+        [sectionInjected, taskId],
+        ([section, id]) => {
+            if (section && id) {
                 emits("updateDocumentation", null);
             }
         },
-        {deep: true},
     );
+
+    const taskSection = computed(() => {
+        return (sectionInjected.value ?? "TASKS").toString() as "tasks" | "triggers"
+    });
 
     import {useI18n} from "vue-i18n";
     const {t} = useI18n({useScope: "global"});
@@ -96,7 +101,6 @@
     import {useStore} from "vuex";
     const store = useStore();
 
-    const panel = computed(() => store.state.code.panel);
 
     const emits = defineEmits([
         "save",
@@ -115,9 +119,15 @@
 
     document.addEventListener("keydown", saveEvent);
 
+    const creatingFlow = computed(() => {
+        return store.state.flow.isCreating;
+    });
+
+    const creatingTask = inject(CREATING_TASK_INJECTION_KEY);
+    const flow = inject(FLOW_INJECTION_KEY, ref(""));
+    const saveMode = inject(SAVEMODE_INJECTION_KEY, "button");
+
     const props = defineProps({
-        creation: {type: Boolean, default: false},
-        flow: {type: String, required: true},
         metadata: {type: Object, required: true},
     });
 
@@ -128,6 +138,26 @@
         return rest;
     };
 
+    function exitTask() {
+        sectionInjected.value = "";
+        taskId.value = "";
+    }
+
+    function onTaskUpdate(yaml: string) {
+        emits("updateTask", yaml)
+
+        if(saveMode === "button") {
+            exitTask()
+        }
+    }
+
+    const schema = ref({})
+    onMounted(async () => {
+        await store.dispatch("plugin/loadSchemaType").then((response) => {
+            schema.value = response;
+        })
+    });
+
     const fields = computed<Fields>(() => {
         return {
             id: {
@@ -135,14 +165,14 @@
                 value: props.metadata.id,
                 label: t("no_code.fields.main.flow_id"),
                 required: true,
-                disabled: !props.creation,
+                disabled: !creatingFlow.value,
             },
             namespace: {
                 component: InputText,
                 value: props.metadata.namespace,
                 label: t("no_code.fields.main.namespace"),
                 required: true,
-                disabled: !props.creation,
+                disabled: !creatingFlow.value,
             },
             description: {
                 component: InputText,
@@ -193,32 +223,8 @@
                 component: TaskBasic,
                 value: props.metadata.concurrency,
                 label: t("no_code.fields.general.concurrency"),
-                // TODO: Pass schema for concurrency dynamically
-                schema: {
-                    type: "object",
-                    properties: {
-                        behavior: {
-                            type: "string",
-                            enum: ["QUEUE", "CANCEL", "FAIL"],
-                            default: "QUEUE",
-                            markdownDescription: "Default value is : `QUEUE`",
-                        },
-                        limit: {type: "integer", exclusiveMinimum: 0},
-                    },
-                    required: ["limit"],
-                },
+                schema: schema.value?.definitions?.["io.kestra.core.models.flows.Concurrency"] ?? {},
                 root: "concurrency",
-            },
-            pluginDefaults: {
-                component: Editor,
-                value: props.metadata.pluginDefaults,
-                label: t("no_code.fields.general.plugin_defaults"),
-                navbar: false,
-                input: true,
-                lang: "yaml",
-                shouldFocus: false,
-                showScroll: true,
-                style: {height: "100px"},
             },
             disabled: {
                 component: InputSwitch,
@@ -241,31 +247,22 @@
         return rest;
     })
 
-    import {YamlUtils as YAML_UTILS} from "@kestra-io/ui-libs";
-    const getSectionTitle = (label: string, elements: Record<string, any>[] = []) => {
-        const title = t(`no_code.sections.${label}`);
-        return {title, elements};
-    };
+    const SECTIONS_IDS = [
+        "tasks",
+        "triggers",
+        "errors",
+        "finally",
+        "afterExecution",
+        "pluginDefaults",
+    ] as const
+
+    type SectionKey = typeof SECTIONS_IDS[number];
+
     const sections = computed((): CollapseItem[] => {
-        const flow:{
-            tasks: Record<string, any>[];
-            triggers: Record<string, any>[];
-            errors: Record<string, any>[];
-            finally: Record<string, any>[];
-            afterExecution: Record<string, any>[];
-        } = YAML_UTILS.parse(props.flow) as any;
-        return [
-            getSectionTitle("tasks", flow?.tasks ?? []),
-            getSectionTitle("triggers", flow?.triggers ?? []),
-            getSectionTitle(
-                "error_handlers",
-                flow?.errors ?? [],
-            ),
-            getSectionTitle("finally", flow?.finally ?? []),
-            getSectionTitle(
-                "after_execution",
-                flow?.afterExecution ?? [],
-            ),
-        ];
+        const parsedFlow = YAML_UTILS.parse<Partial<Record<SectionKey, NoCodeElement[]>>>(flow.value);
+        return SECTIONS_IDS.map((section) => ({
+            elements: parsedFlow?.[section] ?? [],
+            title: t(`no_code.sections.${section}`),
+        }))
     });
 </script>
