@@ -1,5 +1,6 @@
 import type {ComputedRef, InjectionKey, Ref} from "vue"
-import {Breadcrumb, SectionKey} from "./utils/types"
+import {Breadcrumb, SectionKey, TopologyClickParams} from "./utils/types"
+import {Panel} from "../MultiPanelTabs.vue"
 
 /**
  * Complete flow YAML string for the no-code
@@ -8,7 +9,7 @@ export const FLOW_INJECTION_KEY = Symbol("flow-injection-key") as InjectionKey<C
 /**
  * Current section name (Where a task is created or edited)
  */
-export const SECTION_INJECTION_KEY = Symbol("section-injection-key") as InjectionKey<Ref<SectionKey>>
+export const SECTION_INJECTION_KEY = Symbol("section-injection-key") as InjectionKey<Ref<SectionKey | undefined>>
 /**
  * Current task ID (When a task is edited) or target task ID (When a task is created) or task type (when a pluginDefaults is edited)
  */
@@ -32,12 +33,12 @@ export const SAVEMODE_INJECTION_KEY = Symbol("flow-id-injection-key") as Injecti
  * Call this when starting to create a new task, when the user clicks on the add button
  * to start the addition process
  */
-export const CREATE_TASK_FUNCTION_INJECTION_KEY = Symbol("creating-function-injection-key") as InjectionKey<(section: string) => void>
+export const CREATE_TASK_FUNCTION_INJECTION_KEY = Symbol("creating-function-injection-key") as InjectionKey<(section: SectionKey) => void>
 /**
  * Call this when starting to edit a task, when the user clicks on the task line
  * to start the edition process
  */
-export const EDIT_TASK_FUNCTION_INJECTION_KEY = Symbol("edit-function-injection-key") as InjectionKey<(section: string, taskId: string) => void>
+export const EDIT_TASK_FUNCTION_INJECTION_KEY = Symbol("edit-function-injection-key") as InjectionKey<(section: SectionKey, taskId: string) => void>
 /**
  * Call this when closing a task, when the user clicks on the close button
  */
@@ -63,3 +64,19 @@ export const PANEL_INJECTION_KEY = Symbol("panel-injection-key") as InjectionKey
  * undefined when creating a task at the root level
  */
 export const PARENT_TASKID_INJECTION_KEY = Symbol("parent-taskid-injection-key") as InjectionKey<Ref<string | undefined>>
+/**
+ * When users click on one of topology buttons, such as create or edit, multi-panel view needs to react accordingly
+ */
+export const TOPOLOGY_CLICK_INJECTION_KEY = Symbol("topology-click-injection-key") as InjectionKey<Ref<TopologyClickParams | undefined>>
+/**
+* Array of visible panels in the multi-panel view
+*/
+export const VISIBLE_PANELS_INJECTION_KEY = Symbol("visible-panels-injection-key") as InjectionKey<Ref<Panel[]>>
+/**
+* The position of the cursor in the code editor
+*/
+export const EDITOR_CURSOR_INJECTION_KEY = Symbol("editor-cursor-injection-key") as InjectionKey<Ref<number | undefined>>
+/**
+* The range inside the code editor that we want to highlight
+*/
+export const EDITOR_HIGHLIGHT_INJECTION_KEY = Symbol("editor-highlight-injection-key") as InjectionKey<Ref<number | undefined>>
