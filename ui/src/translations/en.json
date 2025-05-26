@@ -1233,7 +1233,7 @@
         "finally": "Close task",
         "after execution": "Close task",
         "input": "Close input",
-        "plugin defaults": "Close plugin default",
+        "pluginDefaults": "Close plugin default",
         "conditions": "Close condition"
       }
     },
