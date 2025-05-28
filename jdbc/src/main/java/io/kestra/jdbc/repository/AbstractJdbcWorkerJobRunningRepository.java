@@ -68,8 +68,9 @@ public abstract class AbstractJdbcWorkerJobRunningRepository extends AbstractJdb
                 .from(this.jdbcRepository.getTable())
                 .where(field("worker_uuid").in(workersToDelete))
                 .forUpdate()
+                .skipLocked() // avoid deadlock with deleteByKey
                 .fetch()
-                .map(r -> this.jdbcRepository.deserialize(r.get("value").toString())
+                .map(r -> this.jdbcRepository.deserialize(r.get("value", String.class))
             );
     }
 }
