@@ -1329,6 +1329,9 @@ public class JdbcExecutor implements ExecutorInterface, Service {
                             executionRunningStorage.save(executionRunning);
                             executionQueue.emit(newExecution);
                             metricRegistry.counter(MetricRegistry.METRIC_EXECUTOR_EXECUTION_POPPED_COUNT, MetricRegistry.METRIC_EXECUTOR_EXECUTION_POPPED_COUNT_DESCRIPTION, metricRegistry.tags(newExecution)).increment();
+
+                            // send an execution state change event so we can use a flow trigger on the queued state
+                            executionStateChangeQueue.emit(ExecutionStateChange.fromExecution(newExecution, State.Type.QUEUED, State.Type.RUNNING));
                         })
                     );
                 }
