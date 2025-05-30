@@ -1,5 +1,7 @@
 package io.kestra.repository.postgres;
 
+import io.kestra.core.models.dashboards.ColumnDescriptor;
+import io.kestra.core.models.dashboards.DataFilter;
 import io.kestra.core.models.dashboards.filters.AbstractFilter;
 import io.kestra.core.models.dashboards.filters.In;
 import io.kestra.core.models.executions.LogEntry;
@@ -71,10 +73,10 @@ public class PostgresLogRepository extends AbstractJdbcLogRepository {
     }
 
     @Override
-    protected <F extends Enum<F>> SelectConditionStep<Record> where(SelectConditionStep<Record> selectConditionStep, JdbcFilterService jdbcFilterService, List<AbstractFilter<F>> filters, Map<F, String> fieldsMapping) {
-        if (!ListUtils.isEmpty(filters)) {
+    protected <F extends Enum<F>> SelectConditionStep<Record> where(SelectConditionStep<Record> selectConditionStep, JdbcFilterService jdbcFilterService, DataFilter<F, ? extends ColumnDescriptor<F>> descriptors, Map<F, String> fieldsMapping) {
+        if (!ListUtils.isEmpty(descriptors.getWhere())) {
             // Check if descriptors contain a filter of type Logs.Fields.LEVEL and apply the custom filter "statesFilter" if present
-            List<In<Logs.Fields>> levelFilters = filters.stream()
+            List<In<Logs.Fields>> levelFilters = descriptors.getWhere().stream()
                 .filter(descriptor -> descriptor.getField().equals(Logs.Fields.LEVEL) && descriptor instanceof In)
                 .map(descriptor -> (In<Logs.Fields>) descriptor)
                 .toList();
@@ -89,7 +91,7 @@ public class PostgresLogRepository extends AbstractJdbcLogRepository {
             }
 
             // Remove the state filters from descriptors
-            List<AbstractFilter<F>> remainingFilters = filters.stream()
+            List<AbstractFilter<F>> remainingFilters = descriptors.getWhere().stream()
                 .filter(descriptor -> !descriptor.getField().equals(Logs.Fields.LEVEL) || !(descriptor instanceof In))
                 .toList();
 

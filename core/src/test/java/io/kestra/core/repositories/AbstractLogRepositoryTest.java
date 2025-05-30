@@ -7,10 +7,7 @@ import io.kestra.core.models.dashboards.ColumnDescriptor;
 import io.kestra.core.models.executions.Execution;
 import io.kestra.core.models.executions.LogEntry;
 import io.kestra.core.models.executions.statistics.LogStatistics;
-import io.kestra.core.tenant.TenantService;
 import io.kestra.core.utils.IdUtils;
-import io.kestra.plugin.core.dashboard.data.Executions;
-import io.kestra.plugin.core.dashboard.data.ILogs;
 import io.kestra.plugin.core.dashboard.data.Logs;
 import io.micronaut.data.model.Pageable;
 import io.kestra.core.junit.annotations.KestraTest;
@@ -262,7 +259,7 @@ public abstract class AbstractLogRepositoryTest {
     void fetchData() throws IOException {
         logRepository.save(logEntry(Level.INFO).build());
 
-        var results = logRepository.fetchData(TenantService.MAIN_TENANT,
+        var results = logRepository.fetchData(null,
             Logs.builder()
                 .type(Logs.class.getName())
                 .columns(Map.of(
@@ -273,6 +270,6 @@ public abstract class AbstractLogRepositoryTest {
             ZonedDateTime.now(),
             null);
 
-        assertThat(results).hasSize(1);
+        assertThat(results, hasSize(1));
     }
 }
