@@ -16,8 +16,7 @@ env:
   NEXT_VERSION: "${{ github.event.inputs.nextVersion }}"
 
 # Grant necessary permissions to the GITHUB_TOKEN for the entire workflow since develop is a protected branch.
-permissions:
-  contents: write
+permissions: write-all
 
 jobs:
   release:
