@@ -15,9 +15,6 @@ env:
   RELEASE_VERSION: "${{ github.event.inputs.releaseVersion }}"
   NEXT_VERSION: "${{ github.event.inputs.nextVersion }}"
 
-permissions:
-  contents: write
-
 jobs:
   release:
     name: Release Kestra
@@ -66,7 +63,7 @@ jobs:
       # Execute
       - name: Run Gradle Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PAT: ${{ secrets.GH_PERSONAL_TOKEN }}
         run: |
           # Extract the major and minor versions
           BASE_VERSION=$(echo "$RELEASE_VERSION" | sed -E 's/^([0-9]+\.[0-9]+)\..*/\1/')
