@@ -452,7 +452,7 @@
                 ...filterQueryString.value
             }
         });
-    }, {immediate: true, debounce: 500});
+    }, {immediate: true, debounce: 1000});
 </script>
 
 <style lang="scss" scoped>
