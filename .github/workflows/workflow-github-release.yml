@@ -28,7 +28,6 @@ jobs:
         with:
           repository: kestra-io/actions
           sparse-checkout-cone-mode: true
-          ref: fix/core-release
           path: actions
           sparse-checkout: |
             .github/actions
