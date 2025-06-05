@@ -51,6 +51,7 @@ import java.util.stream.StreamSupport;
 @Singleton
 public class JsonSchemaGenerator {
     private static final List<Class<?>> TYPES_RESOLVED_AS_STRING = List.of(Duration.class, LocalTime.class, LocalDate.class, LocalDateTime.class, ZonedDateTime.class, OffsetDateTime.class, OffsetTime.class);
+    private static final List<Class<?>> SUBTYPE_RESOLUTION_EXCLUSION_FOR_PLUGIN_SCHEMA = List.of(Task.class, AbstractTrigger.class);
 
     private final PluginRegistry pluginRegistry;
 
@@ -500,21 +501,32 @@ public class JsonSchemaGenerator {
                     collectedTypeAttributes.remove("$examples");
                 }
             });
+        } else {
+            builder.forTypesInGeneral()
+                .withSubtypeResolver((declaredType, context) -> {
+                    TypeContext typeContext = context.getTypeContext();
 
-            // Ensure that `type` is defined as a constant in JSON Schema.
-            // The `const` property is used by editors for auto-completion based on that schema.
-            builder.forTypesInGeneral().withTypeAttributeOverride((collectedTypeAttributes, scope, context) -> {
-                final Class<?> pluginType = scope.getType().getErasedType();
-                if (pluginType.getAnnotation(Plugin.class) != null) {
-                    ObjectNode properties = (ObjectNode) collectedTypeAttributes.get("properties");
-                    if (properties != null) {
-                        properties.set("type", context.getGeneratorConfig().createObjectNode()
-                            .put("const", pluginType.getName())
-                        );
+                    if (SUBTYPE_RESOLUTION_EXCLUSION_FOR_PLUGIN_SCHEMA.contains(declaredType.getErasedType())) {
+                        return null;
                     }
-                }
-            });
+
+                    return this.subtypeResolver(declaredType, typeContext);
+                });
         }
+
+        // Ensure that `type` is defined as a constant in JSON Schema.
+        // The `const` property is used by editors for auto-completion based on that schema.
+        builder.forTypesInGeneral().withTypeAttributeOverride((collectedTypeAttributes, scope, context) -> {
+            final Class<?> pluginType = scope.getType().getErasedType();
+            if (pluginType.getAnnotation(Plugin.class) != null) {
+                ObjectNode properties = (ObjectNode) collectedTypeAttributes.get("properties");
+                if (properties != null) {
+                    properties.set("type", context.getGeneratorConfig().createObjectNode()
+                        .put("const", pluginType.getName())
+                    );
+                }
+            }
+        });
     }
 
     private boolean isAssignableFromResolvedAsString(Class<?> declaredType) {
