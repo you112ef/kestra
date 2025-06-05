@@ -518,7 +518,9 @@
         "less_than": "minore di",
         "not_contains": "non contiene",
         "not_in": "non in",
-        "starts_with": "inizia con"
+        "starts_with": "inizia con",
+        "greater_than_or_equal_to": "greater than or equal to",
+        "less_than_or_equal_to": "less than or equal to"
       },
       "empty": "Nessun dato.",
       "format": "Digita il parametro come 'key:value'",
@@ -544,7 +546,9 @@
         "text": "I'm sorry, but it seems like the text you want me to translate is missing. Could you please provide the text you would like translated?",
         "trigger_state": "Stato",
         "type": "Tipo",
-        "user": "Utente"
+        "user": "Utente",
+        "startDate": "Start date",
+        "endDate": "End date"
       },
       "save": {
         "dialog": {

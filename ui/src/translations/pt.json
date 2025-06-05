@@ -518,7 +518,9 @@
         "less_than": "menor que",
         "not_contains": "não contém",
         "not_in": "não em",
-        "starts_with": "começa com"
+        "starts_with": "começa com",
+        "greater_than_or_equal_to": "greater than or equal to",
+        "less_than_or_equal_to": "less than or equal to"
       },
       "empty": "Sem dados.",
       "format": "Digite o parâmetro como 'key:value'",
@@ -544,7 +546,9 @@
         "text": "Parece que você não forneceu nenhum texto para tradução. Por favor, forneça o texto que deseja que eu traduza para o português.",
         "trigger_state": "Estado",
         "type": "Tipo",
-        "user": "Usuário"
+        "user": "Usuário",
+        "startDate": "Start date",
+        "endDate": "End date"
       },
       "save": {
         "dialog": {

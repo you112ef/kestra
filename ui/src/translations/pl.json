@@ -518,7 +518,9 @@
         "less_than": "mniej niż",
         "not_contains": "nie zawiera",
         "not_in": "nie w",
-        "starts_with": "zaczyna się od"
+        "starts_with": "zaczyna się od",
+        "greater_than_or_equal_to": "greater than or equal to",
+        "less_than_or_equal_to": "less than or equal to"
       },
       "empty": "Brak danych.",
       "format": "Wpisz parametr jako 'key:value'",
@@ -544,7 +546,9 @@
         "text": "tekst",
         "trigger_state": "Stan",
         "type": "Typ",
-        "user": "Użytkownik"
+        "user": "Użytkownik",
+        "startDate": "Start date",
+        "endDate": "End date"
       },
       "save": {
         "dialog": {

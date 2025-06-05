@@ -518,7 +518,9 @@
         "less_than": "weniger als",
         "not_contains": "nicht enthält",
         "not_in": "nicht in",
-        "starts_with": "beginnt mit"
+        "starts_with": "beginnt mit",
+        "greater_than_or_equal_to": "greater than or equal to",
+        "less_than_or_equal_to": "less than or equal to"
       },
       "empty": "Keine Daten.",
       "format": "Geben Sie den Parameter als 'key:value' ein",
@@ -544,7 +546,9 @@
         "text": "I'm sorry, but it seems that there is no text provided after \"----------\" for translation. Could you please provide the text you would like me to translate?",
         "trigger_state": "Zustand",
         "type": "Typ",
-        "user": "Benutzer"
+        "user": "Benutzer",
+        "startDate": "Start date",
+        "endDate": "End date"
       },
       "save": {
         "dialog": {

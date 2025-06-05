@@ -518,7 +518,9 @@
         "less_than": "से कम",
         "not_contains": "नहीं शामिल है",
         "not_in": "में नहीं",
-        "starts_with": "शुरू होता है"
+        "starts_with": "शुरू होता है",
+        "greater_than_or_equal_to": "greater than or equal to",
+        "less_than_or_equal_to": "less than or equal to"
       },
       "empty": "कोई डेटा नहीं।",
       "format": "'key:value' के रूप में पैरामीटर टाइप करें",
@@ -544,7 +546,9 @@
         "text": "मुझे अनुवाद के लिए कोई पाठ नहीं मिला। कृपया अनुवाद के लिए पाठ प्रदान करें।",
         "trigger_state": "स्थिति",
         "type": "प्रकार",
-        "user": "उपयोगकर्ता"
+        "user": "उपयोगकर्ता",
+        "startDate": "Start date",
+        "endDate": "End date"
       },
       "save": {
         "dialog": {

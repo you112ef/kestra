@@ -518,7 +518,9 @@
         "less_than": "보다 작음",
         "not_contains": "포함하지 않음",
         "not_in": "에 없음",
-        "starts_with": "로 시작합니다"
+        "starts_with": "로 시작합니다",
+        "greater_than_or_equal_to": "greater than or equal to",
+        "less_than_or_equal_to": "less than or equal to"
       },
       "empty": "데이터가 없습니다.",
       "format": "'key:value'로 매개변수 입력",
@@ -544,7 +546,9 @@
         "text": "텍스트",
         "trigger_state": "상태",
         "type": "유형",
-        "user": "사용자"
+        "user": "사용자",
+        "startDate": "Start date",
+        "endDate": "End date"
       },
       "save": {
         "dialog": {

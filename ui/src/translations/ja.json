@@ -518,7 +518,9 @@
         "less_than": "未満",
         "not_contains": "含まれていない",
         "not_in": "にない",
-        "starts_with": "で始まる"
+        "starts_with": "で始まる",
+        "greater_than_or_equal_to": "greater than or equal to",
+        "less_than_or_equal_to": "less than or equal to"
       },
       "empty": "データがありません。",
       "format": "「key:value」としてパラメータを入力してください。",
@@ -544,7 +546,9 @@
         "text": "申し訳ありませんが、翻訳するためのテキストが提供されていないようです。翻訳が必要なテキストをもう一度送信してください。",
         "trigger_state": "状態",
         "type": "タイプ",
-        "user": "ユーザー"
+        "user": "ユーザー",
+        "startDate": "Start date",
+        "endDate": "End date"
       },
       "save": {
         "dialog": {
