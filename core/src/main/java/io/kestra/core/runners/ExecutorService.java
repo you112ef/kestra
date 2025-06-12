@@ -68,6 +68,9 @@ public class ExecutorService {
     protected FlowExecutorInterface flowExecutorInterface;
 
     @Inject
+    private WorkerJobRunningStateStore workerJobRunningStateStore;
+
+    @Inject
     private ExecutionService executionService;
 
     @Inject
@@ -1013,6 +1016,17 @@ public class ExecutorService {
             newExecution = executionService.killParentTaskruns(taskRun, newExecution);
         }
         executor.withExecution(newExecution, "addWorkerTaskResult");
+        if (taskRun.getState().isTerminated()) {
+            log.trace("TaskRun terminated: {}", taskRun);
+            workerJobRunningStateStore.deleteByKey(taskRun.getId());
+            metricRegistry
+                .counter(MetricRegistry.EXECUTOR_TASKRUN_ENDED_COUNT, metricRegistry.tags(workerTaskResult))
+                .increment();
+
+            metricRegistry
+                .timer(MetricRegistry.EXECUTOR_TASKRUN_ENDED_DURATION, metricRegistry.tags(workerTaskResult))
+                .record(taskRun.getState().getDuration());
+        }
     }
 
     private Execution addDynamicTaskRun(Execution execution, Flow flow, WorkerTaskResult workerTaskResult) throws InternalException {

@@ -7,9 +7,9 @@ import io.kestra.core.exceptions.DeserializationException;
 import io.kestra.core.models.triggers.TriggerContext;
 import io.kestra.core.queues.QueueFactoryInterface;
 import io.kestra.core.queues.QueueInterface;
+import io.kestra.core.runners.WorkerJobRunningStateStore;
 import io.kestra.core.runners.WorkerTriggerResult;
 import io.kestra.core.utils.Either;
-import io.kestra.jdbc.repository.AbstractJdbcWorkerJobRunningRepository;
 import io.kestra.jdbc.runner.JdbcQueue;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.inject.qualifiers.Qualifiers;
@@ -30,7 +30,8 @@ public class JdbcWorkerTriggerResultQueueService implements Closeable {
     private final JdbcQueue<WorkerTriggerResult> workerTriggerResultQueue;
 
     @Inject
-    private AbstractJdbcWorkerJobRunningRepository jdbcWorkerJobRunningRepository;
+    private WorkerJobRunningStateStore workerJobRunningStateStore;
+
     private final AtomicReference<Runnable> disposable = new AtomicReference<>();
 
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
@@ -52,14 +53,14 @@ public class JdbcWorkerTriggerResultQueueService implements Closeable {
                     try {
                         JsonNode json = MAPPER.readTree(either.getRight().getRecord());
                         var triggerContext = MAPPER.treeToValue(json.get("triggerContext"), TriggerContext.class);
-                        jdbcWorkerJobRunningRepository.deleteByKey(triggerContext.uid());
+                        workerJobRunningStateStore.deleteByKey(triggerContext.uid());
                     } catch (JsonProcessingException | DeserializationException e) {
                         // ignore the message if we cannot do anything about it
                         log.error("Unexpected exception when trying to handle a deserialization error", e);
                     }
                 } else {
                     WorkerTriggerResult workerTriggerResult = either.getLeft();
-                    jdbcWorkerJobRunningRepository.deleteByKey(workerTriggerResult.getTriggerContext().uid());
+                    workerJobRunningStateStore.deleteByKey(workerTriggerResult.getTriggerContext().uid());
                 }
                 consumer.accept(either);
             });
