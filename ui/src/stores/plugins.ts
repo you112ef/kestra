@@ -1,11 +1,14 @@
 import {defineStore} from "pinia";
-import {apiUrl} from "override/utils/route";
-import {YamlUtils} from "@kestra-io/ui-libs";
+import {apiUrl, apiUrlWithoutTenants} from "override/utils/route";
+import * as YamlUtils from "@kestra-io/ui-libs/flow-yaml-utils";
 import axios from "axios";
+import semver from "semver";
+import {useApiStore} from "./api";
+import {Store} from "vuex";
 
 interface PluginComponent {
     icon?: string;
-    cls: string;
+    cls?: string;
     description?: string;
     properties?: Record<string, any>;
 }
@@ -34,6 +37,7 @@ interface State {
     editorPlugin: (PluginComponent & { cls: string }) | undefined;
     inputSchema: any | undefined;
     inputsType: any | undefined;
+    store: Store<any> | undefined;
 }
 
 interface LoadOptions {
@@ -54,7 +58,8 @@ export const usePluginsStore = defineStore("plugins", {
         pluginsDocumentation: {},
         editorPlugin: undefined,
         inputSchema: undefined,
-        inputsType: undefined
+        inputsType: undefined,
+        store: undefined
     }),
 
     getters: {
@@ -64,8 +69,11 @@ export const usePluginsStore = defineStore("plugins", {
     },
 
     actions: {
+        setStore(store: Store<any>) {
+            this.store = store;
+        },
         async list() {
-            const response = await axios.get<Plugin[]>(`${apiUrl(this)}/plugins`);
+            const response = await axios.get<Plugin[]>(`${apiUrl(this.store)}/plugins`);
             this.plugins = response.data;
             this.pluginSingleList = response.data
                 .map(plugin => plugin.tasks
@@ -77,7 +85,7 @@ export const usePluginsStore = defineStore("plugins", {
         },
 
         async listWithSubgroup(options: Record<string, any>) {
-            const response = await axios.get<Plugin[]>(`${apiUrl(this)}/plugins/groups/subgroups`, {
+            const response = await axios.get<Plugin[]>(`${apiUrl(this.store)}/plugins/groups/subgroups`, {
                 params: options
             });
             this.plugins = response.data;
@@ -103,8 +111,8 @@ export const usePluginsStore = defineStore("plugins", {
             }
 
             const url = options.version ?
-                `${apiUrl(this)}/plugins/${options.cls}/versions/${options.version}` :
-                `${apiUrl(this)}/plugins/${options.cls}`;
+                `${apiUrl(this.store)}/plugins/${options.cls}/versions/${options.version}` :
+                `${apiUrl(this.store)}/plugins/${options.cls}`;
 
             const response = await axios.get<PluginComponent>(url, {params: options});
 
@@ -126,21 +134,106 @@ export const usePluginsStore = defineStore("plugins", {
             return response.data;
         },
 
-        // ... existing code for other actions, converted to async/await ...
+        loadVersions(options: { cls: string; commit?: boolean }) {
+            const promise = axios.get(
+                `${apiUrl(this.store)}/plugins/${options.cls}/versions`
+            );
+            return promise.then(response => {
+                if (options.commit !== false) {
+                    this.versions = response.data.versions;
+                }
+                return response.data;
+            });
+        },
+
+        icons() {
+            const apiStore = useApiStore();
+            return Promise.all([
+                axios.get(`${apiUrl(this.store)}/plugins/icons`, {}),
+                apiStore.pluginIcons()
+            ]).then(responses => {
+                const icons = responses[0].data;
+
+                for (const [key, plugin] of Object.entries(responses[1].data)) {
+                    if (icons[key] === undefined) {
+                        icons[key] = plugin;
+                    }
+                }
+
+                this.icons = icons;
+
+                return icons;
+            });
+        },
+
+        groupIcons() {
+            return Promise.all([
+                axios.get(`${apiUrl(this.store)}/plugins/icons/groups`, {})
+            ]).then(responses => {
+                return responses[0].data;
+            });
+        },
+
+        loadInputsType() {
+            return axios.get(`${apiUrl(this.store)}/plugins/inputs`, {}).then(response => {
+                this.inputsType = response.data;
+
+                return response.data;
+            });
+        },
+        loadInputSchema(options: {type: string}) {
+            return axios.get(`${apiUrl(this.store)}/plugins/inputs/${options.type}`, {}).then(response => {
+                this.inputSchema = response.data;
+
+                return response.data;
+            });
+        },
+        loadSchemaType(options: {type: string} = {type: "flow"}) {
+            return axios.get(`${apiUrlWithoutTenants()}/plugins/schemas/${options.type}`, {}).then(response => {
+                return response.data;
+            });
+        },
+
 
         async updateDocumentation(options: { task?: string; event: { model: { getValue: () => string }, position: any } }) {
-            const taskType = options.task !== undefined ? options.task : YamlUtils.getTaskType(
+            const taskType = options.task !== undefined ? options.task : YamlUtils.getTypeAtPosition(
                 options.event.model.getValue(),
                 options.event.position,
                 this.getPluginSingleList
             );
 
+            const taskVersion: string | undefined = options.event
+                ? YamlUtils.getVersionAtPosition(
+                    options?.event?.model?.getValue(),
+                    options?.event?.position
+                )
+                : undefined;
+
             if (taskType) {
-                const plugin = await this.load({cls: taskType});
-                this.editorPlugin = {cls: taskType, ...plugin};
+                let payload:LoadOptions = {cls: taskType};
+                if (taskVersion !== undefined) {
+                    // Check if the version is valid to avoid error
+                    // when loading plugin
+                    if (semver.valid(taskVersion) !== null ||
+                        "latest" === taskVersion.toString().toLowerCase() ||
+                        "oldest" === taskVersion.toString().toLowerCase()
+                    ) {
+                        payload = {
+                            ...payload,
+                            version: taskVersion
+                        };
+                    }
+                }
+                this.load(payload).then((plugin) => {
+                    this.editorPlugin = {
+                        cls: taskType,
+                        ...plugin,
+                    };
+                });
             } else {
                 this.editorPlugin = undefined;
             }
         }
-    }
+    },
+
 });

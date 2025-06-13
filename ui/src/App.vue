@@ -23,6 +23,8 @@
     import "@kestra-io/ui-libs/style.css";
 
     import {useApiStore} from "./stores/api";
+    import {usePluginsStore} from "./stores/plugins";
+
     // Main App
     export default {
         name: "App",
@@ -46,7 +48,7 @@
             ...mapState("flow", ["overallTotal"]),
             ...mapGetters("core", ["guidedProperties"]),
             ...mapGetters("misc", ["configs"]),
-            ...mapStores(useApiStore),
+            ...mapStores(useApiStore, usePluginsStore),
             envName() {
                 return this.$store.getters["layout/envName"] || this.configs?.environment?.name;
             },
@@ -127,7 +129,9 @@
                     localStorage.setItem("uid", uid);
                 }
 
-                this.$store.dispatch("plugin/icons")
+                this.pluginsStore.setStore(this.$store);
+
+                this.pluginsStore.icons()
                 const config = await this.$store.dispatch("misc/loadConfigs");
                 await this.$store.dispatch("doc/initResourceUrlTemplate", config.version);
 

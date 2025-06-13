@@ -109,6 +109,7 @@
 
     import {useStore} from "vuex";
     import TaskWrapper from "../../flows/tasks/TaskWrapper.vue";
+    import {usePluginsStore} from "../../../stores/plugins";
     const store = useStore();
 
     const emits = defineEmits([
@@ -157,8 +158,12 @@
         $ref?: string,
     }>({})
 
+    const pluginStore = usePluginsStore();
+
+    pluginStore.setStore(store);
+
     onMounted(async () => {
-        await store.dispatch("plugin/loadSchemaType").then((response) => {
+        await pluginStore.loadSchemaType().then((response) => {
             schema.value = response;
         })
     });
