@@ -245,7 +245,6 @@
         padding: 0;
         display: flex;
         flex-grow: 1;
-        flex-direction: column;
     }
 
     :deep(.el-tabs__nav-next),
