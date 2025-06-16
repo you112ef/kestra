@@ -95,6 +95,7 @@
         if (alertState.value.visible || localEdit.value) {
             return;
         }
+        localEdit.value = false;
         internalPairs.value = Object.entries(newValue || {});
     }, {
         deep: true,

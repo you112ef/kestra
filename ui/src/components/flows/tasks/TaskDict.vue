@@ -89,7 +89,7 @@
             if(localEdit.value) {
                 return;
             }
-            localEdit.value = true;
+            localEdit.value = false;
             if(newValue === undefined || newValue === null) {
                 currentValue.value = [];
                 return;
@@ -113,7 +113,7 @@
         if(duplicatedKeys.value?.length > 0) {
             return;
         }
-        localEdit.value = false;
+        localEdit.value = true;
         emit("update:modelValue", Object.fromEntries(currentValue.value.filter(pair => pair[0] !== "" && pair[1] !== undefined)));
     }, 200);
 
