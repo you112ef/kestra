@@ -5,12 +5,14 @@ import axios from "axios";
 import semver from "semver";
 import {useApiStore} from "./api";
 import {Store} from "vuex";
+import {Schemas} from "../components/code/utils/types";
 
 interface PluginComponent {
     icon?: string;
     cls?: string;
     description?: string;
     properties?: Record<string, any>;
+    schema: Schemas;
 }
 
 interface Plugin {
@@ -147,7 +149,7 @@ export const usePluginsStore = defineStore("plugins", {
             });
         },
 
-        icons() {
+        fetchIcons() {
             const apiStore = useApiStore();
             return Promise.all([
                 axios.get(`${apiUrl(this.vuexStore)}/plugins/icons`, {}),
@@ -196,12 +198,12 @@ export const usePluginsStore = defineStore("plugins", {
         },
 
 
-        async updateDocumentation(options: { task?: string; event: { model: { getValue: () => string }, position: any } }) {
-            const taskType = options.task !== undefined ? options.task : YamlUtils.getTypeAtPosition(
+        async updateDocumentation(options: { task?: string; event?: { model: { getValue: () => string }, position: any } }) {
+            const taskType = options.event ? (options.task !== undefined ? options.task : YamlUtils.getTypeAtPosition(
                 options.event.model.getValue(),
                 options.event.position,
                 this.getPluginSingleList
-            );
+            )) : options.task;
 
             const taskVersion: string | undefined = options.event
                 ? YamlUtils.getVersionAtPosition(

@@ -29,6 +29,7 @@
     import {useStore} from "vuex";
     import {TaskIcon} from "@kestra-io/ui-libs";
     import {BlockType} from "../code/utils/types";
+    import {usePluginsStore} from "../../stores/plugins";
 
     const props = defineProps<{
         blockType: BlockType | "pluginDefaults";
@@ -40,9 +41,11 @@
     });
 
     const store = useStore();
+    const pluginsStore = usePluginsStore();
+    pluginsStore.setVuexStore(store);
 
     onBeforeMount(() => {
-        store.dispatch("plugin/listWithSubgroup", {includeDeprecated: false});
+        pluginsStore.listWithSubgroup({includeDeprecated: false});
     })
 
     const plugins = computed(() => {

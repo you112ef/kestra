@@ -82,12 +82,15 @@
     import RouteContext from "../../mixins/routeContext";
     import {mapState, mapGetters} from "vuex";
     import {getPluginReleaseUrl} from "../../utils/pluginUtils";
+    import {mapStores} from "pinia";
+    import {usePluginsStore} from "../../stores/plugins";
 
     export default {
         mixins: [RouteContext],
         computed: {
             ...mapState("plugin", ["plugin", "plugins", "icons", "versions"]),
             ...mapGetters("misc", ["theme"]),
+            ...mapStores(usePluginsStore),
             routeInfo() {
                 return {
                     title: this.pluginType ?? this.$t("plugins.names"),
@@ -122,6 +125,7 @@
         created() {
             this.loadToc();
             this.loadPlugin()
+            this.pluginsStore.setVuexStore(this.$store);
         },
         watch: {
             $route: {
@@ -129,7 +133,7 @@
                     if (newValue.name === "plugins/list") {
                         this.pluginType = undefined;
                         this.version = undefined;
-                    } 
+                    }
                     if (newValue.name.startsWith("plugins/")) {
                         this.onRouterChange();
                     }
@@ -139,7 +143,7 @@
         },
         methods: {
             loadToc() {
-                this.$store.dispatch("plugin/listWithSubgroup", {
+                this.listWithSubgroup({
                     includeDeprecated: false
                 })
             },
@@ -156,8 +160,8 @@
                 if (params.cls) {
                     this.isLoading = true;
                     Promise.all([
-                        this.$store.dispatch("plugin/load", params),
-                        this.$store.dispatch("plugin/loadVersions", params)
+                        this.pluginsStore.load(params),
+                        this.pluginsStore.loadVersions(params)
                             .then(data => {
                                 if (data.versions && data.versions.length > 0) {
                                     if (this.version === undefined) {

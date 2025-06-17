@@ -43,6 +43,8 @@
     import {mapState, mapGetters} from "vuex";
     import intro from "../../assets/docs/basic.md?raw";
     import {getPluginReleaseUrl} from "../../utils/pluginUtils";
+    import {mapStores} from "pinia";
+    import {usePluginsStore} from "../../stores/plugins";
 
     export default {
         props: {
@@ -62,6 +64,7 @@
         computed: {
             ...mapState("plugin", ["editorPlugin", "icons"]),
             ...mapGetters("misc", ["theme"]),
+            ...mapStores(usePluginsStore),
             introContent () {
                 return this.overrideIntro ?? intro
             },
@@ -74,7 +77,8 @@
             }
         },
         created() {
-            this.$store.dispatch("plugin/list");
+            this.pluginsStore.setVuexStore(this.$store);
+            this.pluginsStore.list();
         },
         methods: {
             openReleaseNotes() {

@@ -47,6 +47,7 @@
     import {hashCode} from "../../utils/global.ts";
     import ICodeEditor = editor.ICodeEditor;
     import debounce from "lodash/debounce";
+    import {usePluginsStore} from "../../stores/plugins.ts";
 
     const store = useStore();
     const currentInstance = getCurrentInstance()!;
@@ -436,12 +437,16 @@
 
     const disposeCompletions = ref<() => void>();
 
+    const pluginsStore = usePluginsStore();
+
     onMounted(async function () {
         await document.fonts.ready;
         await initMonaco();
 
+        pluginsStore.setVuexStore(store);
+
         if (props.language !== undefined) {
-            disposeCompletions.value = await configureLanguage(store, t, props.diffEditor ? undefined : editorResolved.value as ICodeEditor, props.language, props.schemaType);
+            disposeCompletions.value = await configureLanguage(store, pluginsStore, t, props.diffEditor ? undefined : editorResolved.value as ICodeEditor, props.language, props.schemaType);
         }
 
         // Exposing functions globally for testing purposes
