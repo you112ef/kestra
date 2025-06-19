@@ -167,7 +167,6 @@
 
     const apiStore = useApiStore();
     const pluginsStore = usePluginsStore();
-    pluginsStore.setVuexStore(store);
 
     const {t} = useI18n({useScope: "global"});
 

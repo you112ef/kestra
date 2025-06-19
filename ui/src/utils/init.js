@@ -48,7 +48,6 @@ import RouterMd from "../components/utils/RouterMd.vue";
 import Utils from "./utils";
 
 
-
 export default async (app, routes, stores, translations, additionalTranslations = {}) => {
     // charts
     Chart.register(
@@ -75,6 +74,23 @@ export default async (app, routes, stores, translations, additionalTranslations 
     let piniaStore = createPinia();
     piniaStore.use(({store:piniaStoreLocal}) => {
         piniaStoreLocal.vuexStore = store;
+        piniaStoreLocal.$http = {
+            get: (url, config) => {
+                return store.$http.get(url, config);
+            },
+            post: (url, data, config) => {
+                return store.$http.post(url, data, config);
+            },
+            put: (url, data, config) => {
+                return store.$http.put(url, data, config);
+            },
+            delete: (url, config) => {
+                return store.$http.delete(url, config);
+            },
+            patch: (url, data, config) => {
+                return store.$http.patch(url, data, config);
+            }
+        }
     });
     app.use(piniaStore);
 

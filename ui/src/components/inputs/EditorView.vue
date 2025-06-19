@@ -699,7 +699,6 @@
     const pluginsStore = usePluginsStore();
 
     onMounted(async () => {
-        pluginsStore.setVuexStore(store);
         if(guidedProperties.value?.tourStarted) {
             editorViewType.value = "YAML";
             switchViewType(editorViewTypes.SOURCE_TOPOLOGY, false);

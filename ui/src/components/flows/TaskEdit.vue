@@ -157,9 +157,6 @@
                 default: undefined
             }
         },
-        created() {
-            this.pluginsStore.setVuexStore(this.$store);
-        },
         watch: {
             task: {
                 async handler() {

@@ -24,7 +24,6 @@
 <script setup lang="ts">
     import {computed, inject} from "vue";
     import {useI18n} from "vue-i18n";
-    import {useStore} from "vuex";
     import {usePluginsStore} from "../../../../stores/plugins";
 
     import {DeleteOutline, ChevronUp, ChevronDown} from "../../utils/icons";
@@ -48,13 +47,7 @@
         elementIndex?: number;
     }>();
 
-
-
-    const store = useStore();
-
     const pluginsStore = usePluginsStore();
-
-    pluginsStore.setVuexStore(store);
 
     const icons = computed(() => pluginsStore.icons);
 

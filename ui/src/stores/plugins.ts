@@ -1,10 +1,8 @@
 import {defineStore} from "pinia";
 import {apiUrl, apiUrlWithoutTenants} from "override/utils/route";
 import * as YamlUtils from "@kestra-io/ui-libs/flow-yaml-utils";
-import axios from "axios";
 import semver from "semver";
 import {useApiStore} from "./api";
-import {Store} from "vuex";
 import {Schemas} from "../components/code/utils/types";
 
 interface PluginComponent {
@@ -39,7 +37,6 @@ interface State {
     editorPlugin: (PluginComponent & { cls: string }) | undefined;
     inputSchema: any | undefined;
     inputsType: any | undefined;
-    vuexStore: Store<any> | undefined;
 }
 
 interface LoadOptions {
@@ -60,8 +57,7 @@ export const usePluginsStore = defineStore("plugins", {
         pluginsDocumentation: {},
         editorPlugin: undefined,
         inputSchema: undefined,
-        inputsType: undefined,
-        vuexStore: undefined
+        inputsType: undefined
     }),
 
     getters: {
@@ -71,12 +67,8 @@ export const usePluginsStore = defineStore("plugins", {
     },
 
     actions: {
-        setVuexStore(store: Store<any>) {
-            this.vuexStore = store;
-        },
-
         async list() {
-            const response = await axios.get<Plugin[]>(`${apiUrl(this.vuexStore)}/plugins`);
+            const response = await this.$http.get<Plugin[]>(`${apiUrl(this.vuexStore)}/plugins`);
             this.plugins = response.data;
             this.pluginSingleList = response.data
                 .map(plugin => plugin.tasks
@@ -88,7 +80,7 @@ export const usePluginsStore = defineStore("plugins", {
         },
 
         async listWithSubgroup(options: Record<string, any>) {
-            const response = await axios.get<Plugin[]>(`${apiUrl(this.vuexStore)}/plugins/groups/subgroups`, {
+            const response = await this.$http.get<Plugin[]>(`${apiUrl(this.vuexStore)}/plugins/groups/subgroups`, {
                 params: options
             });
             this.plugins = response.data;
@@ -117,7 +109,7 @@ export const usePluginsStore = defineStore("plugins", {
                 `${apiUrl(this.vuexStore)}/plugins/${options.cls}/versions/${options.version}` :
                 `${apiUrl(this.vuexStore)}/plugins/${options.cls}`;
 
-            const response = await axios.get<PluginComponent>(url, {params: options});
+            const response = await this.$http.get<PluginComponent>(url, {params: options});
 
             if (options.commit !== false) {
                 if (options.all === true) {
@@ -138,7 +130,7 @@ export const usePluginsStore = defineStore("plugins", {
         },
 
         loadVersions(options: { cls: string; commit?: boolean }) {
-            const promise = axios.get(
+            const promise = this.$http.get(
                 `${apiUrl(this.vuexStore)}/plugins/${options.cls}/versions`
             );
             return promise.then(response => {
@@ -152,7 +144,7 @@ export const usePluginsStore = defineStore("plugins", {
         fetchIcons() {
             const apiStore = useApiStore();
             return Promise.all([
-                axios.get(`${apiUrl(this.vuexStore)}/plugins/icons`, {}),
+                this.$http.get(`${apiUrl(this.vuexStore)}/plugins/icons`, {}),
                 apiStore.pluginIcons()
             ]).then(responses => {
                 const icons = responses[0].data;
@@ -171,28 +163,28 @@ export const usePluginsStore = defineStore("plugins", {
 
         groupIcons() {
             return Promise.all([
-                axios.get(`${apiUrl(this.vuexStore)}/plugins/icons/groups`, {})
+                this.$http.get(`${apiUrl(this.vuexStore)}/plugins/icons/groups`, {})
             ]).then(responses => {
                 return responses[0].data;
             });
         },
 
         loadInputsType() {
-            return axios.get(`${apiUrl(this.vuexStore)}/plugins/inputs`, {}).then(response => {
+            return this.$http.get(`${apiUrl(this.vuexStore)}/plugins/inputs`, {}).then(response => {
                 this.inputsType = response.data;
 
                 return response.data;
             });
         },
         loadInputSchema(options: {type: string}) {
-            return axios.get(`${apiUrl(this.vuexStore)}/plugins/inputs/${options.type}`, {}).then(response => {
+            return this.$http.get(`${apiUrl(this.vuexStore)}/plugins/inputs/${options.type}`, {}).then(response => {
                 this.inputSchema = response.data;
 
                 return response.data;
             });
         },
         loadSchemaType(options: {type: string} = {type: "flow"}) {
-            return axios.get(`${apiUrlWithoutTenants()}/plugins/schemas/${options.type}`, {}).then(response => {
+            return this.$http.get(`${apiUrlWithoutTenants()}/plugins/schemas/${options.type}`, {}).then(response => {
                 return response.data;
             });
         },

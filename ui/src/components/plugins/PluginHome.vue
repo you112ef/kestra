@@ -110,7 +110,6 @@
             }
         },
         created() {
-            this.pluginsStore.setVuexStore(this.$store);
             this.pluginsStore.groupIcons().then(
                 res => {
                     this.icons = res

@@ -100,7 +100,6 @@
     const timeout = ref<any>(null);
 
     const pluginsStore = usePluginsStore();
-    pluginsStore.setVuexStore(store);
 
     function editorUpdate(newValue: string){
         if(store.state.editor.tabs.find((t:any) => t.path === props.path)?.content === newValue){

@@ -32,7 +32,6 @@
 
 <script lang="ts" setup>
     import {computed, inject, onActivated, ref, toRaw, watch} from "vue";
-    import {useStore} from "vuex";
     import * as YAML_UTILS from "@kestra-io/ui-libs/flow-yaml-utils";
     import TaskObject from "./tasks/TaskObject.vue";
     import PluginSelect from "../../components/plugins/PluginSelect.vue";
@@ -48,11 +47,7 @@
 
     const modelValue = defineModel<string>();
 
-    const store = useStore();
-
     const pluginsStore = usePluginsStore();
-
-    pluginsStore.setVuexStore(store);
 
     type PartialCodeElement = Partial<NoCodeElement>;
 

@@ -459,8 +459,6 @@
         await document.fonts.ready;
         await initMonaco();
 
-        pluginsStore.setVuexStore(store);
-
         if (props.language !== undefined) {
             disposeCompletions.value = await configureLanguage(store, pluginsStore, t, props.diffEditor ? undefined : editorResolved.value as ICodeEditor, props.language, props.schemaType);
         }

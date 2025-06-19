@@ -61,9 +61,6 @@
 
     export default {
         mixins: [RouteContext, RestoreUrl, DataTableActions],
-        created() {
-            this.logsStore.setVuexStore(this.$store);
-        },
         props: {
             logLevel: {
                 type: String,

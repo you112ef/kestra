@@ -214,7 +214,6 @@
                 this.newMetadata.disabled = this.metadata.disabled || false
                 this.newMetadata.retry = YAML_UTILS.stringify(this.metadata.retry) || ""
                 this.showConcurrency = !!this.metadata.concurrency
-                this.pluginsStore.setVuexStore(this.$store);
             },
             addItem() {
                 const local = this.newMetadata.labels || [];

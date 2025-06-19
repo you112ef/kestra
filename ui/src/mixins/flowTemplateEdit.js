@@ -279,7 +279,4 @@ export default {
             }
         },
     },
-    created() {
-        this.pluginsStore.setVuexStore(this.$store);
-    }
 };

@@ -81,9 +81,6 @@
                 required: false
             },
         },
-        created() {
-            this.logsStore.setVuexStore(this.$store);
-        },
         computed: {
             ...mapState("core", ["tutorialFlows"]),
             ...mapState("bookmarks", ["pages"]),

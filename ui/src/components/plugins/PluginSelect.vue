@@ -26,7 +26,6 @@
 
 <script setup lang="ts">
     import {computed, onBeforeMount} from "vue";
-    import {useStore} from "vuex";
     import {TaskIcon} from "@kestra-io/ui-libs";
     import {BlockType} from "../code/utils/types";
     import {usePluginsStore} from "../../stores/plugins";
@@ -40,9 +39,7 @@
         default: "",
     });
 
-    const store = useStore();
     const pluginsStore = usePluginsStore();
-    pluginsStore.setVuexStore(store);
 
     onBeforeMount(() => {
         pluginsStore.listWithSubgroup({includeDeprecated: false});

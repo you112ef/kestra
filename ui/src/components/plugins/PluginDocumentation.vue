@@ -76,7 +76,6 @@
             }
         },
         created() {
-            this.pluginsStore.setVuexStore(this.$store);
             this.pluginsStore.list();
         },
         methods: {

@@ -389,8 +389,6 @@
 
     const pluginsStore = usePluginsStore();
 
-    pluginsStore.setVuexStore(store);
-
     const icons = computed(() => {
         // TODO: https://github.com/kestra-io/kestra/issues/5643
         const getTaskIcons = (tasks, mapped) => {

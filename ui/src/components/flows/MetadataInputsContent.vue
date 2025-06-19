@@ -27,7 +27,6 @@
 
 <script setup lang="ts">
     import {ref, computed, watch, onMounted, inject} from "vue";
-    import {useStore} from "vuex";
     import TaskObject from "./tasks/TaskObject.vue";
     import Save from "../code/components/Save.vue";
     import {BREADCRUMB_INJECTION_KEY, PANEL_INJECTION_KEY} from "../code/injectionKeys";
@@ -73,11 +72,8 @@
     const inputSchema = computed(() => pluginsStore.inputSchema);
     const inputsType = computed(() => pluginsStore.inputsType);
 
-    const vuexStore = useStore()
-
     onMounted(() => {
         loading.value = true;
-        pluginsStore.setVuexStore(vuexStore);
         pluginsStore.loadInputsType()
             .then(() => loading.value = false);
 

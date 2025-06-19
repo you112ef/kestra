@@ -197,7 +197,6 @@
     const t = getCurrentInstance().appContext.config.globalProperties.$t;
 
     const pluginsStore = usePluginsStore();
-    pluginsStore.setVuexStore(store);
 
     // Components variables
     const isHorizontalLS = useStorage("topology-orientation", props.horizontalDefault);

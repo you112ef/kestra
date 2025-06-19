@@ -124,7 +124,6 @@
         created() {
             this.loadToc();
             this.loadPlugin()
-            this.pluginsStore.setVuexStore(this.$store);
         },
         watch: {
             $route: {
