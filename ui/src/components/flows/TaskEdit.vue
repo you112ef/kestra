@@ -66,14 +66,14 @@
                         @update:model-value="onInput"
                     />
                 </el-tab-pane>
-                <el-tab-pane v-if="pluginMarkdown" name="documentation">
+                <el-tab-pane v-if="pluginMardown" name="documentation">
                     <template #label>
                         <span>
                             {{ $t("documentation.documentation") }}
                         </span>
                     </template>
                     <div class="documentation">
-                        <markdown :source="pluginMarkdown" />
+                        <markdown :source="pluginMardown" />
                     </div>
                 </el-tab-pane>
             </el-tabs>
@@ -82,24 +82,22 @@
 </template>
 
 <script setup>
+    import {YamlUtils as YAML_UTILS} from "@kestra-io/ui-libs";
 
     import CodeTags from "vue-material-design-icons/CodeTags.vue";
     import ContentSave from "vue-material-design-icons/ContentSave.vue";
 </script>
 
 <script>
-    import {mapGetters, mapState} from "vuex";
-    import {mapStores} from "pinia";
-    import {SECTIONS} from "@kestra-io/ui-libs";
-    import * as YAML_UTILS from "@kestra-io/ui-libs/flow-yaml-utils";
     import Editor from "../inputs/Editor.vue";
     import TaskEditor from "./TaskEditor.vue";
     import Drawer from "../Drawer.vue";
     import {canSaveFlowTemplate} from "../../utils/flowTemplate";
+    import {mapGetters, mapState} from "vuex";
     import Utils from "../../utils/utils";
     import Markdown from "../layout/Markdown.vue";
     import ValidationError from "./ValidationError.vue";
-    import {usePluginsStore} from "../../stores/plugins";
+    import {SECTIONS} from "@kestra-io/ui-libs";
 
     export default {
         components: {Editor, TaskEditor, Drawer, Markdown, ValidationError},
@@ -157,16 +155,13 @@
                 default: undefined
             }
         },
-        created() {
-            this.pluginsStore.setVuexStore(this.$store);
-        },
         watch: {
             task: {
                 async handler() {
                     if (this.task) {
                         this.taskYaml = YAML_UTILS.stringify(this.task);
                         if (this.task.type) {
-                            this.pluginsStore.load({cls: this.task.type})
+                            this.$store.dispatch("plugin/load", {cls: this.task.type})
                         }
                     } else {
                         this.taskYaml = "";
@@ -178,7 +173,7 @@
                 handler() {
                     const task = YAML_UTILS.parse(this.taskYaml);
                     if (task?.type && task.type !== this.type) {
-                        this.pluginsStore.load({cls: task.type})
+                        this.$store.dispatch("plugin/load", {cls: task.type})
                         this.type = task.type
                     }
                 },
@@ -220,7 +215,8 @@
                     this.taskYaml = YAML_UTILS.stringify(this.task);
                 }
                 if (this.task?.type) {
-                    this.pluginsStore.load({cls: this.task.type})
+                    this.$store
+                        .dispatch("plugin/load", {cls: this.task.type})
                 }
             },
             onInput(value) {
@@ -253,14 +249,13 @@
         computed: {
             ...mapGetters("flow", ["taskError"]),
             ...mapState("auth", ["user"]),
-            ...mapStores(usePluginsStore),
+            ...mapState("plugin", ["plugin"]),
             errors() {
                 return this.taskError?.split(/, ?/)
             },
-            pluginMarkdown() {
-                const plugin = this.pluginsStore.plugin;
-                if (plugin?.markdown && YAML_UTILS.parse(this.taskYaml)?.type) {
-                    return plugin.markdown
+            pluginMardown() {
+                if (this.plugin && this.plugin.markdown && YAML_UTILS.parse(this.taskYaml)?.type) {
+                    return this.plugin.markdown
                 }
                 return null
             },

@@ -1,12 +1,12 @@
 <template>
     <div class="plugin-doc">
-        <template v-if="fetchPluginDocumentation && pluginsStore.editorPlugin">
+        <template v-if="fetchPluginDocumentation && editorPlugin">
             <div class="d-flex gap-3 mb-3 align-items-center">
                 <task-icon
                     class="plugin-icon"
-                    :cls="pluginsStore.editorPlugin.cls"
+                    :cls="editorPlugin.cls"
                     only-icon
-                    :icons="pluginsStore.icons"
+                    :icons="icons"
                 />
                 <h4 class="mb-0">
                     {{ pluginName }}
@@ -22,7 +22,7 @@
                 </el-button>
             </div>
             <Suspense>
-                <schema-to-html class="plugin-schema" :dark-mode="theme === 'dark'" :schema="pluginsStore.editorPlugin.schema" :plugin-type="pluginsStore.editorPlugin.cls">
+                <schema-to-html class="plugin-schema" :dark-mode="theme === 'dark'" :schema="editorPlugin.schema" :plugin-type="editorPlugin.cls">
                     <template #markdown="{content}">
                         <markdown font-size-var="font-size-base" :source="content" />
                     </template>
@@ -40,11 +40,9 @@
 </script>
 
 <script>
-    import {mapGetters} from "vuex";
+    import {mapState, mapGetters} from "vuex";
     import intro from "../../assets/docs/basic.md?raw";
     import {getPluginReleaseUrl} from "../../utils/pluginUtils";
-    import {mapStores} from "pinia";
-    import {usePluginsStore} from "../../stores/plugins";
 
     export default {
         props: {
@@ -62,22 +60,21 @@
             }
         },
         computed: {
+            ...mapState("plugin", ["editorPlugin", "icons"]),
             ...mapGetters("misc", ["theme"]),
-            ...mapStores(usePluginsStore),
             introContent () {
                 return this.overrideIntro ?? intro
             },
             pluginName() {
-                const split = this.pluginsStore.editorPlugin.cls.split(".");
+                const split = this.editorPlugin.cls.split(".");
                 return split[split.length - 1];
             },
             releaseNotesUrl() {
-                return getPluginReleaseUrl(this.pluginsStore.editorPlugin.cls);
+                return getPluginReleaseUrl(this.editorPlugin.cls);
             }
         },
         created() {
-            this.pluginsStore.setVuexStore(this.$store);
-            this.pluginsStore.list();
+            this.$store.dispatch("plugin/list");
         },
         methods: {
             openReleaseNotes() {

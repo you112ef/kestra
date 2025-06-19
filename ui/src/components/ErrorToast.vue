@@ -3,8 +3,6 @@
     import {pageFromRoute} from "../utils/eventsRouter";
     import {h} from "vue"
     import ErrorToastContainer from "./ErrorToastContainer.vue";
-    import {mapStores} from "pinia";
-    import {useApiStore} from "../stores/api";
 
     export default {
         name: "ErrorToast",
@@ -25,7 +23,6 @@
             },
         },
         computed: {
-            ...mapStores(useApiStore),
             title () {
                 if (this.message.title) {
                     return this.message.title;
@@ -78,7 +75,7 @@
                     error.error.request.method = this.message.response.config.method;
                 }
 
-                this.apiStore.events(error);
+                this.$store.dispatch("api/events", error);
 
                 this.notifications = ElNotification({
                     title: this.title || "Error",

@@ -16,7 +16,7 @@
         </el-form-item>
     </el-form>
 
-    <div @click="pluginsStore.updateDocumentation({task: selectedTaskType});">
+    <div @click="store.dispatch('plugin/updateDocumentation', {task: selectedTaskType});">
         <TaskObject
             v-loading="isLoading"
             v-if="selectedTaskType && schema"
@@ -39,7 +39,6 @@
     import {NoCodeElement, Schemas} from "../code/utils/types";
     import {BLOCKTYPE_INJECT_KEY, PARENT_PATH_INJECTION_KEY} from "../code/injectionKeys";
     import {removeNullAndUndefined} from "../code/utils/cleanUp";
-    import {usePluginsStore} from "../../stores/plugins";
 
     defineOptions({
         name: "TaskEditor",
@@ -49,10 +48,6 @@
     const modelValue = defineModel<string>();
 
     const store = useStore();
-
-    const pluginsStore = usePluginsStore();
-
-    pluginsStore.setVuexStore(store);
 
     type PartialCodeElement = Partial<NoCodeElement>;
 
@@ -128,29 +123,28 @@
     // when tab is clicked, load the documentation
     onActivated(() => {
         if(selectedTaskType.value){
-            pluginsStore.updateDocumentation({task: selectedTaskType.value});
+            store.dispatch("plugin/updateDocumentation", {task: selectedTaskType.value});
         }
     });
 
     watch(selectedTaskType, (task) => {
         if (task) {
             load();
-            pluginsStore.updateDocumentation({task});
+            store.dispatch("plugin/updateDocumentation", {task});
         }
     }, {immediate: true});
 
     function load() {
         isLoading.value = true;
-        if(selectedTaskType.value){
-            pluginsStore.load({
+        store
+            .dispatch("plugin/load", {
                 cls: selectedTaskType.value,
                 all: true
             })
-                .then((response) => {
-                    plugin.value = response;
-                    isLoading.value = false;
-                })
-        }
+            .then((response) => {
+                plugin.value = response;
+                isLoading.value = false;
+            })
 
     }
 

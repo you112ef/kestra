@@ -1,5 +1,4 @@
 import {apiUrl, apiUrlWithoutTenants} from "override/utils/route";
-import {useApiStore} from "./api";
 
 export default {
     namespaced: true,
@@ -30,9 +29,7 @@ export default {
                 password: options.password,
             });
 
-            const apiStore = useApiStore();
-
-            return apiStore.posthogEvents({
+            return this.dispatch("api/posthogEvents", {
                 type: "ossauth",
                 iid: state.configs.uuid,
                 uid: localStorage.getItem("uid"),

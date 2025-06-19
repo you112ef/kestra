@@ -7,11 +7,9 @@
     import {computed} from "vue";
     import {useStore} from "vuex";
     import PluginDocumentation from "./PluginDocumentation.vue"
-    import {usePluginsStore} from "../../stores/plugins";
 
     const store = useStore();
-    const pluginsStore = usePluginsStore()
-    const plugin = computed(() => pluginsStore.editorPlugin);
+    const plugin = computed(() => store.state.plugin.editorPlugin);
     const theme = computed(() => store.getters["misc/theme"]);
 </script>
 

@@ -30,7 +30,7 @@
                         <div class="pe-5 d-flex task">
                             <TaskIcon
                                 v-if="data.icon"
-                                :icons="pluginsStore.icons"
+                                :icons="allIcons"
                                 :cls="icons[data.taskId]"
                                 only-icon
                             />
@@ -236,7 +236,6 @@
 
     import TimelineTextOutline from "vue-material-design-icons/TimelineTextOutline.vue";
     import TextBoxSearchOutline from "vue-material-design-icons/TextBoxSearchOutline.vue";
-    import {usePluginsStore} from "../../../stores/plugins";
 
     const cascader = ref<InstanceType<typeof ElTree> | null>(null);
     const scrollRight = () =>
@@ -387,10 +386,7 @@
         return tasks;
     });
 
-    const pluginsStore = usePluginsStore();
-
-    pluginsStore.setVuexStore(store);
-
+    const allIcons = computed(() => store.state.plugin.icons);
     const icons = computed(() => {
         // TODO: https://github.com/kestra-io/kestra/issues/5643
         const getTaskIcons = (tasks, mapped) => {

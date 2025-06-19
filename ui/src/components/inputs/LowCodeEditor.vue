@@ -24,7 +24,7 @@
             @swapped-task="onSwappedTask"
             @message="message"
             @expand-subflow="expandSubflow"
-            :icons="pluginsStore.icons"
+            :icons="icons"
         />
 
         <!-- Drawer to create/add task -->
@@ -123,8 +123,7 @@
     import {Topology} from "@kestra-io/ui-libs";
 
     // Utils
-    import {SECTIONS} from "@kestra-io/ui-libs";
-    import * as YAML_UTILS from "@kestra-io/ui-libs/flow-yaml-utils";
+    import {YamlUtils as YAML_UTILS, SECTIONS} from "@kestra-io/ui-libs";
     import Markdown from "../layout/Markdown.vue";
     import Editor from "./Editor.vue";
 
@@ -134,7 +133,6 @@
     const {fitView} = useVueFlow(vueflowId.value);
 
     import {TOPOLOGY_CLICK_INJECTION_KEY} from "../code/injectionKeys";
-    import {usePluginsStore} from "../../stores/plugins";
     const topologyClick = inject(TOPOLOGY_CLICK_INJECTION_KEY);
 
     // props
@@ -196,14 +194,12 @@
     const toast = getCurrentInstance().appContext.config.globalProperties.$toast();
     const t = getCurrentInstance().appContext.config.globalProperties.$t;
 
-    const pluginsStore = usePluginsStore();
-    pluginsStore.setVuexStore(store);
-
     // Components variables
     const isHorizontalLS = useStorage("topology-orientation", props.horizontalDefault);
     const isHorizontal = ref(props.horizontalDefault ?? (isHorizontalLS.value === "true"));
     const vueFlow = ref(null);
     const timer = ref(null);
+    const icons = ref(store.getters["plugin/getIcons"]);
     const taskObject = ref(null);
     const taskEditData = ref(null);
     const taskEditDomElement = ref(null);
@@ -219,7 +215,9 @@
     onMounted(() => {
         // Regenerate graph on window resize
         observeWidth();
-        pluginsStore.fetchIcons()
+        store.dispatch("plugin/icons").then(() => {
+            icons.value = store.getters["plugin/getIcons"];
+        });
     });
 
     watch(
@@ -269,11 +267,7 @@
                     });
                     return;
                 }
-                const updatedYmlSource = YAML_UTILS.deleteBlock({
-                    source:props.source,
-                    section,
-                    key: event.id,
-                })
+                const updatedYmlSource = YAML_UTILS.deleteTask(props.source, event.id, section)
                 emit(
                     "on-edit",
                     updatedYmlSource,

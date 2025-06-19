@@ -14,17 +14,12 @@
     import {h, ref, shallowRef} from "vue";
     import ErrorToast from "./components/ErrorToast.vue";
     import {mapGetters, mapState} from "vuex";
-    import {mapStores} from "pinia";
     import Utils from "./utils/utils";
     import VueTour from "./components/onboarding/VueTour.vue";
     import DefaultLayout from "override/components/layout/DefaultLayout.vue";
     import DocIdDisplay from "./components/DocIdDisplay.vue";
     import posthog from "posthog-js";
     import "@kestra-io/ui-libs/style.css";
-
-    import {useApiStore} from "./stores/api";
-    import {usePluginsStore} from "./stores/plugins";
-
     // Main App
     export default {
         name: "App",
@@ -48,7 +43,6 @@
             ...mapState("flow", ["overallTotal"]),
             ...mapGetters("core", ["guidedProperties"]),
             ...mapGetters("misc", ["configs"]),
-            ...mapStores(useApiStore, usePluginsStore),
             envName() {
                 return this.$store.getters["layout/envName"] || this.configs?.environment?.name;
             },
@@ -129,19 +123,17 @@
                     localStorage.setItem("uid", uid);
                 }
 
-                this.pluginsStore.setVuexStore(this.$store);
-
-                this.pluginsStore.fetchIcons()
+                this.$store.dispatch("plugin/icons")
                 const config = await this.$store.dispatch("misc/loadConfigs");
                 await this.$store.dispatch("doc/initResourceUrlTemplate", config.version);
 
-                this.apiStore.loadFeeds({
+                this.$store.dispatch("api/loadFeeds", {
                     version: config.version,
                     iid: config.uuid,
                     uid: uid,
                 });
 
-                this.apiStore.loadConfig()
+                this.$store.dispatch("api/loadConfig")
                     .then(apiConfig => {
                         this.initStats(apiConfig, config, uid);
                     })

@@ -71,12 +71,10 @@
     import {useStore} from "vuex";
     import {useI18n} from "vue-i18n";
     import Utils from "../utils/utils";
-    import {useApiStore} from "../stores/api";
 
     const {t} = useI18n({useScope: "global"});
 
     const store = useStore();
-    const apiStore = useApiStore();
 
     const configs = computed(() => store.getters["misc/configs"]);
     const activeTab = computed(() => store.getters["misc/contextInfoBarOpenTab"])
@@ -84,7 +82,7 @@
     const lastNewsReadDate = useStorage<string | null>("feeds", null)
 
     const hasUnread = computed(() => {
-        const feeds = apiStore.feeds
+        const feeds = store.state.misc.feeds
         return (
             lastNewsReadDate.value === null ||
             (feeds?.[0] && (new Date(lastNewsReadDate.value) < new Date(feeds[0].publicationDate)))

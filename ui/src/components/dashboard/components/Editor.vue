@@ -122,7 +122,7 @@
 </template>
 <script setup>
     import {YamlUtils as YAML_UTILS} from "@kestra-io/ui-libs";
-
+    
     import {TYPES, getChartTitle} from "../composables/useDashboards";
 
     import PluginDocumentation from "../../plugins/PluginDocumentation.vue";
@@ -138,17 +138,14 @@
     defineEmits(["save"])
 </script>
 <script>
-    import {mapStores} from "pinia";
 
     import Editor from "../../inputs/Editor.vue";
-    import {usePluginsStore} from "../../../stores/plugins";
     import yaml from "yaml";
     import ContentSave from "vue-material-design-icons/ContentSave.vue";
     import intro from "../../../assets/docs/dashboard_home.md?raw";
 
     export default {
         computed: {
-            ...mapStores(usePluginsStore),
             ContentSave() {
                 return ContentSave
             },
@@ -185,15 +182,13 @@
             async updatePluginDocumentation(event) {
                 if (this.currentView === this.views.DOC) {
                     const type = YAML_UTILS.getTaskType(event.model.getValue(), event.position, this.plugins)
-                    this.pluginsStore.setVuexStore(this.$store);
                     if (type) {
-
-                        this.pluginsStore.load({cls: type})
+                        this.$store.dispatch("plugin/load", {cls: type})
                             .then(plugin => {
-                                this.pluginsStore.editorPlugin = {cls: type, ...plugin};
-                            })
+                                this.$store.commit("plugin/setEditorPlugin", {cls: type, ...plugin});
+                            });
                     } else {
-                        this.pluginsStore.editorPlugin = undefined;
+                        this.$store.commit("plugin/setEditorPlugin", undefined);
                     }
                 } else if (this.currentView === this.views.CHART) {
                     const chart = YAML_UTILS.getChartAtPosition(event.model.getValue(), event.position)
@@ -222,8 +217,7 @@
                 };
             },
             loadPlugins() {
-                this.pluginsStore.setVuexStore(this.$store);
-                this.pluginsStore.list({...this.$route.params})
+                this.$store.dispatch("plugin/list", {...this.$route.params})
                     .then(data => {
                         this.plugins = data.map(plugin => {
                             const charts = plugin.charts || [];
@@ -295,7 +289,7 @@
             }
         },
         beforeUnmount() {
-            this.pluginsStore.editorPlugin = undefined;
+            this.$store.commit("plugin/setEditorPlugin", undefined);
         }
     };
 </script>

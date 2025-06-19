@@ -54,7 +54,6 @@
     import {hashCode} from "../../utils/global.ts";
     import ICodeEditor = editor.ICodeEditor;
     import debounce from "lodash/debounce";
-    import {usePluginsStore} from "../../stores/plugins.ts";
 
     const store = useStore();
     const currentInstance = getCurrentInstance()!;
@@ -310,11 +309,11 @@
             node.querySelector(`.${KESTRA_ICON_WRAPPER_CLASS}`)?.remove();
 
             if (completionValue.includes(".") && !completionValue.includes("{")) {
-                if (pluginsStore?.icons?.[completionValue] !== undefined) {
+                if (store.state.plugin?.icons?.[completionValue] !== undefined) {
                     replaceRowIcon(vsCodeIcon, h(TaskIcon, {
                         cls: completionValue,
                         "only-icon": true,
-                        icons: pluginsStore.icons,
+                        icons: store.state.plugin.icons,
                     }));
                 }
             } else if (STATES[completionValue] !== undefined) {
@@ -453,16 +452,12 @@
 
     const disposeCompletions = ref<() => void>();
 
-    const pluginsStore = usePluginsStore();
-
     onMounted(async function () {
         await document.fonts.ready;
         await initMonaco();
 
-        pluginsStore.setVuexStore(store);
-
         if (props.language !== undefined) {
-            disposeCompletions.value = await configureLanguage(store, pluginsStore, t, props.diffEditor ? undefined : editorResolved.value as ICodeEditor, props.language, props.schemaType);
+            disposeCompletions.value = await configureLanguage(store, t, props.diffEditor ? undefined : editorResolved.value as ICodeEditor, props.language, props.schemaType);
         }
 
         // Exposing functions globally for testing purposes

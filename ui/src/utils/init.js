@@ -33,7 +33,6 @@ import {
 } from "chart.js";
 import Vue3Tour from "vue3-tour"
 import VueVirtualScroller from "vue-virtual-scroller";
-import {createPinia} from "pinia";
 
 import Toast from "./toast";
 import filters from "./filters";
@@ -72,11 +71,6 @@ export default async (app, routes, stores, translations, additionalTranslations 
     let store = createStore(stores);
     app.use(store);
 
-    let piniaStore = createPinia();
-    piniaStore.use(({store}) => {
-        store.vuexStore = store;
-    });
-    app.use(piniaStore);
 
     // router
     let router = createRouter({
@@ -183,5 +177,5 @@ export default async (app, routes, stores, translations, additionalTranslations 
 
     app.config.globalProperties.append = (path, pathToAppend) => path + (path.endsWith("/") ? "" : "/") + pathToAppend
 
-    return {store, router, piniaStore};
+    return {store, router};
 }

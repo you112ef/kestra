@@ -479,7 +479,6 @@
     import EditorButtons from "./EditorButtons.vue";
     import MetadataEditor from "../flows/MetadataEditor.vue";
     import {useFlowOutdatedErrors} from "./flowOutdatedErrors";
-    import {usePluginsStore} from "../../stores/plugins";
 
     const store = useStore();
     const router = useRouter();
@@ -696,10 +695,7 @@
         }
     };
 
-    const pluginsStore = usePluginsStore();
-
     onMounted(async () => {
-        pluginsStore.setVuexStore(store);
         if(guidedProperties.value?.tourStarted) {
             editorViewType.value = "YAML";
             switchViewType(editorViewTypes.SOURCE_TOPOLOGY, false);
@@ -743,7 +739,7 @@
     onBeforeUnmount(() => {
         window.removeEventListener("resize", onResize);
 
-        pluginsStore.editorPlugin = undefined;
+        store.commit("plugin/setEditorPlugin", undefined);
         document.removeEventListener("keydown", saveUsingKeyboard);
         document.removeEventListener("popstate", () => {
             stopTour();
@@ -766,7 +762,7 @@
     };
 
     const updatePluginDocumentation = (event, task) => {
-        pluginsStore.updateDocumentation({event,task});
+        store.dispatch("plugin/updateDocumentation", {event,task});
     };
 
     const fetchGraph = () => {

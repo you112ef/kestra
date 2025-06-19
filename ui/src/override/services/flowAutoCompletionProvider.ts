@@ -1,11 +1,9 @@
 import type {Store} from "vuex";
 import type {JSONSchema} from "@kestra-io/ui-libs";
-import {YamlElement} from "@kestra-io/ui-libs";
-import * as YAML_UTILS from "@kestra-io/ui-libs/flow-yaml-utils";
+import {YamlElement, YamlUtils as YAML_UTILS} from "@kestra-io/ui-libs";
 import {QUOTE, YamlAutoCompletion} from "../../services/autoCompletionProvider";
 import RegexProvider from "../../utils/regex";
 import {State} from "@kestra-io/ui-libs";
-import {usePluginsStore} from "../../stores/plugins";
 
 function distinct<T>(val: T[] | undefined): T[] {
     return Array.from(new Set(val ?? []));
@@ -14,12 +12,10 @@ function distinct<T>(val: T[] | undefined): T[] {
 export class FlowAutoCompletion extends YamlAutoCompletion {
     store: Store<Record<string, any>>;
     flowsInputsCache: Record<string, string[]> = {};
-    pluginsStore: ReturnType<typeof usePluginsStore>;
 
-    constructor(store: Store<Record<string, any>>, pluginsStore: ReturnType<typeof usePluginsStore>) {
+    constructor(store: Store<Record<string, any>>) {
         super();
         this.store = store;
-        this.pluginsStore = pluginsStore;
     }
 
     rootFieldAutoCompletion(): Promise<string[]> {
@@ -84,7 +80,7 @@ export class FlowAutoCompletion extends YamlAutoCompletion {
             return [];
         }
 
-        const pluginDoc = await this.pluginsStore.load({cls: taskType, commit: false});
+        const pluginDoc = await this.store.dispatch("plugin/load", {cls: taskType, commit: false});
 
         return Object.keys(pluginDoc?.schema?.outputs?.properties ?? {});
     }
@@ -97,7 +93,7 @@ export class FlowAutoCompletion extends YamlAutoCompletion {
         const fetchTriggerVarsByType = await Promise.all(
             distinct(flowAsJs?.triggers?.map(trigger => trigger.type))
                 .map(async triggerType => {
-                    const triggerDoc: {schema: JSONSchema} | undefined = await this.pluginsStore.load({
+                    const triggerDoc: {schema: JSONSchema} | undefined = await this.store.dispatch("plugin/load", {
                         cls: triggerType,
                         commit: false
                     });

@@ -29,7 +29,6 @@
     import {useStore} from "vuex";
     import {TaskIcon} from "@kestra-io/ui-libs";
     import {BlockType} from "../code/utils/types";
-    import {usePluginsStore} from "../../stores/plugins";
 
     const props = defineProps<{
         blockType: BlockType | "pluginDefaults";
@@ -41,22 +40,20 @@
     });
 
     const store = useStore();
-    const pluginsStore = usePluginsStore();
-    pluginsStore.setVuexStore(store);
 
     onBeforeMount(() => {
-        pluginsStore.listWithSubgroup({includeDeprecated: false});
+        store.dispatch("plugin/listWithSubgroup", {includeDeprecated: false});
     })
 
     const plugins = computed(() => {
-        return pluginsStore.plugins;
+        return store.state.plugin.plugins;
     })
     const icons = computed(() => {
-        return pluginsStore.icons;
+        return store.state.plugin.icons;
     })
 
     const taskModels = computed(() => {
-        const models = new Set<any>();
+        const models = new Set<string>();
         const pluginKeySection: BlockType[] =
             props.blockType === "pluginDefaults"
                 ? ["tasks", "conditions", "triggers", "taskRunners"]

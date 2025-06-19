@@ -322,6 +322,7 @@
             this.autoExpandBasedOnSettings();
         },
         computed: {
+            ...mapState("plugin", ["icons"]),
             ...mapState("auth", ["user"]),
             Download() {
                 return Download

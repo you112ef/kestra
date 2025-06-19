@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div class="title">
             <slot name="back-button" />
-            <h2>{{ title }}</h2>
+            <h2>{{ props.title }}</h2>
         </div>
         <div class="content">
             <slot />
@@ -10,8 +10,13 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-    defineProps<{title:string}>();
+<script setup>
+    const props = defineProps({
+        title: {
+            type: String,
+            required: true
+        },
+    });
 </script>
 
 <style lang="scss" scoped>
