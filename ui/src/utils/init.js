@@ -72,8 +72,11 @@ export default async (app, routes, stores, translations, additionalTranslations 
     let store = createStore(stores);
     app.use(store);
 
-    let pinia = createPinia();
-    app.use(pinia);
+    let piniaStore = createPinia();
+    piniaStore.use(({store}) => {
+        store.vuexStore = store;
+    });
+    app.use(piniaStore);
 
     // router
     let router = createRouter({
@@ -180,5 +183,5 @@ export default async (app, routes, stores, translations, additionalTranslations 
 
     app.config.globalProperties.append = (path, pathToAppend) => path + (path.endsWith("/") ? "" : "/") + pathToAppend
 
-    return {store, router};
+    return {store, router, piniaStore};
 }
