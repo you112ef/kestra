@@ -90,7 +90,7 @@
                                 </div>
                                 <div v-if="!embed" class="tasks-container">
                                     <task-icon
-                                        :icons="icons"
+                                        :icons="pluginsStore.icons"
                                         :cls="task"
                                         :key="task"
                                         v-for="task in [...new Set(blueprint.includedTasks)]"
