@@ -325,12 +325,12 @@ public class WorkingDirectoryTest {
         }
 
         public void invalidRunIf(RunnerUtils runnerUtils) throws TimeoutException, QueueException {
-            Execution execution = runnerUtils.runOne(MAIN_TENANT, "io.kestra.tests", "working-directory-invalid-runif", null,
+            Execution execution = runnerUtils.runOne(null, "io.kestra.tests", "working-directory-invalid-runif", null,
                 (f, e) -> ImmutableMap.of("failed", "false"), Duration.ofSeconds(60)
             );
 
-            assertThat(execution.getTaskRunList()).hasSize(2);
-            assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.FAILED);
+            assertThat(execution.getTaskRunList(), hasSize(2));
+            assertThat(execution.getState().getCurrent(), is(State.Type.FAILED));
         }
 
         private void put(String path, String content) throws IOException {
