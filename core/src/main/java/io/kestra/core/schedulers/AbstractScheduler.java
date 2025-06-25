@@ -968,6 +968,8 @@ public abstract class AbstractScheduler implements Scheduler, Service {
             }
 
             setState(ServiceState.TERMINATING);
+            this.receiveCancellations.forEach(Runnable::run);
+            this.scheduleExecutor.shutdown();
             try {
                 if (onClose != null) {
                     onClose.run();
@@ -975,8 +977,6 @@ public abstract class AbstractScheduler implements Scheduler, Service {
             } catch (Exception e) {
                 log.error("Unexpected error while terminating scheduler.", e);
             }
-            this.receiveCancellations.forEach(Runnable::run);
-            this.scheduleExecutor.shutdown();
             setState(ServiceState.TERMINATED_GRACEFULLY);
 
             if (log.isDebugEnabled()) {
