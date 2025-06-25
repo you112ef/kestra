@@ -482,7 +482,7 @@
 
             const queryKeys = Object.keys(query);
             if (defaultNamespace && !queryKeys.some(key => key.startsWith("filters[namespace]"))) {
-                query["filters[namespace][EQUALS]"] = defaultNamespace;
+                query["filters[namespace][PREFIX]"] = defaultNamespace;
                 queryHasChanged = true;
             }
 
@@ -739,7 +739,7 @@
                 );
 
                 if (this.namespace) {
-                    queryFilter["filters[namespace][EQUALS]"] = this.$route.params.id || this.namespace;
+                    queryFilter["filters[namespace][PREFIX]"] = this.$route.params.id || this.namespace;
                 }
 
                 return _merge(base, queryFilter);

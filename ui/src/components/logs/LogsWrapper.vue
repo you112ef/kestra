@@ -165,7 +165,7 @@
 
             const queryKeys = Object.keys(query);
             if (defaultNamespace && !queryKeys.some(key => key.startsWith("filters[namespace]"))) {
-                query["filters[namespace][EQUALS]"] = defaultNamespace;
+                query["filters[namespace][PREFIX]"] = defaultNamespace;
                 queryHasChanged = true;
             }
 

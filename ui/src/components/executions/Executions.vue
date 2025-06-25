@@ -673,7 +673,7 @@
 
             const queryKeys = Object.keys(query);
             if (this?.namespace === undefined && defaultNamespace && !queryKeys.some(key => key.startsWith("filters[namespace]"))) {
-                query["filters[namespace][EQUALS]"] = defaultNamespace;
+                query["filters[namespace][PREFIX]"] = defaultNamespace;
                 queryHasChanged = true;
             }
 
@@ -745,7 +745,7 @@
                 let queryFilter = this.queryWithFilter();
 
                 if (this.namespace) {
-                    queryFilter["filters[namespace][EQUALS]"] = this.namespace;
+                    queryFilter["filters[namespace][PREFIX]"] = this.namespace;
                 }
 
                 if (this.flowId) {
