@@ -264,59 +264,11 @@ class HttpClientTest {
     }
 
     @Test
-    void postCustomObject_WithUnknownResponseField() throws IllegalVariableEvaluationException, HttpClientException, IOException {
-        CustomObject test = CustomObject.builder()
-            .id(IdUtils.create())
-            .name("test")
-            .build();
-
-        Map<String, String> withAdditionalField = JacksonMapper.ofJson().convertValue(test, new TypeReference<>() {
-        });
-
-        withAdditionalField.put("foo", "bar");
-
-        try (HttpClient client = client()) {
-            HttpResponse<CustomObject> response = client.request(
-                HttpRequest.of(URI.create(embeddedServerUri + "/http/json-post"), "POST", HttpRequest.JsonRequestBody.builder().content(withAdditionalField).build()),
-                CustomObject.class
-            );
-
-            assertThat(response.getStatus().getCode(), is(200));
-            assertThat(response.getBody().id, is(test.id));
-            assertThat(response.getHeaders().firstValue(HttpHeaders.CONTENT_TYPE).orElseThrow(), is(MediaType.APPLICATION_JSON));
-        }
-    }
-
-    @Test
-    void postCustomObject_WithUnknownResponseField() throws IllegalVariableEvaluationException, HttpClientException, IOException {
-        CustomObject test = CustomObject.builder()
-            .id(IdUtils.create())
-            .name("test")
-            .build();
-
-        Map<String, String> withAdditionalField = JacksonMapper.ofJson().convertValue(test, new TypeReference<>() {
-        });
-
-        withAdditionalField.put("foo", "bar");
-
-        try (HttpClient client = client()) {
-            HttpResponse<CustomObject> response = client.request(
-                HttpRequest.of(URI.create(embeddedServerUri + "/http/json-post"), "POST", HttpRequest.JsonRequestBody.builder().content(withAdditionalField).build()),
-                CustomObject.class
-            );
-
-            assertThat(response.getStatus().getCode()).isEqualTo(200);
-            assertThat(response.getBody().id).isEqualTo(test.id);
-            assertThat(response.getHeaders().firstValue(HttpHeaders.CONTENT_TYPE).orElseThrow()).isEqualTo(MediaType.APPLICATION_JSON);
-        }
-    }
-
-    @Test
     void postMultipart() throws IOException, URISyntaxException, IllegalVariableEvaluationException, HttpClientException {
         Map<String, Object> multipart = Map.of(
             "ping", "pong",
             "int", 1,
-             "file", new File(Objects.requireNonNull(this.getClass().getClassLoader().getResource("logback.xml")).toURI()),
+            "file", new File(Objects.requireNonNull(this.getClass().getClassLoader().getResource("logback.xml")).toURI()),
             "inputStream", new ByteArrayInputStream(IOUtils.toString(
                     Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("logback.xml")),
                     StandardCharsets.UTF_8
