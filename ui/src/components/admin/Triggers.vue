@@ -389,9 +389,15 @@
                     return;
                 }
                 this.$store.dispatch("trigger/update", {...trigger, disabled: !value})
-                    .then(_ => {
-                        this.loadData();
-                    })
+                    .then(trigger => {
+                        // replace the update trigger in the list
+                        this.triggers = this.triggers.map(t => {
+                            if (t.id === trigger.id) {
+                                return {triggerContext: trigger, abstractTrigger: t.abstractTrigger};
+                            }
+                            return t;
+                        });
+                    });
             },
             genericConfirmAction(toast, queryAction, byIdAction, success, data) {
                 this.$toast().confirm(
