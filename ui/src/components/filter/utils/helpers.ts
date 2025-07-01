@@ -1,6 +1,5 @@
 export const encodeParams = (route, filters, OPTIONS, isDefaultDashboard) => {
     if(isSearchPath(route) && !isDefaultDashboard) { return encodeSearchParams(filters, OPTIONS); }
-
     const encode = (values, key) => {
         return values
             .map((v) => {
@@ -121,11 +120,11 @@ export const encodeSearchParams = (filters, OPTIONS) => {
     };
 
     return filters.reduce((query, filter) => {
+        const match = OPTIONS.find((o) => o.value.label === filter.label);
+        const key = match ? match.key : filter.label === "text" ? "q" : null;
         if(filter.operation) {
-            Object.assign(query, encode(filter.value, filter.field, filter.operation));
+            Object.assign(query, encode(filter.value, key, filter.operation));
         } else {
-            const match = OPTIONS.find((o) => o.value.label === filter.label);
-            const key = match ? match.key : filter.label === "text" ? "q" : null;
             const operation = filter.comparator?.value || match?.comparators?.find(c => c.value === filter.operation)?.value || "EQUALS";
 
             if (key) {
@@ -158,13 +157,12 @@ export const decodeSearchParams = (query, include, OPTIONS) => {
                 return {field: field, value: `${subKey}:${decodeURIComponent(value)}`, operation};
             }
 
-            const label = field === "q" ? "text" : OPTIONS.find(o => o.key === field)?.value.label || field;
+            const label = field === "q" ? "q" : OPTIONS.find(o => o.key === field)?.value.label || field;
             const comparator = OPTIONS.find(o => o.key === field)?.comparators?.find(c => c.value === operation) || {value: operation};
 
             return {field: label, label: label, operation: comparator.value, comparator: comparator, value: decodeURIComponent(value).split(",")};
         })
         .filter(Boolean);
-
     return params;
 };
 export const isSearchPath = (name: string) => ["home", "flows/list", "executions/list", "logs/list", "admin/triggers"].includes(name);
