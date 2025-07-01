@@ -320,9 +320,16 @@
                     }
                 }
 
-                this.$store.dispatch("trigger/search", query).then(triggersData => {
+                const previousSelection = this.selection;
+                this.$store.dispatch("trigger/search", query).then(async triggersData => {
                     this.triggers = triggersData.results;
                     this.total = triggersData.total;
+
+                    if (previousSelection && this.$refs.selectTable) {
+                        await this.$refs.selectTable.waitTableRender();
+                        this.$refs.selectTable.setSelection(previousSelection);
+                    }
+
                     if (callback) {
                         callback();
                     }
