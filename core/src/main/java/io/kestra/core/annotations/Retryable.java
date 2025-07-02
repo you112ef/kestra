@@ -65,4 +65,9 @@ public @interface Retryable {
      * (defaults to none)
      */
     Class<? extends RetryPredicate> predicate() default DefaultRetryPredicate.class;
+
+    /**
+     * @return The multiplier to use to calculate the delay
+     */
+    String jitter() default "${kestra.retries.jitter:0.0}";
 }

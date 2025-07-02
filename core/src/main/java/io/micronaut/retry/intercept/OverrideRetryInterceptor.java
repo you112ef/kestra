@@ -18,10 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Replace {@link DefaultRetryInterceptor} only to catch Throwable
@@ -56,7 +53,8 @@ public class OverrideRetryInterceptor implements MethodInterceptor<Object, Objec
             retry.get("delay", Duration.class).orElse(Duration.ofSeconds(1)),
             retry.get("maxDelay", Duration.class).orElse(null),
             new DefaultRetryPredicate(resolveIncludes(retry, "includes"), resolveIncludes(retry, "excludes")),
-            Throwable.class
+            Throwable.class,
+            retry.get("jitter", Double.class).orElse(0D)
         );
 
         MutableConvertibleValues<Object> attrs = context.getAttributes();
