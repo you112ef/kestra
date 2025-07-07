@@ -33,7 +33,7 @@ export default {
     },
     computed: {
         ...mapState("auth", ["user"]),
-        ...mapGetters("flow", ["flow"]),
+        ...mapState("flow", ["flow"]),
         ...mapGetters("template", ["template"]),
         ...mapState("plugin", ["pluginSingleList","pluginsDocumentation"]),
         ...mapStores(useApiStore, usePluginsStore, useCoreStore),

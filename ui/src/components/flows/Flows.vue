@@ -196,50 +196,6 @@
                             />
 
                             <el-table-column
-                                prop="state.startDate"
-                                v-if="
-                                    displayColumn('state.startDate') &&
-                                        user.hasAny(permission.EXECUTION)
-                                "
-                                :label="$t('last execution date')"
-                            >
-                                <template #default="scope">
-                                    <date-ago
-                                        v-if="lastExecutionByFlowReady"
-                                        :inverted="true"
-                                        :date="
-                                            getLastExecution(scope.row)
-                                                .startDate
-                                        "
-                                    />
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column
-                                prop="state.current"
-                                v-if="
-                                    displayColumn('state.current') &&
-                                        user.hasAny(permission.EXECUTION)
-                                "
-                                :label="$t('last execution status')"
-                            >
-                                <template #default="scope">
-                                    <status
-                                        v-if="
-                                            lastExecutionByFlowReady &&
-                                                getLastExecution(scope.row)
-                                                    .lastStatus
-                                        "
-                                        :status="
-                                            getLastExecution(scope.row)
-                                                .lastStatus
-                                        "
-                                        size="small"
-                                    />
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column
                                 v-if="displayColumn('triggers')"
                                 :label="$t('triggers')"
                                 class-name="row-action"
@@ -310,11 +266,9 @@
     import TopNavBar from "../../components/layout/TopNavBar.vue";
     import RouteContext from "../../mixins/routeContext";
     import DataTableActions from "../../mixins/dataTableActions";
-    import DateAgo from "../layout/DateAgo.vue";
     import SelectTableActions from "../../mixins/selectTableActions";
     import RestoreUrl from "../../mixins/restoreUrl";
     import DataTable from "../layout/DataTable.vue";
-    import Status from "../Status.vue";
     import TriggerAvatar from "./TriggerAvatar.vue";
     import MarkdownTooltip from "../layout/MarkdownTooltip.vue";
     import Kicon from "../Kicon.vue";
@@ -326,8 +280,6 @@
         components: {
             TextSearch,
             DataTable,
-            DateAgo,
-            Status,
             TriggerAvatar,
             MarkdownTooltip,
             Kicon,
@@ -352,6 +304,7 @@
         },
         data() {
             return {
+                lastExecutionByFlowReady: false,
                 optionalColumns: [
                     {
                         label: this.$t("labels"),
@@ -531,7 +484,7 @@
                         const flowCount = this.queryBulkAction
                             ? this.total
                             : this.selection.length;
-                        
+
                         if (this.queryBulkAction) {
                             return this.$store
                                 .dispatch(
@@ -705,25 +658,6 @@
                         this.$refs.file.value = "";
                         this.loadData(() => {});
                     });
-            },
-            getLastExecution(row) {
-                let noState = {state: null, startDate: null};
-                if (this.statStore.lastExecutionsData && this.statStore.lastExecutionsData.length > 0) {
-                    let filteredFlowExec = this.statStore.lastExecutionsData.filter(
-                        (executedFlow) =>
-                            executedFlow.flowId == row.id &&
-                            executedFlow.namespace == row.namespace,
-                    );
-                    if (filteredFlowExec.length > 0) {
-                        return {
-                            lastStatus: filteredFlowExec[0].state?.current,
-                            startDate: filteredFlowExec[0].state?.startDate,
-                        };
-                    }
-                    return noState;
-                } else {
-                    return noState;
-                }
             },
             loadQuery(base, ignoreDateFilters = true) {
                 let queryFilter = this.queryWithFilter(

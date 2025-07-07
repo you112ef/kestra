@@ -7,6 +7,7 @@
             :warnings="flowWarnings"
             :infos="flowInfos"
         />
+        <PlaygroundToggle />
         <EditorButtons
             :is-creating="isCreating"
             :is-read-only="isReadOnly"
@@ -47,7 +48,7 @@
     const {t} = useI18n();
 
     const exportYaml = () => {
-        const blob = new Blob([store.getters["flow/flowYaml"]], {type: "text/yaml"});
+        const blob = new Blob([store.state.flow.flowYaml], {type: "text/yaml"});
         localUtils.downloadUrl(window.URL.createObjectURL(blob), "flow.yaml");
     };
 
@@ -64,7 +65,7 @@
     const flowHaveTasks = computed(() => store.getters["flow/flowHaveTasks"])
     const flowErrors = computed(() => store.getters["flow/flowErrors"]?.map(translateError));
     const flowInfos = computed(() => store.getters["flow/flowInfos"])
-    const flowParsed = computed(() => store.getters["flow/flow"])
+    const flowParsed = computed(() => store.state.flow.flow)
     const tabs = computed<{dirty:boolean}[]>(() => store.state.editor.tabs)
     const metadata = computed(() => store.state.flow.metadata);
     const toast = getCurrentInstance()?.appContext.config.globalProperties.$toast();
