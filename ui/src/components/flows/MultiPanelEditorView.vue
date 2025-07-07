@@ -244,11 +244,11 @@
         background-image: linear-gradient(
             to right,
             colorPalette.$base-blue-500 0%,
-            colorPalette.$base-blue-700 40%,
-            transparent 50%,
+            colorPalette.$base-blue-700 45%,
+            transparent 55%,
             transparent 100%
         );
-        background-size: 200% 100%;
+        background-size: 220% 100%;
         background-position: 100% 0;
         transition: background-position .2s;
     }
