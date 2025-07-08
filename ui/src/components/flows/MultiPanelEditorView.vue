@@ -20,9 +20,7 @@
                     <MultiPanelTabs v-model="panels" @remove-tab="onRemoveTab" />
                 </Pane>
                 <Pane v-if="store.state.flow.playgroundMode">
-                    <div class="playground">
-                        Playground
-                    </div>
+                    <FlowPlayground />
                 </Pane>
             </Splitpanes>
         </div>
@@ -38,6 +36,7 @@
     import {useCoreStore} from "../../stores/core";
 
     import MultiPanelTabs, {Panel, Tab} from "../MultiPanelTabs.vue";
+    import FlowPlayground from "./FlowPlayground.vue";
     import EditorButtonsWrapper from "../inputs/EditorButtonsWrapper.vue";
     import {DEFAULT_ACTIVE_TABS, EDITOR_ELEMENTS} from "override/components/flows/panelDefinition";
     import {useCodePanels, useInitialCodeTabs} from "./useCodePanels";
@@ -300,23 +299,13 @@
         background-position: 0 0;
     }
 
-    .playground {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        font-size: 1.5rem;
-        color: var(--ks-color-text-secondary);
-        background-color: var(--ks-background-panel);
-    }
-
     .default-theme{
         .splitpanes__pane {
             background-color: var(--ks-background-panel);
         }
 
         :deep(.splitpanes__splitter){
-            border-left-color: var(--ks-border-primary);
+            border-top-color: var(--ks-border-primary);
             background-color: var(--ks-background-panel);
             &:before, &:after{
                 background-color: var(--ks-content-secondary);
