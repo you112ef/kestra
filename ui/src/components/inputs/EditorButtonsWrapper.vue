@@ -7,7 +7,7 @@
             :warnings="flowWarnings"
             :infos="flowInfos"
         />
-        <PlaygroundToggle />
+        <FlowPlaygroundToggle />
         <EditorButtons
             :is-creating="isCreating"
             :is-read-only="isReadOnly"
@@ -40,7 +40,7 @@
     import {useRouter, useRoute} from "vue-router";
     import {useI18n} from "vue-i18n";
     import EditorButtons from "./EditorButtons.vue";
-    import PlaygroundToggle from "./PlaygroundToggle.vue";
+    import FlowPlaygroundToggle from "./FlowPlaygroundToggle.vue";
     import ValidationError from "../flows/ValidationError.vue";
 
     import localUtils from "../../utils/utils";
