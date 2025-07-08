@@ -301,6 +301,26 @@
     }
 
     .playground {
-        background-color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 1.5rem;
+        color: var(--ks-color-text-secondary);
+        background-color: var(--ks-background-panel);
+    }
+
+    .default-theme{
+        .splitpanes__pane {
+            background-color: var(--ks-background-panel);
+        }
+
+        :deep(.splitpanes__splitter){
+            border-left-color: var(--ks-border-primary);
+            background-color: var(--ks-background-panel);
+            &:before, &:after{
+                background-color: var(--ks-content-secondary);
+            }
+        }
     }
 </style>
