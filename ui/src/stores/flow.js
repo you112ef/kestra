@@ -57,7 +57,7 @@ export default {
                 return;
             }
 
-            await dispatch("editor/saveAllTabs", {namespace: getters.namespace}, {root: true});
+            await dispatch("editor/saveAllTabs", {namespace: state.flow.namespace}, {root: true});
             commit("setFlowYamlOrigin", state.flowYaml);
             return dispatch("saveWithoutRevisionGuard");
         },
@@ -94,7 +94,7 @@ export default {
                 if(!currentTab?.dirty) return;
 
                 await dispatch("namespace/createFile", {
-                    namespace: namespace ?? getters.namespace,
+                    namespace: namespace ?? state.flow.namespace,
                     path: currentTab.path ?? currentTab.name,
                     content,
                 }, {root: true});
@@ -120,8 +120,8 @@ export default {
                 if (!state.isCreating){
                     if(!source.trim()?.length ||
                         (flowParsed &&
-                        (getters.id !== flowParsed.id ||
-                            getters.namespace !== flowParsed.namespace)))
+                        (state.flow.id !== flowParsed.id ||
+                            state.flow.namespace !== flowParsed.namespace)))
                         {
                         const coreStore = useCoreStore();
                         coreStore.message = {
@@ -131,8 +131,8 @@ export default {
                         };
                         commit("setFlowYaml", YAML_UTILS.replaceIdAndNamespace(
                             source,
-                            getters.id,
-                            getters.namespace
+                            state.flow.id,
+                            state.flow.namespace
                         ));
                     }
                 }
