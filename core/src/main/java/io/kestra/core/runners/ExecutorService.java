@@ -65,7 +65,7 @@ public class ExecutorService {
     @Inject
     private WorkerGroupExecutorInterface workerGroupExecutorInterface;
 
-    protected FlowExecutorInterface flowExecutorInterface;
+    protected FlowMetaStoreInterface flowExecutorInterface;
 
     @Inject
     private WorkerJobRunningStateStore workerJobRunningStateStore;
@@ -86,10 +86,10 @@ public class ExecutorService {
     @Named(QueueFactoryInterface.KILL_NAMED)
     protected QueueInterface<ExecutionKilled> killQueue;
 
-    protected FlowExecutorInterface flowExecutorInterface() {
+    protected FlowMetaStoreInterface flowExecutorInterface() {
         // bean is injected late, so we need to wait
         if (this.flowExecutorInterface == null) {
-            this.flowExecutorInterface = applicationContext.getBean(FlowExecutorInterface.class);
+            this.flowExecutorInterface = applicationContext.getBean(FlowMetaStoreInterface.class);
         }
 
         return this.flowExecutorInterface;
