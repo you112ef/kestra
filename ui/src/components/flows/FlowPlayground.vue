@@ -19,10 +19,12 @@
 
 <script setup lang="ts">
     import {ref} from "vue";
+    import LogsWrapper from "../logs/LogsWrapper.vue"
 
     const tabs = [{
                       name: "logs",
                       label: "Logs",
+                      component: LogsWrapper
                   },{
                       name: "gantt",
                       label: "Gantt",
