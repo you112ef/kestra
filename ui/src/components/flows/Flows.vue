@@ -310,9 +310,11 @@
     import TopNavBar from "../../components/layout/TopNavBar.vue";
     import RouteContext from "../../mixins/routeContext";
     import DataTableActions from "../../mixins/dataTableActions";
+    import DateAgo from "../layout/DateAgo.vue";
     import SelectTableActions from "../../mixins/selectTableActions";
     import RestoreUrl from "../../mixins/restoreUrl";
     import DataTable from "../layout/DataTable.vue";
+    import Status from "../Status.vue";
     import TriggerAvatar from "./TriggerAvatar.vue";
     import MarkdownTooltip from "../layout/MarkdownTooltip.vue";
     import Kicon from "../Kicon.vue";
@@ -324,6 +326,8 @@
         components: {
             TextSearch,
             DataTable,
+            DateAgo,
+            Status,
             TriggerAvatar,
             MarkdownTooltip,
             Kicon,
