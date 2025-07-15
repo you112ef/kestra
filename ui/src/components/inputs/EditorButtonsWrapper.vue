@@ -1,5 +1,7 @@
 <template>
     <div style="display: flex; align-items: center; margin: .5rem; gap: .5rem;">
+        <FlowPlaygroundToggle />
+
         <ValidationError
             class="validation"
             tooltip-placement="bottom-start"
@@ -7,7 +9,7 @@
             :warnings="flowWarnings"
             :infos="flowInfos"
         />
-        <FlowPlaygroundToggle />
+
         <EditorButtons
             :is-creating="isCreating"
             :is-read-only="isReadOnly"
