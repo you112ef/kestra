@@ -5,41 +5,72 @@
                 v-for="tab in tabs"
                 :key="tab.name"
                 type="button"
-                :class="[{activeTab: tab.name === activeTab}, tab.name]"
-                @click="activeTab = tab.name"
+                :class="[{activeTab: tab.name === activeTab.name}]"
+                @click="activeTab = tab"
             >
-                {{ tab.label }}
+                {{ tab.title }}
             </button>
         </div>
-        <div class="content">
-            {{ activeTab }}
+        <div class="tab-content">
+            <component
+                v-if="activeTab?.component && executionsStore.execution"
+                :is="activeTab.component"
+                :key="activeTab.name"
+            />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-    import {ref} from "vue";
-    import LogsWrapper from "../logs/LogsWrapper.vue"
+    import {computed, ref, markRaw, onMounted} from "vue";
+    import {useI18n} from "vue-i18n";
+    import Gantt from "../executions/Gantt.vue";
+    import Logs from "../executions/Logs.vue";
+    import ExecutionOutput from "../executions/outputs/Wrapper.vue";
+    import ExecutionMetric from "../executions/ExecutionMetric.vue";
+    import {useExecutionsStore} from "../../stores/executions";
+    import {useStore} from "vuex";
 
-    const tabs = [{
-                      name: "logs",
-                      label: "Logs",
-                      component: LogsWrapper
-                  },{
-                      name: "gantt",
-                      label: "Gantt",
-                  },
-                  {
-                      name: "outputs",
-                      label: "Outputs",
-                  },
-                  {
-                      name: "metrics",
-                      label: "Metrics",
-                  }
-    ]
+    const {t} = useI18n();
 
-    const activeTab = ref("logs");
+    const tabs = computed(() => ([{
+                                      name: "logs",
+                                      title: t("logs"),
+                                      component: markRaw(Logs),
+                                  },{
+                                      name: "gantt",
+                                      title: t("gantt"),
+                                      component: markRaw(Gantt),
+                                  },
+                                  {
+                                      name: "outputs",
+                                      title: t("outputs"),
+                                      component: markRaw(ExecutionOutput),
+                                  },
+                                  {
+                                      name: "metrics",
+                                      title: t("metrics"),
+                                      component: markRaw(ExecutionMetric),
+                                  }
+    ]));
+
+    const executionsStore = useExecutionsStore();
+    const store = useStore();
+    onMounted(async () => {
+        const lastExecutions = await executionsStore.loadLatestExecutions({
+            flowFilters: [{
+                namespace: store.state.flow.flow.namespace,
+                id: store.state.flow.flow.id,
+            }]
+        });
+        if (lastExecutions.length > 0) {
+            await executionsStore.loadExecution({
+                id: lastExecutions[0].id
+            });
+        }
+    })
+
+    const activeTab = ref(tabs.value[0]);
 </script>
 
 <style lang="scss" scoped>
@@ -70,5 +101,11 @@
                 background-color: $base-blue-500;
             }
         }
+    }
+
+    .tab-content{
+        overflow: auto;
+        padding: 1rem;
+        background-color: var(--ks-background-panel);
     }
 </style>
