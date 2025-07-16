@@ -6,7 +6,6 @@ import graph from "./graph"
 import namespace from "./namespaces"
 import template from "./template"
 import editor from "./editor";
-import service from "./service"
 
 export default {
     modules: {
@@ -18,6 +17,5 @@ export default {
         auth,
         graph,
         editor,
-        service,
     }
 }
