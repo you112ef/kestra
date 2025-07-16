@@ -51,6 +51,10 @@ public class LocalStorage implements StorageInterface {
 
     protected Path getLocalPath(String tenantId, URI uri) {
         Path basePath = Paths.get(this.basePath.toAbsolutePath().toString(), tenantId);
+        return getLocalPath(uri, basePath);
+    }
+
+    private Path getLocalPath(URI uri, Path basePath) {
         if(uri == null) {
             return basePath;
         }
@@ -62,6 +66,14 @@ public class LocalStorage implements StorageInterface {
     @Override
     public InputStream get(String tenantId, @Nullable String namespace, URI uri) throws IOException {
         return new BufferedInputStream(new FileInputStream(getLocalPath(tenantId, uri)
+            .toAbsolutePath()
+            .toString())
+        );
+    }
+
+    @Override
+    public InputStream getGlobalResource(@Nullable String namespace, URI uri) throws IOException {
+        return new BufferedInputStream(new FileInputStream(getLocalPath(uri, basePath)
             .toAbsolutePath()
             .toString())
         );
@@ -121,9 +133,10 @@ public class LocalStorage implements StorageInterface {
 
     @Override
     public List<FileAttributes> list(String tenantId, @Nullable String namespace, URI uri) throws IOException {
-        try (Stream<Path> stream = Files.list(getLocalPath(tenantId, uri))) {
+        Path path = getLocalPath(tenantId, uri);
+        try (Stream<Path> stream = Files.list(path)) {
             return stream
-                .filter(path -> !path.getFileName().toString().endsWith(".metadata"))
+                .filter(file -> !file.getFileName().toString().endsWith(".metadata"))
                 .map(throwFunction(file -> {
                     URI relative = URI.create(
                         getLocalPath(tenantId, null).relativize(
@@ -136,6 +149,12 @@ public class LocalStorage implements StorageInterface {
         } catch (NoSuchFileException e) {
             throw new FileNotFoundException(e.getMessage());
         }
+    }
+
+    @Override
+    public List<FileAttributes> listGlobalResource(@Nullable String namespace, URI uri) throws IOException {
+        Path path = getLocalPath(tenantId, uri);
+        return listResources(tenantId, namespace, path);
     }
 
     @Override
@@ -179,10 +198,26 @@ public class LocalStorage implements StorageInterface {
 
     @Override
     public URI createDirectory(String tenantId, @Nullable String namespace, URI uri) {
+        validateDirectoryUri(uri);
+        File file = getLocalPath(tenantId, uri).toFile();
+        return createDirectory(uri, file);
+    }
+
+    @Override
+    public URI createGlobalDirectory(@Nullable String namespace, URI uri) {
+        validateDirectoryUri(uri);
+        File file = getLocalPath(uri, basePath).toFile();
+        return createDirectory(uri, file);
+    }
+
+    private static void validateDirectoryUri(URI uri) {
         if (uri == null || uri.getPath().isEmpty()) {
             throw new IllegalArgumentException("Unable to create a directory with empty url.");
         }
-        File file = getLocalPath(tenantId, uri).toFile();
+    }
+
+
+    private static URI createDirectory(URI uri, File file) {
         if (!file.exists() && !file.mkdirs()) {
             throw new RuntimeException("Cannot create directory: " + file.getAbsolutePath());
         }

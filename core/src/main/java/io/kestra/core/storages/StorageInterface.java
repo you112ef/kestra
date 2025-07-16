@@ -43,6 +43,9 @@ public interface StorageInterface extends AutoCloseable, Plugin {
     InputStream get(String tenantId, @Nullable String namespace, URI uri) throws IOException;
 
     @Retryable(includes = {IOException.class}, excludes = {FileNotFoundException.class})
+    InputStream getGlobalResource(@Nullable String namespace, URI uri) throws IOException;
+
+    @Retryable(includes = {IOException.class}, excludes = {FileNotFoundException.class})
     StorageObject getWithMetadata(String tenantId, @Nullable String namespace, URI uri) throws IOException;
 
     /**
@@ -57,6 +60,9 @@ public interface StorageInterface extends AutoCloseable, Plugin {
     @Retryable(includes = {IOException.class}, excludes = {FileNotFoundException.class})
     List<FileAttributes> list(String tenantId, @Nullable String namespace, URI uri) throws IOException;
 
+    @Retryable(includes = {IOException.class}, excludes = {FileNotFoundException.class})
+    List<FileAttributes> listGlobalResources(@Nullable String namespace, URI uri) throws IOException;
+
     /**
      * Whether the uri points to a file/object that exist in the internal storage.
      *
@@ -67,6 +73,21 @@ public interface StorageInterface extends AutoCloseable, Plugin {
     @SuppressWarnings("try")
     default boolean exists(String tenantId, @Nullable String namespace, URI uri) {
         try (InputStream ignored = get(tenantId, namespace, uri)) {
+            return true;
+        } catch (IOException ieo) {
+            return false;
+        }
+    }
+
+    /**
+     * Whether the uri points to a file/object that exist in the global internal storage.
+     *
+     * @param uri      the URI of the file/object in the internal storage.
+     * @return true if the uri points to a file/object that exist in the internal storage.
+     */
+    @SuppressWarnings("try")
+    default boolean existsGlobalResource(@Nullable String namespace, URI uri) {
+        try (InputStream ignored = getGlobalResource(namespace, uri)) {
             return true;
         } catch (IOException ieo) {
             return false;
@@ -89,6 +110,9 @@ public interface StorageInterface extends AutoCloseable, Plugin {
 
     @Retryable(includes = {IOException.class})
     URI createDirectory(String tenantId, @Nullable String namespace, URI uri) throws IOException;
+
+    @Retryable(includes = {IOException.class})
+    URI createGlobalDirectory(@Nullable String namespace, URI uri) throws IOException;
 
     @Retryable(includes = {IOException.class}, excludes = {FileNotFoundException.class})
     URI move(String tenantId, @Nullable String namespace, URI from, URI to) throws IOException;
