@@ -283,23 +283,26 @@ export const useExecutionsStore = defineStore("executions", () => {
     const route = useRoute();
 
     const throttledExecutionUpdate = throttle((executionEvent: MessageEvent) => {
-        const execution = JSON.parse(executionEvent.data);
-            const _flow = flow.value;
+        const _execution = JSON.parse(executionEvent.data);
 
-            if ((!_flow ||
-                execution.flowId !== _flow.id ||
-                execution.namespace !== _flow.namespace ||
-                execution.flowRevision !== _flow.revision)
-            ) {
-                loadFlowForExecutionByExecutionId(
-                    {
-                        id: execution.id,
-                        revision: route.query.revision?.toString()
-                    }
-                );
-            }
+        const _flow = flow.value;
 
-            execution.value = execution;
+        if ((!_flow ||
+            _execution.flowId !== _flow.id ||
+            _execution.namespace !== _flow.namespace ||
+            _execution.flowRevision !== _flow.revision)
+        ) {
+            loadFlowForExecutionByExecutionId(
+                {
+                    id: _execution.id,
+                    revision: route.query.revision?.toString()
+                }
+            ).then(() => {
+                execution.value = _execution
+            });
+        }
+
+        execution.value = _execution;
     }, 500);
 
 

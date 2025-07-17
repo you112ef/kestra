@@ -7,7 +7,9 @@
             :tabs="tabs"
         />
     </template>
-    <div v-else class="full-space" v-loading="!ready" />
+    <div v-else class="full-space" v-loading="true">
+        {{ executionsStore.execution?.id }}
+    </div>
 </template>
 
 <script>
@@ -61,7 +63,7 @@
                 }
                 // if we change the execution id, we need to close the sse
                 if (this.executionsStore.execution && this.$route.params.id != this.executionsStore.execution.id) {
-                    this.closeSSE();
+                    this.executionsStore.closeSSE();
                     window.removeEventListener("popstate", this.follow)
                     this.executionsStore.execution = undefined;
                     this.$store.commit("flow/setFlow", undefined);
@@ -73,12 +75,6 @@
             follow() {
                 this.previousExecutionId = this.$route.params.id;
                 this.executionsStore.followExecution(this.$route.params, this.$t);
-            },
-            closeSSE() {
-                if (this.sse) {
-                    this.sse.close();
-                    this.sse = undefined;
-                }
             },
             getTabs() {
 
@@ -193,7 +189,7 @@
             }
         },
         beforeUnmount() {
-            this.closeSSE();
+            this.executionsStore.closeSSE();
             window.removeEventListener("popstate", this.follow)
             this.executionsStore.execution = undefined;
             this.$store.commit("flow/setFlow", undefined);
