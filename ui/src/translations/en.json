@@ -1436,7 +1436,9 @@
     },
     "playground": {
       "empty": "Click the \"Run task\" button to test your workflow with a simulated execution.",
-      "toggle": "Playground"
+      "toggle": "Playground",
+      "run_task": "Run Task",
+      "run_all_tasks": "Run All Tasks"
     },
     "submit": "Submit",
     "to toggle": "to toggle",

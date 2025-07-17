@@ -41,7 +41,8 @@
             v-if="isNamespace || isAllowedEdit"
             :icon="ContentSave"
             @click="forwardEvent('save', $event)"
-            :type="playgroundStore.enabled ? 'playground' : 'primary'"
+            :type="playgroundStore.enabled ? undefined : 'primary'"
+            :class="{'el-button--playground': playgroundStore.enabled}"
             :disabled="hasErrors || !canSave"
             class="edit-flow-save-button"
         >

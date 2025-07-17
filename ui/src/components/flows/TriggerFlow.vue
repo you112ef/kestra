@@ -1,7 +1,7 @@
 <template>
     <div class="trigger-flow-wrapper">
-        <el-button v-if="playgroundStore.enabled" id="run-all-button" :icon="icon.Play" type="playground" :disabled="isDisabled()" @click="onClick()">
-            {{ $t("run all tasks") }}
+        <el-button v-if="playgroundStore.enabled" id="run-all-button" :icon="icon.Play" class="el-button--playground" :disabled="isDisabled()" @click="onClick()">
+            {{ $t("playground.run_all_tasks") }}
         </el-button>
         <el-button v-else id="execute-button" :class="{'onboarding-glow': coreStore.guidedProperties.tourStarted}" :icon="icon.Flash" :type="type" :disabled="isDisabled()" @click="onClick()">
             {{ $t("execute") }}
@@ -10,7 +10,7 @@
             <template #header>
                 <span v-html="$t('execute the flow', {id: flowId})" />
             </template>
-            <flow-run @execution-trigger="closeModal" :redirect="true" />
+            <flow-run @execution-trigger="closeModal" :redirect="!playgroundStore.enabled" />
         </el-dialog>
         <el-dialog v-if="isSelectFlowOpen" v-model="isSelectFlowOpen" destroy-on-close :before-close="() => reset()" :append-to-body="true">
             <el-form
@@ -46,7 +46,7 @@
                 </el-form-item>
                 <el-form-item v-if="localFlow" :label="$t('inputs')">
                     <div class="w-100">
-                        <flow-run @execution-trigger="closeModal" :redirect="true" />
+                        <flow-run @execution-trigger="closeModal" :redirect="!playgroundStore.enabled" />
                     </div>
                 </el-form-item>
             </el-form>
