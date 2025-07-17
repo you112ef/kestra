@@ -17,19 +17,26 @@
                 :is="activeTab.component"
                 :key="activeTab.name"
             />
+            <div v-else class="empty-state">
+                <p>
+                    <EmptyVisualPlayground />
+                    {{ t("playground.empty") }}
+                </p>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
     import {computed, ref, markRaw, onMounted, watch} from "vue";
+    import {useStore} from "vuex";
     import {useI18n} from "vue-i18n";
     import Gantt from "../executions/Gantt.vue";
     import Logs from "../executions/Logs.vue";
     import ExecutionOutput from "../executions/outputs/Wrapper.vue";
     import ExecutionMetric from "../executions/ExecutionMetric.vue";
     import {useExecutionsStore} from "../../stores/executions";
-    import {useStore} from "vuex";
+    import EmptyVisualPlayground from "../../assets/empty_visuals/playground.svg"
 
     const {t} = useI18n();
 

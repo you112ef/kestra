@@ -1,6 +1,9 @@
 <template>
     <div class="trigger-flow-wrapper">
-        <el-button id="execute-button" :class="{'onboarding-glow': coreStore.guidedProperties.tourStarted}" :icon="icon.Flash" :type="type" :disabled="isDisabled()" @click="onClick()">
+        <el-button v-if="playgroundStore.enabled" id="run-all-button" :icon="icon.Play" type="playground" :disabled="isDisabled()" @click="onClick()">
+            {{ $t("run all tasks") }}
+        </el-button>
+        <el-button v-else id="execute-button" :class="{'onboarding-glow': coreStore.guidedProperties.tourStarted}" :icon="icon.Flash" :type="type" :disabled="isDisabled()" @click="onClick()">
             {{ $t("execute") }}
         </el-button>
         <el-dialog id="execute-flow-dialog" v-if="isOpen" v-model="isOpen" destroy-on-close :show-close="!coreStore.guidedProperties.tourStarted" :before-close="(done) => beforeClose(done)" :append-to-body="true">
@@ -56,6 +59,7 @@
     import FlowRun from "./FlowRun.vue";
     import {mapState} from "vuex";
     import Flash from "vue-material-design-icons/Flash.vue";
+    import Play from "vue-material-design-icons/Play.vue";
     import {shallowRef} from "vue";
     import {pageFromRoute} from "../../utils/eventsRouter";
     import FlowWarningDialog from "./FlowWarningDialog.vue";
@@ -63,6 +67,7 @@
     import {useApiStore} from "../../stores/api";
     import {useCoreStore} from "../../stores/core";
     import {useExecutionsStore} from "../../stores/executions";
+    import {usePlaygroundStore} from "../../stores/playground";
 
     export default {
         components: {
@@ -97,7 +102,8 @@
                 localFlow: undefined,
                 localNamespace: undefined,
                 icon: {
-                    Flash: shallowRef(Flash)
+                    Flash: shallowRef(Flash),
+                    Play: shallowRef(Play)
                 }
             };
         },
@@ -163,7 +169,7 @@
         computed: {
             ...mapState("flow", ["executeFlow"]),
             ...mapState("auth", ["user"]),
-            ...mapStores(useApiStore, useCoreStore, useExecutionsStore),
+            ...mapStores(useApiStore, useCoreStore, useExecutionsStore, usePlaygroundStore),
             computedFlowId() {
                 return this.flowId || this.localFlow?.id;
             },

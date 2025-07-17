@@ -1,11 +1,14 @@
 <template>
-    <el-switch v-model="store.state.flow.playgroundMode" active-text="Playground" class="toggle" />
+    <el-switch v-model="playgroundStore.enabled" :active-text="t('playground.toggle')" class="toggle" />
 </template>
 
 <script setup lang="ts">
-    import {useStore} from "vuex";
+    import {useI18n} from "vue-i18n";
+    import {usePlaygroundStore} from "../../stores/playground";
 
-    const store = useStore();
+    const {t} = useI18n();
+    const playgroundStore = usePlaygroundStore();
+
 </script>
 
 <style lang="scss" scoped>

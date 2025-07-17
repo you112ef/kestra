@@ -8,7 +8,7 @@ interface LogsState {
     results: any[];
 }
 
-interface Execution{
+export interface Execution{
     taskRunList:  {
         id: string,
         taskId: string,
@@ -30,6 +30,7 @@ interface ExecutionsState {
     flowGraph: any | undefined;
     namespaces: string[];
     flowsExecutable: any[];
+    playgroundRuns: Execution[];
 }
 
 export const useExecutionsStore = defineStore("executions", {
@@ -49,8 +50,14 @@ export const useExecutionsStore = defineStore("executions", {
         flow: undefined,
         flowGraph: undefined,
         namespaces: [],
-        flowsExecutable: []
+        flowsExecutable: [],
+        playgroundRuns: [],
     }),
+    getters: {
+        latestPlaygroundRun: (state) => {
+            return state.playgroundRuns.length > 0 ? state.playgroundRuns[state.playgroundRuns.length - 1] : undefined;
+        }
+    },
     actions: {
         restartExecution(options: { executionId: string; revision?: number }) {
             return this.$http.post(
@@ -217,7 +224,7 @@ export const useExecutionsStore = defineStore("executions", {
                 }
             })
         },
-        triggerExecution(options: { namespace: string; id: string; formData: any; labels?: string[]; scheduleDate?: string }) {
+        triggerExecution(options: { namespace: string; id: string; formData: any; labels?: string[]; scheduleDate?: string, kind?: "PLAYGROUND" }) {
             return this.$http.post(`${apiUrl(this.vuexStore)}/executions/${options.namespace}/${options.id}`, Utils.toFormData(options.formData), {
                 timeout: 60 * 60 * 1000,
                 headers: {

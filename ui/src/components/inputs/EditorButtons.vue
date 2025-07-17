@@ -41,7 +41,7 @@
             v-if="isNamespace || isAllowedEdit"
             :icon="ContentSave"
             @click="forwardEvent('save', $event)"
-            :type="store.state.flow.playgroundMode ? 'playground' : 'primary'"
+            :type="playgroundStore.enabled ? 'playground' : 'primary'"
             :disabled="hasErrors || !canSave"
             class="edit-flow-save-button"
         >
@@ -60,8 +60,10 @@
     import ContentCopy from "vue-material-design-icons/ContentCopy.vue";
     import ContentSave from "vue-material-design-icons/ContentSave.vue";
     import Download from "vue-material-design-icons/Download.vue";
+    import {usePlaygroundStore} from "../../stores/playground";
 
     const store = useStore();
+    const playgroundStore = usePlaygroundStore();
 
     const {t} = useI18n();
 
@@ -93,17 +95,3 @@
         return props.haveChange || props.isCreating;
     });
 </script>
-
-<style lang="scss" scoped>
-    @import "@kestra-io/ui-libs/src/scss/_color-palette";
-
-    .el-button--playground {
-        background-color: $base-blue-500;
-        &:hover {
-            background-color: $base-blue-400;
-        }
-        &:active {
-            background-color: $base-blue-600;
-        }
-    }
-</style>

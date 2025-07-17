@@ -74,6 +74,7 @@
     import {useCoreStore} from "../../stores/core";
     import {useMiscStore} from "../../stores/misc";
     import {useExecutionsStore} from "../../stores/executions";
+    import {usePlaygroundStore} from "../../stores/playground";
     import {executeTask} from "../../utils/submitTask"
     import InputsForm from "../../components/inputs/InputsForm.vue";
     import LabelInput from "../../components/labels/LabelInput.vue";
@@ -113,7 +114,7 @@
         },
         emits: ["executionTrigger", "updateInputs", "updateLabels"],
         computed: {
-            ...mapStores(useCoreStore, useMiscStore, useExecutionsStore),
+            ...mapStores(useCoreStore, useMiscStore, useExecutionsStore, usePlaygroundStore),
             flow() {
                 return this.executionsStore.flow
             },
@@ -178,7 +179,8 @@
                                     .map(label => `${label.key}:${label.value}`)
                             )],
                             scheduleDate: this.$moment(this.scheduleDate).tz(localStorage.getItem(TIMEZONE_STORAGE_KEY) ?? moment.tz.guess()).toISOString(true),
-                            nextStep: true
+                            nextStep: true,
+                            kind: this.playgroundStore.enabled ? "PLAYGROUND" : undefined
                         })
                         this.$emit("executionTrigger");
                     });

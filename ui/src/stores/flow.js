@@ -40,7 +40,6 @@ export default {
         haveChange: false,
         expandedSubflows: [],
         metadata: undefined,
-        playgroundMode: false,
     },
 
     actions: {
@@ -708,9 +707,6 @@ export default {
         },
         setMetadata(state, value) {
             state.metadata = value
-        },
-        setPlaygroundMode(state, value) {
-            state.playgroundMode = value;
         },
     },
     getters: {

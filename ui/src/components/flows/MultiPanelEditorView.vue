@@ -1,6 +1,6 @@
 <template>
     <div class="multi-panel-editor-wrapper">
-        <div class="tabs-wrapper" :class="{playgroundMode: store.state.flow.playgroundMode}">
+        <div class="tabs-wrapper" :class="{playgroundMode}">
             <div class="tabs">
                 <button
                     v-for="element of EDITOR_ELEMENTS"
@@ -19,7 +19,7 @@
                 <Pane>
                     <MultiPanelTabs v-model="panels" @remove-tab="onRemoveTab" />
                 </Pane>
-                <Pane v-if="store.state.flow.playgroundMode">
+                <Pane v-if="playgroundMode">
                     <FlowPlayground />
                 </Pane>
             </Splitpanes>
@@ -43,6 +43,7 @@
     import {useTopologyPanels} from "./useTopologyPanels";
 
     import {getCreateTabKey, getEditTabKey, setupInitialNoCodeTab, setupInitialNoCodeTabIfExists, useNoCodePanels} from "./useNoCodePanels";
+    import {usePlaygroundStore} from "../../stores/playground";
 
     function isTabFlowRelated(element: Tab){
         return ["code", "nocode", "topology"].includes(element.value)
@@ -57,6 +58,10 @@
     onMounted(() => {
         store.state.editor.explorerVisible = false
     })
+
+    const playgroundStore = usePlaygroundStore()
+
+    const playgroundMode = computed(() => playgroundStore.enabled)
 
     /**
      * Focus or activate a tab from it's value
