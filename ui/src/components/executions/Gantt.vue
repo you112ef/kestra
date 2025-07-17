@@ -4,6 +4,14 @@
         :execution="execution"
     />
     <el-card id="gantt" shadow="never" v-else-if="execution && executionsStore.flow">
+        <template #header>
+            <div class="d-flex">
+                <duration class="th text-end" :histories="execution.state.histories" />
+                <span class="text-end" v-for="(date, i) in dates" :key="i">
+                    {{ date }}
+                </span>
+            </div>
+        </template>
         <template #default>
             <DynamicScroller
                 :items="filteredSeries"
@@ -36,16 +44,11 @@
                                     </span>
                                 </el-tooltip>
                                 <div>
-                                    <el-tooltip placement="right" :persistent="false" :hide-after="0" effect="light">
+                                    <el-tooltip v-if="item.attempts > 1" placement="right" :persistent="false" :hide-after="0" effect="light">
                                         <template #content>
                                             <span>{{ $t("this_task_has") }} {{ item.attempts }} {{ $t("attempts").toLowerCase() }}.</span>
                                         </template>
-                                        <span>
-                                            <AlertIcon
-                                                v-if="item.attempts > 1"
-                                                class="attempt_warn me-3"
-                                            />
-                                        </span>
+                                        <Warning class="attempt_warn me-3" />
                                     </el-tooltip>
                                 </div>
                                 <div :style="'width: ' + (100 / (dates.length + 1)) * dates.length + '%'">
@@ -93,13 +96,14 @@
 <script>
     import TaskRunDetails from "../logs/TaskRunDetails.vue";
     import {State} from "@kestra-io/ui-libs"
+    import Duration from "../layout/Duration.vue";
     import Utils from "../../utils/utils";
     import FlowUtils from "../../utils/flowUtils";
     import "vue-virtual-scroller/dist/vue-virtual-scroller.css"
     import {DynamicScroller, DynamicScrollerItem} from "vue-virtual-scroller";
     import ChevronRight from "vue-material-design-icons/ChevronRight.vue";
     import ChevronDown from "vue-material-design-icons/ChevronDown.vue";
-    import AlertIcon from "vue-material-design-icons/Alert.vue";
+    import Warning from "vue-material-design-icons/Alert.vue";
     import ExecutionPending from "./ExecutionPending.vue";
     import {mapStores} from "pinia";
     import {useExecutionsStore} from "../../stores/executions";
@@ -109,9 +113,10 @@
     export default {
         components: {
             DynamicScroller,
-            AlertIcon,
+            Warning,
             DynamicScrollerItem,
             TaskRunDetails,
+            Duration,
             ChevronRight,
             ChevronDown,
             ExecutionPending
