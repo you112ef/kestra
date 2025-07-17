@@ -318,7 +318,7 @@
         },
         mounted() {
             if (this.targetExecutionId) {
-                this.followExecution(this.targetExecutionId);
+                this.followExecution(this.targetExecutionId, this.$t);
             }
 
             this.autoExpandBasedOnSettings();
@@ -480,7 +480,7 @@
             },
             followExecution(executionId) {
                 this.executionsStore
-                    .followExecution({id: executionId})
+                    .followExecution({id: executionId}, this.$t)
                     .then(sse => {
                         this.executionSSE = sse;
                         this.executionSSE.onmessage = executionEvent => {

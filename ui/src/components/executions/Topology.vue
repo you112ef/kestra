@@ -235,7 +235,7 @@
                     return;
                 }
 
-                this.executionsStore.followExecution({id: executionId})
+                this.executionsStore.followExecution({id: executionId}, this.$t)
                     .then(sse => {
                         this.sseBySubflow[subflow] = sse;
                         sse.onmessage = (executionEvent) => {

@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-    import {computed, ref, markRaw, watch} from "vue";
+    import {computed, ref, markRaw, watch, onUnmounted} from "vue";
     import {useI18n} from "vue-i18n";
     import Gantt from "../executions/Gantt.vue";
     import Logs from "../executions/Logs.vue";
@@ -66,10 +66,15 @@
     watch(() => playgroundStore.latestExecution, (newValue) => {
         if (newValue) {
             activeTab.value = tabs.value[0]; // Reset to first tab when a new execution is loaded
-            executionsStore.followExecution(newValue);
+            executionsStore.followExecution(newValue, t);
         }
     });
+
     const activeTab = ref(tabs.value[0]);
+
+    onUnmounted(() => {
+        executionsStore.closeSSE();
+    });
 </script>
 
 <style lang="scss" scoped>

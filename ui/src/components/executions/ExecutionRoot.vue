@@ -27,8 +27,6 @@
     import Tabs from "../../components/Tabs.vue";
     import ExecutionRootTopBar from "./ExecutionRootTopBar.vue";
     import DemoAuditLogs from "../demo/AuditLogs.vue";
-
-    import throttle from "lodash/throttle";
     import {useExecutionsStore} from "../../stores/executions";
 
     export default {
@@ -41,25 +39,6 @@
             return {
                 sse: undefined,
                 previousExecutionId: undefined,
-                throttledExecutionUpdate: throttle(function (executionEvent) {
-                    let execution = JSON.parse(executionEvent.data);
-                    const flow = this.executionsStore.flow
-
-                    if ((!flow ||
-                        execution.flowId !== flow.id ||
-                        execution.namespace !== flow.namespace ||
-                        execution.flowRevision !== flow.revision)
-                    ) {
-                        this.executionsStore.loadFlowForExecutionByExecutionId(
-                            {
-                                id: execution.id,
-                                revision: this.$route.query.revision
-                            }
-                        );
-                    }
-
-                    this.executionsStore.execution = execution;
-                }, 500)
             };
         },
         created() {
@@ -92,44 +71,8 @@
         },
         methods: {
             follow() {
-                this.closeSSE();
                 this.previousExecutionId = this.$route.params.id;
-                this.executionsStore.followExecution(this.$route.params)
-                    .then(sse => {
-                        this.sse = sse;
-                        this.sse.onmessage = (executionEvent) => {
-                            const isEnd = executionEvent && executionEvent.lastEventId === "end";
-                            if (isEnd) {
-                                this.closeSSE();
-                            }
-                            // we are receiving a first "fake" event to force initializing the connection: ignoring it
-                            if (executionEvent.lastEventId !== "start") {
-                                this.throttledExecutionUpdate(executionEvent);
-                            }
-                            if (isEnd) {
-                                this.throttledExecutionUpdate.flush();
-                            }
-                        }
-                        // sse.onerror doesnt return the details of the error
-                        // but as our emitter can only throw an error on 404
-                        // we can safely assume that the error is a 404
-                        // if execution is not defined
-                        this.sse.onerror = () => {
-                            if (!this.executionsStore.execution) {
-                                this.coreStore.message = {
-                                    variant: "error",
-                                    title: this.$t("error"),
-                                    message: this.$t("errors.404.flow or execution"),
-                                };
-                            } else {
-                                this.coreStore.message = {
-                                    variant: "error",
-                                    title: this.$t("error"),
-                                    message: this.$t("something_went_wrong.loading_execution"),
-                                };
-                            }
-                        }
-                    });
+                this.executionsStore.followExecution(this.$route.params, this.$t);
             },
             closeSSE() {
                 if (this.sse) {

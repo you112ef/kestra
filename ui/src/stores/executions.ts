@@ -1,11 +1,12 @@
 import axios from "axios";
 import {defineStore} from "pinia";
-import {computed, ref} from "vue";
+import {ref} from "vue";
 import {apiUrl} from "override/utils/route";
 import Utils from "../utils/utils";
 import {useStore, Store} from "vuex";
-// import {useCoreStore} from "./core";
-// import {useI18n} from "vue-i18n";
+import {useCoreStore} from "./core";
+import {throttle} from "lodash";
+import {useRoute} from "vue-router";
 
 interface LogsState {
     total: number;
@@ -38,7 +39,6 @@ export const useExecutionsStore = defineStore("executions", () => {
     const flowGraph = ref<any | undefined>(undefined);
     const namespaces = ref<string[]>([]);
     const flowsExecutable = ref<any[]>([]);
-    const playgroundRuns = ref<Execution[]>([]);
 
     const store = useStore() as Store<any> & {
         $http: {
@@ -48,13 +48,7 @@ export const useExecutionsStore = defineStore("executions", () => {
         }
     };
 
-    // const coreStore = useCoreStore();
-    // const {t} = useI18n();
-
-    // Getters
-    const latestPlaygroundRun = computed(() => {
-        return playgroundRuns.value.length > 0 ? playgroundRuns.value[playgroundRuns.value.length - 1] : undefined;
-    });
+    const coreStore = useCoreStore();
 
     // Actions
     const restartExecution = (options: { executionId: string; revision?: number }) => {
@@ -277,8 +271,76 @@ export const useExecutionsStore = defineStore("executions", () => {
         return store.$http.delete(`${apiUrl(store)}/executions/by-query`, {params: options})
     }
 
-    const followExecution = (options: { id: string }) => {
-        return Promise.resolve(new EventSource(`${apiUrl(store)}/executions/${options.id}/follow`, {withCredentials: true}));
+    const sse = ref<EventSource | undefined>(undefined);
+
+    function closeSSE() {
+        if (sse.value) {
+            sse.value.close();
+            sse.value = undefined;
+        }
+    }
+
+    const route = useRoute();
+
+    const throttledExecutionUpdate = throttle((executionEvent: MessageEvent) => {
+        const execution = JSON.parse(executionEvent.data);
+            const _flow = flow.value;
+
+            if ((!_flow ||
+                execution.flowId !== _flow.id ||
+                execution.namespace !== _flow.namespace ||
+                execution.flowRevision !== _flow.revision)
+            ) {
+                loadFlowForExecutionByExecutionId(
+                    {
+                        id: execution.id,
+                        revision: route.query.revision?.toString()
+                    }
+                );
+            }
+
+            execution.value = execution;
+    }, 500);
+
+
+    const followExecution = (options: { id: string }, translate: (itn: string) => string) => {
+        closeSSE();
+        const serverSentEventSource = new EventSource(`${apiUrl(store)}/executions/${options.id}/follow`, {withCredentials: true});
+        sse.value = serverSentEventSource;
+        serverSentEventSource.onmessage = (executionEvent) => {
+            const isEnd = executionEvent && executionEvent.lastEventId === "end";
+            if (isEnd) {
+                closeSSE();
+            }
+            // we are receiving a first "fake" event to force initializing the connection: ignoring it
+            if (executionEvent.lastEventId !== "start") {
+                throttledExecutionUpdate(executionEvent);
+            }
+            if (isEnd) {
+                throttledExecutionUpdate.flush();
+            }
+        }
+
+        // sse.onerror doesnt return the details of the error
+        // but as our emitter can only throw an error on 404
+        // we can safely assume that the error is a 404
+        // if execution is not defined
+        serverSentEventSource.onerror = () => {
+            if (!execution.value) {
+                coreStore.message = {
+                    variant: "error",
+                    title: translate("error"),
+                    message: translate("errors.404.flow or execution"),
+                };
+            } else {
+                coreStore.message = {
+                    variant: "error",
+                    title: translate("error"),
+                    message: translate("something_went_wrong.loading_execution"),
+                };
+            }
+        }
+        return Promise.resolve();
     }
 
     const followLogs = (options: { id: string }) => {
@@ -416,7 +478,7 @@ export const useExecutionsStore = defineStore("executions", () => {
             });
     }
 
-    const loadFlowForExecutionByExecutionId = (options: { id: string }) => {
+    const loadFlowForExecutionByExecutionId = (options: { id: string, revision?: string }) => {
         return store.$http.get(`${apiUrl(store)}/executions/${options.id}/flow`)
             .then(response => {
                 flow.value = response.data;
@@ -496,15 +558,11 @@ export const useExecutionsStore = defineStore("executions", () => {
         logs,
         metrics,
         metricsTotal,
-        filePreview,
         subflowsExecutions,
         flow,
         flowGraph,
         namespaces,
         flowsExecutable,
-        playgroundRuns,
-        // Getters
-        latestPlaygroundRun,
         // Actions
         restartExecution,
         bulkRestartExecution,
@@ -533,6 +591,7 @@ export const useExecutionsStore = defineStore("executions", () => {
         deleteExecution,
         bulkDeleteExecution,
         queryDeleteExecution,
+        closeSSE,
         followExecution,
         followLogs,
         loadLogs,
