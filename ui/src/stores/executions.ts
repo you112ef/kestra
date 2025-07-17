@@ -306,7 +306,6 @@ export const useExecutionsStore = defineStore("executions", () => {
         execution.value = _execution;
     }, 500);
 
-
     const followExecution = (options: { id: string }, translate: (itn: string) => string) => {
         closeSSE();
         const serverSentEventSource = new EventSource(`${apiUrl(store)}/executions/${options.id}/follow`, {withCredentials: true});

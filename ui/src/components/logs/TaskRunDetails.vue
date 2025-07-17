@@ -15,23 +15,23 @@
                 :data-index="currentTaskRunIndex"
             >
                 <el-card class="attempt-wrapper">
-                    <task-run-line
+                    <TaskRunLine
                         :current-task-run="currentTaskRun"
                         :followed-execution="followedExecution"
                         :flow="flow"
                         :forced-attempt-number="forcedAttemptNumber"
                         :task-run-id="taskRunId"
-                        @toggle-show-attempt="toggleShowAttempt"
-                        @swap-displayed-attempt="swapDisplayedAttempt"
                         :selected-attempt-number-by-task-run-id="selectedAttemptNumberByTaskRunId"
                         :shown-attempts-uid="shownAttemptsUid"
                         :logs="filteredLogs"
+                        @toggle-show-attempt="toggleShowAttempt"
+                        @swap-displayed-attempt="swapDisplayedAttempt"
                         @update-logs="loadLogs"
                     >
                         <template #buttons>
                             <div id="buttons" />
                         </template>
-                    </task-run-line>
+                    </TaskRunLine>
                     <for-each-status
                         v-if="shouldDisplayProgressBar(currentTaskRun)"
                         :execution-id="currentTaskRun.executionId"
