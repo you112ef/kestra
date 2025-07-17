@@ -180,7 +180,7 @@
                             )],
                             scheduleDate: this.$moment(this.scheduleDate).tz(localStorage.getItem(TIMEZONE_STORAGE_KEY) ?? moment.tz.guess()).toISOString(true),
                             nextStep: true,
-                            kind: this.playgroundStore.enabled ? "PLAYGROUND" : undefined
+                            kind: this.playgroundStore.enabled ? "PLAYGROUND" : "NORMAL"
                         })
                         this.$emit("executionTrigger");
                     });

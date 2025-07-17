@@ -28,12 +28,13 @@
 </template>
 
 <script setup lang="ts">
-    import {computed, onMounted, Ref, watch} from "vue";
+    import {computed, onMounted, onUnmounted, Ref, watch} from "vue";
     import {useStorage} from "@vueuse/core";
     import {useStore} from "vuex";
     import {useI18n} from "vue-i18n";
     import {Splitpanes, Pane} from "splitpanes"
     import {useCoreStore} from "../../stores/core";
+    import {usePlaygroundStore} from "../../stores/playground";
 
     import MultiPanelTabs, {Panel, Tab} from "../MultiPanelTabs.vue";
     import FlowPlayground from "./FlowPlayground.vue";
@@ -41,9 +42,7 @@
     import {DEFAULT_ACTIVE_TABS, EDITOR_ELEMENTS} from "override/components/flows/panelDefinition";
     import {useCodePanels, useInitialCodeTabs} from "./useCodePanels";
     import {useTopologyPanels} from "./useTopologyPanels";
-
     import {getCreateTabKey, getEditTabKey, setupInitialNoCodeTab, setupInitialNoCodeTabIfExists, useNoCodePanels} from "./useNoCodePanels";
-    import {usePlaygroundStore} from "../../stores/playground";
 
     function isTabFlowRelated(element: Tab){
         return ["code", "nocode", "topology"].includes(element.value)
@@ -62,6 +61,11 @@
     const playgroundStore = usePlaygroundStore()
 
     const playgroundMode = computed(() => playgroundStore.enabled)
+
+    onUnmounted(() => {
+        playgroundStore.enabled = false
+        playgroundStore.clearExecutions()
+    })
 
     /**
      * Focus or activate a tab from it's value
