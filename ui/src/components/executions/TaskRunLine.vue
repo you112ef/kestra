@@ -175,6 +175,9 @@
     import ChevronRight from "vue-material-design-icons/ChevronRight.vue";
     import ChevronDown from "vue-material-design-icons/ChevronDown.vue";
     import DotsVertical from "vue-material-design-icons/DotsVertical.vue";
+    import Copy from "vue-material-design-icons/ContentCopy.vue";
+    import Delete from "vue-material-design-icons/Delete.vue";
+    import Download from "vue-material-design-icons/Download.vue";
     import WorkerInfo from "./WorkerInfo.vue";
     import {State} from "@kestra-io/ui-libs"
     import FlowUtils from "../../utils/flowUtils";
@@ -266,6 +269,15 @@
             },
             canReadFlow() {
                 return this.user.isAllowed(permission.FLOW, action.READ, this.$route.params.namespace)
+            },
+            Copy() {
+                return Copy;
+            },
+            Delete() {
+                return Delete;
+            },
+            Download() {
+                return Download;
             }
         },
         methods: {
