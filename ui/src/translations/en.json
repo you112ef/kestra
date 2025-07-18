@@ -1187,6 +1187,7 @@
         }
       },
       "select": {
+        "task": "Select a task",
         "tasks": "Select a task",
         "triggers": "Select a trigger",
         "errors": "Select a task",

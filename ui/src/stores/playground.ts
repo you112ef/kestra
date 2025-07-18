@@ -1,24 +1,37 @@
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import {defineStore} from "pinia";
 import {useStore} from "vuex";
 import {Execution, useExecutionsStore} from "./executions";
 import Inputs from "../utils/inputs";
+import {useUrlSearchParams} from "@vueuse/core"
 
 export const usePlaygroundStore = defineStore("playground", () => {
+    const params = useUrlSearchParams("history", {
+        removeFalsyValues: true
+    })
 
-    const enabled = ref<boolean>(false)
+    const enabled = ref<boolean>(params.playground === "1")
+    watch(enabled, (newValue) => {
+        if (newValue) {
+            params.playground = "1"
+        } else {
+            params.playground = ""
+        }
+    })
+
+
+
     const executions = ref<Execution[]>([])
-
-    const store = useStore();
-    const executionsStore = useExecutionsStore();
-
     function addExecution(execution: Execution) {
-            executions.value.push(execution);
+        executions.value.push(execution);
     }
 
     function clearExecutions() {
-            executions.value = [];
+        executions.value = [];
     }
+
+    const store = useStore();
+    const executionsStore = useExecutionsStore();
 
     async function runUntilTask(taskId?: string){
         await store.dispatch("flow/saveAll")
