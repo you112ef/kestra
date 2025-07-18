@@ -1,13 +1,11 @@
 <template>
-    <div v-if="playgroundStore.enabled && taskObject?.id" class="flow-playground">
+    <div v-if="playgroundStore.enabled && isTask && taskObject?.id" class="flow-playground">
         <el-button
             class="el-button--playground"
-            @click="() => runTaskUntil(taskObject?.id ?? '')"
+            @click="runFlowUntilTask(taskObject?.id ?? '')"
         >
             Run Task
         </el-button>
-
-        {{ parentPath }}
     </div>
     <el-form label-position="top">
         <el-form-item>
@@ -49,7 +47,7 @@
         SCHEMA_PATH_INJECTION_KEY,
         FIELDNAME_INJECTION_KEY, PARENT_PATH_INJECTION_KEY,
         BLOCK_SCHEMA_PATH_INJECTION_KEY,
-        RUN_UNTIL_TASK_FUNCTION_INJECTION_KEY
+        RUN_FLOW_UNTIL_TASK_FUNCTION_INJECTION_KEY
     } from "../code/injectionKeys";
     import {removeNullAndUndefined} from "../code/utils/cleanUp";
     import {removeRefPrefix, usePluginsStore} from "../../stores/plugins";
@@ -82,7 +80,9 @@
 
     const blockSchemaPath = inject(BLOCK_SCHEMA_PATH_INJECTION_KEY, "");
 
-    const runTaskUntil = inject(RUN_UNTIL_TASK_FUNCTION_INJECTION_KEY, () => {})
+    const runFlowUntilTask = inject(RUN_FLOW_UNTIL_TASK_FUNCTION_INJECTION_KEY, () => {})
+
+    const isTask = computed(() => ["task", "tasks"].includes(parentPath.split(".").pop() ?? ""));
 
     const isPluginDefaults = computed(() => {
         return parentPath.startsWith("pluginDefaults")
