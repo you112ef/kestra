@@ -3,7 +3,8 @@
         <button
             v-for="execution in executions"
             :key="execution.id"
-            @click="$emit('click', execution.id)"
+            @click="() => executionsStore.execution = execution"
+            :class="{active: executionsStore.execution?.id === execution.id}"
         >
             <p>{{ date(execution.state.startDate) }}</p>
             <p class="playground-duration">
@@ -19,16 +20,12 @@
 <script setup lang="ts">
     import Status from "../../Status.vue";
     import {date, humanizeDuration} from "../../../utils/filters";
+    import {Execution, useExecutionsStore} from "../../../stores/executions";
+
+    const executionsStore = useExecutionsStore();
 
     defineProps<{
-        executions: {
-            id: string;
-            state: {
-                current: string;
-                duration: string;
-                startDate: string;
-            };
-        }[];
+        executions: Execution[];
     }>();
 
     defineEmits<{
@@ -40,8 +37,8 @@
     .playground-log{
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        padding: 0.5rem 1rem;
+        gap: .5rem;
+        padding: 0.5rem 0.5rem;
     }
 
     .playground-log > button{
@@ -49,8 +46,9 @@
         border: none;
         background-color: var(--ks-background-panel);
         text-align: left;
-        padding: 0;
+        padding: .3rem .5rem;
         font-size: 0.8rem;
+        border-radius: 5px;
         grid-template-columns: 1fr 80px;
         grid-template-rows: 1fr 1fr;
         grid-template-areas:
@@ -59,6 +57,9 @@
         p{
             margin: 0;
             padding: 0;
+        }
+        &.active{
+            background-color: var(--ks-background-card-hover);
         }
     }
     .playground-status {
