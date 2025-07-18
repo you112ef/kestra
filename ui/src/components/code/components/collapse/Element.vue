@@ -8,7 +8,7 @@
             {{ identifier }}
         </div>
 
-        <button v-if="playgroundStore.enabled && element.id && isTask" @click.stop="runFlowUntilTask(element.id)" type="button" class="playground-run-task">
+        <button v-if="playgroundStore.enabled && element.id && isTask" @click.stop="playgroundStore.runUntilTask(element.id)" type="button" class="playground-run-task">
             <PlayIcon />
         </button>
 
@@ -35,8 +35,7 @@
 
     import {DeleteOutline, ChevronUp, ChevronDown} from "../../utils/icons";
     import {
-        EDIT_TASK_FUNCTION_INJECTION_KEY,
-        RUN_FLOW_UNTIL_TASK_FUNCTION_INJECTION_KEY
+        EDIT_TASK_FUNCTION_INJECTION_KEY
     } from "../../injectionKeys";
 
     import TaskIcon from "@kestra-io/ui-libs/src/components/misc/TaskIcon.vue";
@@ -66,11 +65,6 @@
 
     const editTask = inject(
         EDIT_TASK_FUNCTION_INJECTION_KEY,
-        () => {},
-    );
-
-    const runFlowUntilTask = inject(
-        RUN_FLOW_UNTIL_TASK_FUNCTION_INJECTION_KEY,
         () => {},
     );
 

@@ -2,7 +2,7 @@
     <div v-if="playgroundStore.enabled && isTask && taskObject?.id" class="flow-playground">
         <el-button
             class="el-button--playground"
-            @click="runFlowUntilTask(taskObject?.id ?? '')"
+            @click="playgroundStore.runUntilTask(taskObject?.id)"
         >
             Run Task
         </el-button>
@@ -47,7 +47,6 @@
         SCHEMA_PATH_INJECTION_KEY,
         FIELDNAME_INJECTION_KEY, PARENT_PATH_INJECTION_KEY,
         BLOCK_SCHEMA_PATH_INJECTION_KEY,
-        RUN_FLOW_UNTIL_TASK_FUNCTION_INJECTION_KEY
     } from "../code/injectionKeys";
     import {removeNullAndUndefined} from "../code/utils/cleanUp";
     import {removeRefPrefix, usePluginsStore} from "../../stores/plugins";
@@ -79,8 +78,6 @@
     provide(SCHEMA_PATH_INJECTION_KEY, computed(() => `#/definitions/${selectedTaskType.value}`))
 
     const blockSchemaPath = inject(BLOCK_SCHEMA_PATH_INJECTION_KEY, "");
-
-    const runFlowUntilTask = inject(RUN_FLOW_UNTIL_TASK_FUNCTION_INJECTION_KEY, () => {})
 
     const isTask = computed(() => ["task", "tasks"].includes(parentPath.split(".").pop() ?? ""));
 

@@ -85,7 +85,11 @@
     import moment from "moment-timezone";
 
     export default {
-        components: {LabelInput, InputsForm, Curl},
+        components: {
+            LabelInput,
+            InputsForm,
+            Curl
+        },
         props: {
             redirect: {
                 type: Boolean,
@@ -167,7 +171,6 @@
                             return false;
                         }
 
-
                         executeTask(this, this.flow, this.inputs, {
                             redirect: this.redirect,
                             newTab: this.newTab,
@@ -180,7 +183,6 @@
                             )],
                             scheduleDate: this.$moment(this.scheduleDate).tz(localStorage.getItem(TIMEZONE_STORAGE_KEY) ?? moment.tz.guess()).toISOString(true),
                             nextStep: true,
-                            kind: this.playgroundStore.enabled ? "PLAYGROUND" : "NORMAL",
                         })
                         this.$emit("executionTrigger");
                     });

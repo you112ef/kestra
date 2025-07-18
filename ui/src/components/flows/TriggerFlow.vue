@@ -1,12 +1,12 @@
 <template>
     <div class="trigger-flow-wrapper">
-        <el-button v-if="playgroundStore.enabled" id="run-all-button" :icon="icon.Play" class="el-button--playground" :disabled="isDisabled()" @click="onClick()">
+        <el-button v-if="playgroundStore.enabled" id="run-all-button" :icon="icon.Play" class="el-button--playground" :disabled="isDisabled()" @click="playgroundStore.runUntilTask()">
             {{ $t("playground.run_all_tasks") }}
         </el-button>
         <el-button v-else id="execute-button" :class="{'onboarding-glow': coreStore.guidedProperties.tourStarted}" :icon="icon.Flash" :type="type" :disabled="isDisabled()" @click="onClick()">
             {{ $t("execute") }}
         </el-button>
-        <el-dialog id="execute-flow-dialog" v-if="isOpen" v-model="isOpen" destroy-on-close :show-close="!coreStore.guidedProperties.tourStarted" :before-close="(done) => beforeClose(done)" :append-to-body="true">
+        <el-dialog id="execute-flow-dialog" v-model="isOpen" destroy-on-close :show-close="!coreStore.guidedProperties.tourStarted" :before-close="(done) => beforeClose(done)" :append-to-body="true">
             <template #header>
                 <span v-html="$t('execute the flow', {id: flowId})" />
             </template>
@@ -127,19 +127,22 @@
                     this.$toast().confirm(FlowWarningDialog, () => (this.toggleModal()), true, null);
                 }
                 else if (this.computedNamespace !== undefined && this.computedFlowId !== undefined) {
-                    this.toggleModal()
+                    this.toggleModal(true)
                 }
                 else {
                     this.executionsStore.loadNamespaces();
                     this.isSelectFlowOpen = !this.isSelectFlowOpen;
                 }
             },
-            async toggleModal() {
-                if (!this.isOpen && this.flowId && this.namespace) {
+            async toggleModal(newValue) {
+                if (newValue === undefined) {
+                    newValue = !this.isOpen;
+                }
+                if (newValue && this.flowId && this.namespace) {
                     // wait for flow to be set before opening the dialog
                     await this.loadDefinition();
                 }
-                this.isOpen = !this.isOpen;
+                this.isOpen = newValue;
             },
             closeModal() {
                 this.isOpen = false;
