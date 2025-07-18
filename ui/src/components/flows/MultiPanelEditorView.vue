@@ -24,6 +24,7 @@
                 </Pane>
             </Splitpanes>
         </div>
+        <KeyShortcuts />
     </div>
 </template>
 
@@ -39,9 +40,12 @@
     import MultiPanelTabs, {Panel, Tab} from "../MultiPanelTabs.vue";
     import FlowPlayground from "./FlowPlayground.vue";
     import EditorButtonsWrapper from "../inputs/EditorButtonsWrapper.vue";
+    import KeyShortcuts from "../inputs/KeyShortcuts.vue";
     import {DEFAULT_ACTIVE_TABS, EDITOR_ELEMENTS} from "override/components/flows/panelDefinition";
     import {useCodePanels, useInitialCodeTabs} from "./useCodePanels";
     import {useTopologyPanels} from "./useTopologyPanels";
+    import {useKeyShortcuts} from "../../utils/useKeyShortcuts";
+
     import {getCreateTabKey, getEditTabKey, setupInitialNoCodeTab, setupInitialNoCodeTabIfExists, useNoCodePanels} from "./useNoCodePanels";
 
     function isTabFlowRelated(element: Tab){
@@ -52,6 +56,7 @@
 
     const store = useStore()
     const coreStore = useCoreStore()
+    const {showKeyShortcuts} = useKeyShortcuts()
     const flow = computed(() => store.state.flow.flow)
 
     onMounted(() => {
@@ -79,6 +84,12 @@
     }
 
     function setTabValue(tabValue: string){
+        // Show dialog instead of creating panel
+        if(tabValue === "keyshortcuts"){
+            showKeyShortcuts();
+            return;
+        }
+        
         if(openTabs.value.includes(tabValue)){
             focusTab(tabValue)
             return

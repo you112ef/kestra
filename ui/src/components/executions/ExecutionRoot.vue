@@ -29,6 +29,11 @@
     import Tabs from "../../components/Tabs.vue";
     import ExecutionRootTopBar from "./ExecutionRootTopBar.vue";
     import DemoAuditLogs from "../demo/AuditLogs.vue";
+
+    import ExecutionMetric from "./ExecutionMetric.vue";
+    import ExecutionDependencies from "./ExecutionDependencies.vue";
+
+    import throttle from "lodash/throttle";
     import {useExecutionsStore} from "../../stores/executions";
 
     export default {
@@ -115,6 +120,14 @@
                         name: "metrics",
                         component: ExecutionMetric,
                         title: this.$t("metrics")
+                    },
+                    {
+                        name: "dependencies",
+                        component: ExecutionDependencies,
+                        title: title("dependencies"),
+                        props: {
+                            isReadOnly: true,
+                        },
                     },
                     {
                         name: "auditlogs",
