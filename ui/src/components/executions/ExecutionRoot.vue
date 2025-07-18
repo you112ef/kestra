@@ -30,10 +30,8 @@
     import ExecutionRootTopBar from "./ExecutionRootTopBar.vue";
     import DemoAuditLogs from "../demo/AuditLogs.vue";
 
-    import ExecutionMetric from "./ExecutionMetric.vue";
     import ExecutionDependencies from "./ExecutionDependencies.vue";
 
-    import throttle from "lodash/throttle";
     import {useExecutionsStore} from "../../stores/executions";
 
     export default {
@@ -124,7 +122,7 @@
                     {
                         name: "dependencies",
                         component: ExecutionDependencies,
-                        title: title("dependencies"),
+                        title: this.$t("dependencies"),
                         props: {
                             isReadOnly: true,
                         },
