@@ -2,6 +2,8 @@ import type {ComputedRef, InjectionKey, Ref} from "vue"
 import {TopologyClickParams} from "./utils/types"
 import {Panel} from "../MultiPanelTabs.vue"
 
+export const RUN_UNTIL_TASK_FUNCTION_INJECTION_KEY = Symbol("run-until-task-function-injection-key") as InjectionKey<(taskId: string) => void>
+
 export const BLOCK_SCHEMA_PATH_INJECTION_KEY = Symbol("block-schema-path-injection-key") as InjectionKey<string>
 export const SCHEMA_PATH_INJECTION_KEY = Symbol("schema-path-injection-key") as InjectionKey<ComputedRef<string>>
 /**
