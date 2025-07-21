@@ -85,7 +85,6 @@
 
     watch(() => playgroundStore.latestExecution, (newValue) => {
         if (newValue) {
-            activeTab.value = tabs.value[0]; // Reset to first tab when a new execution is loaded
             executionsStore.followExecution(newValue, t);
         }
     });

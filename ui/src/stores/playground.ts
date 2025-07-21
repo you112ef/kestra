@@ -51,6 +51,20 @@ export const usePlaygroundStore = defineStore("playground", () => {
         addExecution(execution);
     }
 
+    function updateExecution(execution: Execution) {
+        const index = executions.value.findIndex(e => e.id === execution.id);
+        if (index !== -1) {
+            executions.value[index] = execution;
+        }
+    }
+
+    // when following an execution, the status changes after creation
+    watch(() => executionsStore.execution, (newValue) => {
+        if (newValue) {
+            updateExecution(newValue);
+        }
+    })
+
     return {
         enabled,
         executions,
