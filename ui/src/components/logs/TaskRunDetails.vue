@@ -230,11 +230,6 @@
                 this.rawLogs = [];
                 this.loadLogs(this.followedExecution.id);
             },
-            execution: function () {
-                if (this.execution && this.execution.state.current !== State.RUNNING && this.execution.state.current !== State.PAUSED) {
-                    this.closeExecutionSSE();
-                }
-            },
             currentTaskRuns: {
                 handler(taskRuns) {
                     // by default we preselect the last attempt for each task run
@@ -256,6 +251,14 @@
                 handler: function (flowSource) {
                     if (flowSource) {
                         this.flow = flowSource;
+                    }
+                },
+                immediate: true
+            },
+            "followedExecution.id": {
+                handler: function (executionId, oldExecutionId) {
+                    if (executionId && executionId !== oldExecutionId) {
+                        this.followExecution(executionId);
                     }
                 },
                 immediate: true
@@ -317,10 +320,6 @@
             }
         },
         mounted() {
-            if (this.targetExecutionId) {
-                this.followExecution(this.targetExecutionId, this.$t);
-            }
-
             this.autoExpandBasedOnSettings();
         },
         computed: {
@@ -479,6 +478,7 @@
                     this.showLogs
             },
             followExecution(executionId) {
+                this.closeExecutionSSE();
                 this.executionsStore
                     .followExecution({id: executionId}, this.$t)
                     .then(sse => {
