@@ -70,7 +70,7 @@ class ScriptServiceTest {
     void replaceInternalStorageUnicode() throws IOException {
         var runContext = runContextFactory.of();
 
-        Path path = Path.of("/tmp/unittest/main/file-龍.txt");
+        Path path = Path.of("/tmp/unittest/file-龍.txt");
         if (!path.toFile().exists()) {
             Files.createFile(path);
         }
