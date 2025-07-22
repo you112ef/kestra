@@ -134,6 +134,12 @@
     const flowParsed = computed(() => store.getters["flow/flowParsed"]);
     const save = async () => {
         const result = await store.dispatch("flow/save", {content: editorDomElement.value.$refs.monacoEditor.value})
+
+        store.commit("editor/setTabDirty", {
+            path: props.path,
+            dirty: false
+        });
+        
         if(result === "redirect_to_update"){
             await router.push({
                 name: "flows/update",
