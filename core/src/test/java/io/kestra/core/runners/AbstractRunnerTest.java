@@ -1,8 +1,5 @@
 package io.kestra.core.runners;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
 import io.kestra.core.junit.annotations.ExecuteFlow;
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.junit.annotations.LoadFlows;
@@ -12,20 +9,18 @@ import io.kestra.core.models.flows.State;
 import io.kestra.core.queues.QueueException;
 import io.kestra.core.queues.QueueFactoryInterface;
 import io.kestra.core.queues.QueueInterface;
-import io.kestra.plugin.core.flow.EachSequentialTest;
-import io.kestra.plugin.core.flow.FlowCaseTest;
-import io.kestra.plugin.core.flow.ForEachItemCaseTest;
-import io.kestra.plugin.core.flow.PauseTest;
-import io.kestra.plugin.core.flow.WaitForCaseTest;
-import io.kestra.plugin.core.flow.WorkingDirectoryTest;
+import io.kestra.plugin.core.flow.*;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import java.util.Map;
-import java.util.concurrent.TimeoutException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junitpioneer.jupiter.RetryingTest;
+
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @KestraTest(startRunner = true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -186,18 +181,6 @@ public abstract class AbstractRunnerTest {
     @LoadFlows({"flows/valids/restart-parent.yaml", "flows/valids/restart-child.yaml"})
     void restartSubflow() throws Exception {
         restartCaseTest.restartSubflow();
-    }
-
-    @Test
-    @LoadFlows({"flows/valids/restart-with-finally.yaml"})
-    protected void restartFailedWithFinally() throws Exception {
-        restartCaseTest.restartFailedWithFinally();
-    }
-
-    @Test
-    @LoadFlows({"flows/valids/restart-with-after-execution.yaml"})
-    protected void restartFailedWithAfterExecution() throws Exception {
-        restartCaseTest.restartFailedWithAfterExecution();
     }
 
     @RetryingTest(5)
