@@ -83,9 +83,9 @@
     const playgroundStore = usePlaygroundStore();
     const executionsStore = useExecutionsStore();
 
-    watch(() => playgroundStore.latestExecution, (newValue) => {
-        if (newValue) {
-            executionsStore.followExecution(newValue, t);
+    watch(() => playgroundStore.latestExecution?.id, (newValue, oldValue) => {
+        if (newValue && newValue !== oldValue) {
+            executionsStore.followExecution(playgroundStore.latestExecution, t);
         }
     });
 
