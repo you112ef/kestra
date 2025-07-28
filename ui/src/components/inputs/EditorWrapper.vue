@@ -61,18 +61,15 @@
             : store.state.editor.tabs.find((t:any) => t.path === props.path)?.content;
     })
 
-    async function loadFile(){
-        if(props.dirty || props.flow){
-            return;
-        }
-        const content = await store.dispatch("namespace/readFile", {
-            namespace: namespace.value,
-            path: props.path
-        })
-        store.commit("editor/setTabContent", {
-            path: props.path,
-            content
-        })
+    async function loadFile() {
+        if (props.dirty || props.flow) return;
+
+        const fileNamespace = namespace.value ?? route.params?.namespace;
+
+        if (!fileNamespace) return;
+
+        const content = await store.dispatch("namespace/readFile", {namespace: fileNamespace, path: props.path})
+        store.commit("editor/setTabContent", {path: props.path, content})
     }
 
     onMounted(() => {
