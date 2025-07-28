@@ -335,6 +335,12 @@
                     }
                 });
             },
+            triggerLoadDataAfterBulkEditAction() {
+                this.loadData();
+                setTimeout(() => this.loadData(), 200);
+                setTimeout(() => this.loadData(), 1000);
+                setTimeout(() => this.loadData(), 5000);
+            },
             async unlock() {
                 const namespace = this.triggerToUnlock.namespace;
                 const flowId = this.triggerToUnlock.flowId;
@@ -387,10 +393,10 @@
                 this.$store.dispatch("trigger/update", {...trigger, disabled: !value})
                     .then(updatedTrigger => {
                         this.triggers = this.triggers.map(t => {
-                            const triggerContextMatches = t.triggerContext && 
+                            const triggerContextMatches = t.triggerContext &&
                                 t.triggerContext.flowId === updatedTrigger.flowId &&
                                 t.triggerContext.triggerId === updatedTrigger.triggerId;
-                        
+
                             if (triggerContextMatches) {
                                 return {triggerContext: updatedTrigger, abstractTrigger: t.abstractTrigger};
                             }
@@ -400,7 +406,7 @@
             },
             genericConfirmAction(toast, queryAction, byIdAction, success, data) {
                 this.$toast().confirm(
-                    this.$t(toast, {"count": this.queryBulkAction ? this.total : this.selection.length}),
+                    this.$t(toast, {"count": this.queryBulkAction ? this.total : this.selection.length}) + ". " + this.$t("bulk action async warning"),
                     () => this.genericConfirmCallback(queryAction, byIdAction, success, data),
                     () => {
                     }
@@ -415,7 +421,7 @@
                         .then(data => {
                             this.$toast().success(this.$t(success, {count: data.count}));
                             this.toggleAllUnselected();
-                            this.loadData();
+                            this.triggerLoadDataAfterBulkEditAction();
                         })
                 } else {
                     const selection = this.selection;
@@ -425,7 +431,7 @@
                         .then(data => {
                             this.$toast().success(this.$t(success, {count: data.count}));
                             this.toggleAllUnselected();
-                            this.loadData();
+                            this.triggerLoadDataAfterBulkEditAction();
                         }).catch(e => {
                             this.$toast().error(e?.invalids.map(exec => {
                                 return {message: this.$t(exec.message, {triggers: exec.invalidValue})}
