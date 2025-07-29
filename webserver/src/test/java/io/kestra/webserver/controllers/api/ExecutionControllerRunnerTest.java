@@ -1313,7 +1313,7 @@ class ExecutionControllerRunnerTest {
         var exception = assertThrows(
             HttpClientResponseException.class,
             () -> client.toBlocking().exchange(HttpRequest.POST(
-                "/api/v1/main/executions/labels/by-query?namespace=" + resultWithLabel.getNamespace(),
+                "/api/v1/executions/labels/by-query?namespace=" + resultWithLabel.getNamespace(),
                 List.of(new Label(null, null)))
             )
         );
