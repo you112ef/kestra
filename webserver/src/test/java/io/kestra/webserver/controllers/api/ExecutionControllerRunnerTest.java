@@ -1281,7 +1281,7 @@ class ExecutionControllerRunnerTest {
         Execution resultWithNoLabel = runnerUtils.runOne(null, TESTS_FLOW_NS, "minimal");
 
         BulkResponse response = client.toBlocking().retrieve(
-            HttpRequest.POST("/api/v1/main/executions/labels/by-ids",
+            HttpRequest.POST("/api/v1/executions/labels/by-ids",
                 new ExecutionController.SetLabelsByIdsRequest(
                     List.of(resultWithLabel.getId(), resultWithNoLabel.getId(), resultWithDifferentLabel.getId()),
                     List.of(new Label(statusLabelKey, "done"))
@@ -1302,7 +1302,7 @@ class ExecutionControllerRunnerTest {
         Execution resultWithNoLabel = runnerUtils.runOne(null, TESTS_FLOW_NS, "minimal");
 
         BulkResponse response = client.toBlocking().retrieve(
-            HttpRequest.POST("/api/v1/main/executions/labels/by-query?namespace=" + resultWithLabel.getNamespace(),
+            HttpRequest.POST("/api/v1/executions/labels/by-query?namespace=" + resultWithLabel.getNamespace(),
                 List.of(new Label(statusLabelKey, "done"))
             ),
             BulkResponse.class
