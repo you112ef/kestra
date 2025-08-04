@@ -37,6 +37,11 @@ public abstract class AbstractJdbcWorkerJobRunningRepository extends AbstractJdb
                     .execute()
             );
     }
+    
+    @Override
+    public void put(WorkerJobRunning  workerJobRunning) {
+        this.jdbcRepository.persist(workerJobRunning);
+    }
 
     @Override
     public Optional<WorkerJobRunning> findByKey(String uid) {

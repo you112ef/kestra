@@ -6,6 +6,7 @@ import io.kestra.core.utils.Exceptions;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.Synchronized;
 import org.slf4j.Logger;
 
@@ -32,6 +33,7 @@ public abstract class AbstractWorkerCallable implements Callable<State.Type> {
     String uid;
 
     @Getter
+    @Setter
     Throwable exception;
 
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
@@ -80,7 +82,7 @@ public abstract class AbstractWorkerCallable implements Callable<State.Type> {
      *
      * @see WorkerJobLifecycle#stop()
      */
-    protected abstract void signalStop();
+    public abstract void signalStop();
 
     /**
      * Wait for this worker task to complete stopping.

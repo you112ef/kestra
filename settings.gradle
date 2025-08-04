@@ -23,5 +23,6 @@ include 'model'
 include 'processor'
 include 'script'
 include 'e2e-tests'
+include 'worker'
 
 include 'jmh-benchmarks'

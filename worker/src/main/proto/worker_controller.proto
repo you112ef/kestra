@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option java_package = "io.kestra.worker.grpc";
+option java_multiple_files = true;
+
+import "request.proto";
+
+service WorkerControllerService {
+  rpc fetchWorkerJobs(FetchWorkerJobRequest) returns (FetchWorkerJobResponse);
+
+  rpc fetchWorkerJobsStream(FetchWorkerJobRequest) returns (stream FetchWorkerJobResponse);
+  
+  rpc sendWorkerJobResults(WorkerJobResultsRequest) returns (WorkerJobResultsResponse);
+}
+
+message FetchWorkerJobRequest {
+  RequestOrResponseHeader header = 1;
+  bytes message = 2;
+}
+
+message FetchWorkerJobResponse {
+  RequestOrResponseHeader header = 1;
+  bytes message = 2;
+}
+
+message WorkerJobResultsRequest {
+  RequestOrResponseHeader header = 1;
+  bytes message = 2;
+}
+
+message WorkerJobResultsResponse {
+  RequestOrResponseHeader header = 1;
+  bytes message = 2;
+}

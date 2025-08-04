@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "io.kestra.server.grpc";
+option java_multiple_files = true;
+
+// Common request and response header
+message RequestOrResponseHeader {
+  // The client ID string. 
+  string clientId = 1;
+  // The client version.
+  string clientVersion = 2;
+  // The correlation ID of this request.
+  string correlationId = 3;
+  // The format of the message
+  string messageFormat = 4;
+}

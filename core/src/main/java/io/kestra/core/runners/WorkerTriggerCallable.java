@@ -15,7 +15,7 @@ public class WorkerTriggerCallable extends AbstractWorkerTriggerCallable {
     @Getter
     Optional<Execution> evaluate;
 
-    WorkerTriggerCallable(RunContext runContext, WorkerTrigger workerTrigger, PollingTriggerInterface pollingTrigger) {
+    public WorkerTriggerCallable(RunContext runContext, WorkerTrigger workerTrigger, PollingTriggerInterface pollingTrigger) {
         super(runContext, pollingTrigger.getClass().getName(), workerTrigger);
         this.pollingTrigger = pollingTrigger;
     }

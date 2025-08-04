@@ -17,4 +17,6 @@ public interface WorkerJobRunningStateStore {
      * @param key the key of the worker job to be deleted.
      */
     void deleteByKey(String key);
+    
+    void put(WorkerJobRunning workerJobRunning);
 }

@@ -1,0 +1,42 @@
+plugins {
+    id 'com.google.protobuf' version '0.9.4'
+}
+
+ext {
+    grpcVersion = '1.71.0'
+    protobufVersion = '3.25.1'
+}
+
+configurations {
+    tests
+    implementation.extendsFrom(micronaut)
+}
+
+dependencies {
+    // Kestra
+    implementation project(':core')
+    annotationProcessor project(':processor')
+    
+    // gRPC
+    implementation("io.micronaut.grpc:micronaut-grpc-server-runtime")
+    implementation("io.micronaut.grpc:micronaut-grpc-client-runtime")
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:$protobufVersion"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {
+                // avoid issues javax packages
+                option '@generated=omit'
+            }
+        }
+    }
+}

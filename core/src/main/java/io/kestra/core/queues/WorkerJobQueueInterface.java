@@ -9,4 +9,5 @@ import java.util.function.Consumer;
 public interface WorkerJobQueueInterface extends QueueInterface<WorkerJob> {
     
     Runnable subscribe(String workerId, String workerGroup, Consumer<Either<WorkerJob, DeserializationException>> consumer);
+
 }

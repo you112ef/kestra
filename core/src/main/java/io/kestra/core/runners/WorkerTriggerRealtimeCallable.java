@@ -16,7 +16,7 @@ public class WorkerTriggerRealtimeCallable extends AbstractWorkerTriggerCallable
     Consumer<? super Throwable> onError;
     Consumer<Execution> onNext;
 
-    WorkerTriggerRealtimeCallable(
+    public WorkerTriggerRealtimeCallable(
         RunContext runContext,
         WorkerTrigger workerTrigger,
         RealtimeTriggerInterface realtimeTrigger,

@@ -10,6 +10,7 @@ import io.kestra.core.runners.StandAloneRunner;
 import io.kestra.core.services.SkipExecutionService;
 import io.kestra.core.services.StartExecutorService;
 import io.kestra.core.utils.Await;
+import io.kestra.controller.Controller;
 import io.micronaut.context.ApplicationContext;
 import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
@@ -110,6 +111,8 @@ public class StandAloneCommand extends AbstractServerCommand {
         }
 
         StandAloneRunner standAloneRunner = applicationContext.getBean(StandAloneRunner.class);
+        
+        Controller controller = applicationContext.getBean(Controller.class);
 
         if (this.workerThread == 0) {
             standAloneRunner.setWorkerEnabled(false);
