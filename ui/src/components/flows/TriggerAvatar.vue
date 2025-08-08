@@ -27,6 +27,7 @@
     import TriggerVars from "./TriggerVars.vue";
     import {mapState} from "vuex";
     import {TaskIcon} from "@kestra-io/ui-libs";
+    import Utils from "../../utils/utils";
 
     export default {
         props: {
@@ -56,16 +57,19 @@
 
                 return split[split.length - 1].substr(0, 1).toUpperCase();
             },
-            copyLink(trigger) {
+            async copyLink(trigger) {
                 if (trigger?.type === "io.kestra.plugin.core.trigger.Webhook" && this.flow) {
                     const url = new URL(window.location.href).origin + `/api/v1/${this.$route.params.tenant ? this.$route.params.tenant +"/" : ""}executions/webhook/${this.flow.namespace}/${this.flow.id}/${trigger.key}`;
 
-                    navigator.clipboard.writeText(url).then(() => {
+                    try {
+                        await Utils.copy(url);
                         this.$message({
                             message: this.$t("webhook link copied"),
                             type: "success"
                         });
-                    });
+                    } catch (error) {
+                        console.error(error);
+                    }
                 }
             }
         },
