@@ -169,7 +169,6 @@ public class State {
     }
 
     @JsonIgnore
-    @JsonIgnore
     public boolean isQueued() {
         return this.current.isQueued();
     }
