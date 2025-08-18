@@ -3,13 +3,17 @@ package io.kestra.webserver.controllers.api;
 import io.kestra.core.models.executions.LogEntry;
 import io.kestra.core.repositories.LogRepositoryInterface;
 import io.kestra.core.services.ExecutionLogService;
+import io.kestra.core.services.ExecutionService;
 import io.kestra.core.tenant.TenantService;
 import io.kestra.webserver.responses.PagedResults;
 import io.kestra.webserver.utils.PageableUtils;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
+import io.micronaut.http.HttpHeaders;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.server.types.files.StreamedFile;
 import io.micronaut.http.sse.Event;
@@ -42,6 +46,9 @@ public class LogController {
 
     @Inject
     private TenantService tenantService;
+
+    @Inject
+    private ExecutionService executionService;
 
     @ExecuteOn(TaskExecutors.IO)
     @Get(uri = "logs/search")
@@ -89,7 +96,7 @@ public class LogController {
     @ExecuteOn(TaskExecutors.IO)
     @Get(uri = "logs/{executionId}/download", produces = MediaType.TEXT_PLAIN)
     @Operation(tags = {"Logs"}, summary = "Download logs for a specific execution, taskrun or task")
-    public StreamedFile download(
+    public HttpResponse<StreamedFile> download(
         @Parameter(description = "The execution id") @PathVariable String executionId,
         @Parameter(description = "The min log level filter") @Nullable @QueryValue Level minLevel,
         @Parameter(description = "The taskrun id") @Nullable @QueryValue String taskRunId,
@@ -105,8 +112,12 @@ public class LogController {
             attempt,
             true
         );
-        return new StreamedFile(inputStream, MediaType.TEXT_PLAIN_TYPE).attach(executionId + ".log");
-    }
+        MutableHttpResponse<StreamedFile> response = HttpResponse.ok(new StreamedFile(inputStream, MediaType.TEXT_PLAIN_TYPE).attach(executionId + ".log"));
+        if (!executionService.getExecution(tenantService.resolveTenant(), executionId, false).getState().getCurrent().isTerminated()) {
+            return response.header(HttpHeaders.CACHE_CONTROL, "no-cache");
+        }
+
+        return response;    }
 
     @ExecuteOn(TaskExecutors.IO)
     @Get(uri = "logs/{executionId}/follow", produces = MediaType.TEXT_EVENT_STREAM)
