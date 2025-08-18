@@ -21,7 +21,7 @@
         :diff-side-by-side="false"
     >
         <template #absolute>
-            <AITriggerButton 
+            <AITriggerButton
                 :show="isCurrentTabFlow"
                 :enabled="aiEnabled"
                 :opened="aiAgentOpened"
@@ -38,7 +38,7 @@
             v-if="aiAgentOpened"
             class="position-absolute prompt"
             @close="aiAgentOpened = false"
-            :flow="flowContent"
+            :flow="editorContent"
             @generated-yaml="(yaml: string) => {draftSource = yaml; aiAgentOpened = false}"
         />
     </transition>
@@ -153,14 +153,14 @@
 
     const timeout = ref<any>(null);
 
-    const flowContent = computed(() => {
+    const editorContent = computed(() => {
         return draftSource.value ?? source.value;
     });
 
     const pluginsStore = usePluginsStore();
 
     function editorUpdate(newValue: string){
-        if (flowContent.value === newValue) {
+        if (editorContent.value === newValue) {
             return;
         }
         if (isCurrentTabFlow.value) {
@@ -228,7 +228,7 @@
         await store.dispatch("namespace/createFile", {
             namespace: namespace.value,
             path: props.path,
-            content: editorRefElement.value?.modelValue,
+            content: editorContent.value || "",
         });
         store.commit("editor/setTabDirty", {
             path: props.path,
@@ -270,16 +270,16 @@
 </script>
 
 <style scoped lang="scss">
-.prompt {
-    bottom: 10%;
-    width: calc(100% - 5rem);
-    left: 3rem;
-    max-width: 700px;
-    background-color: var(--ks-background-panel);
-    box-shadow: 0px 4px 4px 0px var(--ks-card-shadow);
-}
+    .prompt {
+        bottom: 10%;
+        width: calc(100% - 5rem);
+        left: 3rem;
+        max-width: 700px;
+        background-color: var(--ks-background-panel);
+        box-shadow: 0px 4px 4px 0px var(--ks-card-shadow);
+    }
 
-.actions {
-    bottom: 10%;
-}
+    .actions {
+        bottom: 10%;
+    }
 </style>
