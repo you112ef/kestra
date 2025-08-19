@@ -119,11 +119,9 @@
     async function loadFile() {
         if (props.dirty || props.flow) return;
 
-        const fileNamespace = namespace.value ?? route.params?.namespace;
+        if (!namespace.value) return;
 
-        if (!fileNamespace) return;
-
-        const content = await store.dispatch("namespace/readFile", {namespace: fileNamespace, path: props.path})
+        const content = await store.dispatch("namespace/readFile", {namespace: namespace.value, path: props.path})
         store.commit("editor/setTabContent", {path: props.path, content})
     }
 
@@ -145,8 +143,8 @@
 
     const editorRefElement = ref<InstanceType<typeof Editor>>();
 
-    const namespace = computed(() => store.state.flow.namespace);
     const flowStore = computed(() => store.state.flow.flow);
+    const namespace = computed(() => flowStore.value?.namespace ?? route.params?.namespace);
     const isCreating = computed(() => store.state.flow.isCreating);
     const isCurrentTabFlow = computed(() => props.flow)
     const isReadOnly = computed(() => flowStore.value?.deleted || !store.getters["flow/isAllowedEdit"] || store.getters["flow/readOnlySystemLabel"]);
