@@ -72,6 +72,8 @@ public class JdbcExecutor implements ExecutorInterface, Service {
     private static final ObjectMapper MAPPER = JdbcMapper.of();
 
     private final ScheduledExecutorService scheduledDelay = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> executionDelayFuture;
+    private ScheduledFuture<?> monitorSLAFuture;
 
     @Inject
     private AbstractJdbcExecutionRepository executionRepository;
@@ -314,14 +316,14 @@ public class JdbcExecutor implements ExecutorInterface, Service {
         this.receiveCancellations.addFirst(this.executionRunningQueue.receive(Executor.class, this::executionRunningQueue));
         this.clusterEventQueue.ifPresent(clusterEventQueueInterface -> this.receiveCancellations.addFirst(clusterEventQueueInterface.receive(this::clusterEventQueue)));
 
-        ScheduledFuture<?> scheduledDelayFuture = scheduledDelay.scheduleAtFixedRate(
+        executionDelayFuture = scheduledDelay.scheduleAtFixedRate(
             this::executionDelaySend,
             0,
             1,
             TimeUnit.SECONDS
         );
 
-        ScheduledFuture<?> scheduledSLAMonitorFuture = scheduledDelay.scheduleAtFixedRate(
+        monitorSLAFuture = scheduledDelay.scheduleAtFixedRate(
             this::executionSLAMonitor,
             0,
             1,
@@ -331,11 +333,13 @@ public class JdbcExecutor implements ExecutorInterface, Service {
         // look at exceptions on the scheduledDelay thread
         Thread.ofVirtual().name("jdbc-delay-exception-watcher").start(
             () -> {
-                Await.until(scheduledDelayFuture::isDone);
+                Await.until(executionDelayFuture::isDone);
 
                 try {
-                    scheduledDelayFuture.get();
-                } catch (ExecutionException | InterruptedException | CancellationException e) {
+                    executionDelayFuture.get();
+                } catch (CancellationException ignored) {
+
+                } catch (ExecutionException | InterruptedException e) {
                     if (e.getCause() != null && e.getCause().getClass() != CannotCreateTransactionException.class) {
                         log.error("Executor fatal exception in the scheduledDelay thread", e);
                         close();
@@ -348,11 +352,13 @@ public class JdbcExecutor implements ExecutorInterface, Service {
         // look at exceptions on the scheduledSLAMonitorFuture thread
         Thread.ofVirtual().name("jdbc-sla-monitor-exception-watcher").start(
             () -> {
-                Await.until(scheduledSLAMonitorFuture::isDone);
+                Await.until(monitorSLAFuture::isDone);
 
                 try {
-                    scheduledSLAMonitorFuture.get();
-                } catch (ExecutionException | InterruptedException | CancellationException e) {
+                    monitorSLAFuture.get();
+                } catch (CancellationException ignored) {
+
+                } catch (ExecutionException | InterruptedException e) {
                     if (e.getCause() != null && e.getCause().getClass() != CannotCreateTransactionException.class) {
                         log.error("Executor fatal exception in the scheduledSLAMonitor thread", e);
                         close();
@@ -1386,7 +1392,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
 
             setState(ServiceState.TERMINATING);
             this.receiveCancellations.forEach(Runnable::run);
-            scheduledDelay.shutdown();
+            ExecutorsUtils.closeScheduledThreadPool(scheduledDelay, Duration.ofSeconds(5), List.of(executionDelayFuture, monitorSLAFuture));
             setState(ServiceState.TERMINATED_GRACEFULLY);
 
             if (log.isDebugEnabled()) {
