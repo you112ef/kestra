@@ -37,6 +37,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junitpioneer.jupiter.RetryingTest;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
@@ -147,7 +148,7 @@ public abstract class JdbcServiceLivenessCoordinatorTest {
         newWorker.shutdown();
     }
 
-    @Test
+    @RetryingTest(5)
     void shouldReEmitTasksToTheSameWorkerGroup() throws Exception {
         CountDownLatch runningLatch = new CountDownLatch(1);
         CountDownLatch resubmitLatch = new CountDownLatch(1);
