@@ -311,6 +311,7 @@ public class RunContextLogger implements Supplier<org.slf4j.Logger> {
         }
     }
 
+    @Slf4j
     public static class ContextAppender extends BaseAppender {
         private final QueueInterface<LogEntry> logQueue;
         private final LogEntry logEntry;
