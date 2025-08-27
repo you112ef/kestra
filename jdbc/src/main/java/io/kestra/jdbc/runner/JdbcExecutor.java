@@ -1083,11 +1083,12 @@ public class JdbcExecutor implements ExecutorInterface, Service {
             }
             boolean isTerminated = executor.getFlow() != null && executionService.isTerminated(executor.getFlow(), executor.getExecution());
 
-            // purge the executionQueue
+            // purge the executionQueue and the executionStateChangeQueue
             // IMPORTANT: this must be done before emitting the last execution message so that all consumers are notified that the execution ends.
             // NOTE: we may also purge ExecutionKilled events, but as there may not be a lot of them, it may not be worth it.
             if (cleanExecutionQueue && isTerminated) {
                 ((JdbcQueue<Execution>) executionQueue).deleteByKey(executor.getExecution().getId());
+                ((JdbcQueue<ExecutionStateChange>) executionStateChangeQueue).deleteByKey(executor.getExecution().getId());
             }
 
             // emit for other consumers than the executor if no failure
@@ -1098,9 +1099,10 @@ public class JdbcExecutor implements ExecutorInterface, Service {
             }
 
             Execution execution = executor.getExecution();
-            // send a message to the executionStateChange queue for post-execution actions
-            if (!execution.getState().getCurrent().equals(executor.getOriginalState())) {
-                executionStateChangeQueue.emit(ExecutionStateChange.fromExecution(execution, executor.getOriginalState(), execution.getState().getCurrent()));
+            // send a message to the executionStateChange queue for post-execution actions if the state change or the execution is terminated
+            // we must always send terminated execution to the queue or afterExecution execution update would not be detected.
+            if (!execution.getState().getCurrent().equals(executor.getOriginalState()) || isTerminated) {
+                executionStateChangeQueue.emit(new ExecutionStateChange(execution, executor.getOriginalState(), execution.getState().getCurrent()));
             }
         } catch (QueueException e) {
             if (!ignoreFailure) {
@@ -1265,22 +1267,14 @@ public class JdbcExecutor implements ExecutorInterface, Service {
         }
 
         final ExecutionStateChange executionStateChange = either.getLeft();
+        final Execution execution = executionStateChange.getExecution();
 
-        if (skipExecutionService.skipExecution(executionStateChange.getExecutionId())) {
-            log.warn("Skipping execution {}", executionStateChange.getExecutionId());
+        if (skipExecutionService.skipExecution(execution)) {
+            log.warn("Skipping execution {}", execution.getId());
             return;
         }
 
         try {
-            // Note: the execution may have already changed since the event was emitted.
-            // This is not an issue for terminated execution, but for non-terminated, this may lead to some transient states not being seen.
-            // If it occurs to be a real issue, there would be no other way than include the whole execution in the change event.
-            Execution execution = executionRepository.findById(executionStateChange.getTenantId(), executionStateChange.getExecutionId()).orElse(null);
-            if (execution == null) {
-                // FIXME execution deleted too early :(
-                return;
-            }
-
             flowTriggerService.computeExecutionsFromFlowTriggers(execution, allFlows, Optional.of(multipleConditionStorage))
                 .forEach(throwConsumer(executionFromFlowTrigger -> this.executionQueue.emit(executionFromFlowTrigger)));
 
@@ -1331,7 +1325,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
                             metricRegistry.counter(MetricRegistry.METRIC_EXECUTOR_EXECUTION_POPPED_COUNT, MetricRegistry.METRIC_EXECUTOR_EXECUTION_POPPED_COUNT_DESCRIPTION, metricRegistry.tags(newExecution)).increment();
 
                             // send an execution state change event so we can use a flow trigger on the queued state
-                            executionStateChangeQueue.emit(ExecutionStateChange.fromExecution(newExecution, State.Type.QUEUED, State.Type.RUNNING));
+                            executionStateChangeQueue.emit(new ExecutionStateChange(newExecution, State.Type.QUEUED, State.Type.RUNNING));
                         })
                     );
                 }

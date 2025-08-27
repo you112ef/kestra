@@ -13,16 +13,7 @@ import lombok.Value;
 @Builder
 public class ExecutionStateChange implements HasUID {
     @NotNull
-    String tenantId;
-
-    @NotNull
-    String namespace;
-
-    @NotNull
-    String flowId;
-
-    @NotNull
-    String executionId;
+    Execution execution;
 
     @NotNull
     State.Type oldState;
@@ -32,10 +23,6 @@ public class ExecutionStateChange implements HasUID {
 
     @Override
     public String uid() {
-        return executionId;
-    }
-
-    public static ExecutionStateChange fromExecution(Execution execution, State.Type oldState, State.Type newState) {
-        return new ExecutionStateChange(execution.getTenantId(), execution.getNamespace(), execution.getFlowId(), execution.getId(), oldState, newState);
+        return execution.getId();
     }
 }
