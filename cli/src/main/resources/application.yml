@@ -117,6 +117,10 @@ endpoints:
     sensitive: false
   health:
     details-visible: ANONYMOUS
+    disk-space:
+      enabled: false
+    discovery-client:
+      enabled: false
   loggers:
     write-sensitive: false
   env:
