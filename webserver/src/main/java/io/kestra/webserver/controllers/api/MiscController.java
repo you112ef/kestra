@@ -52,7 +52,7 @@ public class MiscController {
 
     @Inject
     CollectorService collectorService;
-
+    
     @Inject
     BasicAuthService basicAuthService;
 
@@ -65,7 +65,7 @@ public class MiscController {
     @io.micronaut.context.annotation.Value("${kestra.anonymous-usage-report.enabled}")
     protected Boolean isAnonymousUsageEnabled;
 
-    @io.micronaut.context.annotation.Value("${kestra.ui-anonymous-usage-report.enabled}")
+    @io.micronaut.context.annotation.Value("${kestra.ui-anonymous-usage-report.enabled:false}")
     protected Boolean isUiAnonymousUsageEnabled;
 
     @io.micronaut.context.annotation.Value("${kestra.environment.name}")
