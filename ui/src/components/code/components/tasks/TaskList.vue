@@ -45,6 +45,10 @@
 
     function removeItem(yaml: string, index: number){
         flowStore.flowYaml = yaml;
+        if(items.value.length <= 1 && index === 0){
+            emits("update:modelValue", undefined);
+            return;
+        }
 
         let localItems = [...items.value]
         localItems.splice(index, 1)
