@@ -29,8 +29,10 @@ class CountTest {
 
     @Test
     void run() throws Exception {
+        var tenant = TestsUtils.randomTenant(this.getClass().getSimpleName());
         for (int i = 0; i < 28; i++) {
             executionRepository.save(AbstractExecutionRepositoryTest.builder(
+                tenant,
                 i < 5 ? State.Type.RUNNING : (i < 8 ? State.Type.FAILED : State.Type.SUCCESS),
                 i < 4 ? "first" : (i < 10 ? "second" : "third")
             ).build());
