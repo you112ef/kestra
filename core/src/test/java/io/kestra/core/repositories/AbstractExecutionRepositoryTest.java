@@ -775,7 +775,7 @@ inject(tenant);
     @Test
     protected void shouldReturnLastExecutionsWhenInputsAreNull() {
         var tenant = TestsUtils.randomTenant(this.getClass().getSimpleName());
-inject(tenant);
+        inject(tenant);
 
         List<Execution> lastExecutions = executionRepository.lastExecutions(tenant, null);
 
