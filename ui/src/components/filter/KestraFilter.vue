@@ -316,7 +316,7 @@
 
         if (key === "Enter") return;
 
-        if (currentFilters.value.at(-1)?.label === "user") {
+        if (currentFilters.value.at(-1)?.label === "userId") {
             emits("input", getInputValue());
         }
 
@@ -398,6 +398,10 @@
             second: {shown: false, index: -1},
             third: {shown: true, index: currentFilters.value.length - 1},
         };
+
+        if (currentFilters.value.at(-1)?.label === "userId") {
+            emits("input", getInputValue());
+        }
 
         updateHoveringIndex(0);
     };
@@ -587,8 +591,8 @@
             valueOptions.value = props.values?.metric || [];
             break;
 
-        case "user":
-            valueOptions.value = props.values?.user || [];
+        case "userid":
+            valueOptions.value = props.values?.userId || [];
             break;
 
         case "type":

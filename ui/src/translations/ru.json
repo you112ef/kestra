@@ -549,7 +549,7 @@
         "text": "I'm sorry, but it seems that the text you want me to translate is missing. Could you please provide the text that needs to be translated?",
         "trigger_state": "Состояние",
         "type": "Тип",
-        "user": "Пользователь"
+        "userId": "Пользователь"
       },
       "save": {
         "dialog": {

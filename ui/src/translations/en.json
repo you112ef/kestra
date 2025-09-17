@@ -1100,7 +1100,7 @@
         "level": "Log level",
         "task": "Task",
         "metric": "Metric",
-        "user": "User",
+        "userId": "User",
         "type": "Type",
         "service_type": "Type",
         "permission": "Permission",

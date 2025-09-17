@@ -549,7 +549,7 @@
         "text": "tekst",
         "trigger_state": "Stan",
         "type": "Typ",
-        "user": "Użytkownik"
+        "userId": "Użytkownik"
       },
       "save": {
         "dialog": {

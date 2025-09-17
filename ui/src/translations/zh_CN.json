@@ -549,7 +549,7 @@
         "text": "文本",
         "trigger_state": "状态",
         "type": "类型",
-        "user": "用户"
+        "userId": "用户"
       },
       "save": {
         "dialog": {
