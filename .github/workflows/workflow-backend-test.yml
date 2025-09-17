@@ -69,6 +69,7 @@ jobs:
           cat report.md
       - name: 'Upload Timeline flamegraph'
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: all-test-timelines.json
           path: build/reports/test-timelines-report/all-test-timelines.json
