@@ -40,7 +40,7 @@
         "dagre": "^0.8.5",
         "el-table-infinite-scroll": "^3.0.7",
         "element-plus": "2.11.2",
-        "humanize-duration": "^3.33.0",
+        "humanize-duration": "^3.33.1",
         "js-yaml": "^4.1.0",
         "lodash": "^4.17.21",
         "mailchecker": "^6.0.18",
