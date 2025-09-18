@@ -38,7 +38,7 @@ class ExitTest {
     @ExecuteFlow("flows/valids/exit.yaml")
     void shouldExitTheExecution(Execution execution) {
         assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.WARNING);
-        assertThat(execution.getTaskRunList().size()).isEqualTo(2);
+        assertThat(execution.getTaskRunList()).hasSize(2);
         assertThat(execution.getTaskRunList().getFirst().getState().getCurrent()).isEqualTo(State.Type.WARNING);
     }
 
@@ -67,5 +67,15 @@ class ExitTest {
         assertThat(killedExecution.get().getTaskRunList().getFirst().getState().getCurrent()).isEqualTo(State.Type.KILLED);
         assertThat(killedExecution.get().getTaskRunList().get(1).getState().getCurrent()).isEqualTo(State.Type.KILLED);
         receive.blockLast();
+    }
+
+    @Test
+    @ExecuteFlow("flows/valids/exit-nested.yaml")
+    void shouldExitAndFailNestedIf(Execution execution) {
+        assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.FAILED);
+        assertThat(execution.getTaskRunList()).hasSize(4);
+        assertThat(execution.findTaskRunsByTaskId("if_some_bool").getFirst().getState().getCurrent()).isEqualTo(State.Type.FAILED);
+        assertThat(execution.findTaskRunsByTaskId("nested_bool_check").getFirst().getState().getCurrent()).isEqualTo(State.Type.FAILED);
+        assertThat(execution.findTaskRunsByTaskId("nested_was_false").getFirst().getState().getCurrent()).isEqualTo(State.Type.FAILED);
     }
 }
