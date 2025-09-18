@@ -142,13 +142,10 @@ public class TestRunnerUtils {
     }
 
     @VisibleForTesting
-    public Execution emitAndAwaitExecution(Predicate<Execution> predicate, Execution execution, Duration duration) throws TimeoutException {
+    public Execution emitAndAwaitExecution(Predicate<Execution> predicate, Execution execution, Duration duration)
+        throws QueueException {
 
-        try {
-            this.executionQueue.emit(execution);
-        } catch (QueueException e) {
-            throw new RuntimeException(e);
-        }
+        this.executionQueue.emit(execution);
 
         return awaitExecution(predicate, execution, duration);
     }
