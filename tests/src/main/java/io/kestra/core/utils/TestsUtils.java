@@ -42,7 +42,14 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 abstract public class TestsUtils {
+    private static final ThreadLocal<List<Runnable>> queueConsumersCancellations = ThreadLocal.withInitial(ArrayList::new);
+
     private static final ObjectMapper mapper = JacksonMapper.ofYaml();
+
+    public static void queueConsumersCleanup() {
+        queueConsumersCancellations.get().forEach(Runnable::run);
+        queueConsumersCancellations.get().clear();
+    }
 
     public static <T> T map(String path, Class<T> cls) throws IOException {
         URL resource = TestsUtils.class.getClassLoader().getResource(path);
@@ -122,8 +129,8 @@ abstract public class TestsUtils {
     }
 
     public static Execution mockExecution(FlowInterface flow,
-                                           Map<String, Object> inputs,
-                                           Map<String, Object> outputs) {
+                                          Map<String, Object> inputs,
+                                          Map<String, Object> outputs) {
         return Execution.builder()
             .id(IdUtils.create())
             .tenantId(flow.getTenantId())
@@ -214,16 +221,17 @@ abstract public class TestsUtils {
             }
         };
         Runnable receiveCancellation = queueType == null ? queue.receive(consumerGroup, eitherConsumer, false) : queue.receive(consumerGroup, queueType, eitherConsumer, false);
+        queueConsumersCancellations.get().add(receiveCancellation);
 
         return Flux.<T>create(sink -> {
-            DeserializationException exception = exceptionRef.get();
-            if (exception == null) {
-                elements.forEach(sink::next);
-                sink.complete();
-            } else {
-                sink.error(exception);
-            }
-        })
+                DeserializationException exception = exceptionRef.get();
+                if (exception == null) {
+                    elements.forEach(sink::next);
+                    sink.complete();
+                } else {
+                    sink.error(exception);
+                }
+            })
             .timeout(Optional.ofNullable(timeout).orElse(Duration.ofMinutes(1)))
             .doFinally(signalType -> receiveCancellation.run());
     }
