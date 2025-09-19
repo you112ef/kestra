@@ -260,7 +260,7 @@ public class RestartCaseTest {
         Execution finishedRestartedExecution = runnerUtils.emitAndAwaitExecution(
             execution -> executionService.isTerminated(flow, execution) && execution.getState().isSuccess() && execution.getId().equals(firstExecution.getId()),
             restartedExec,
-            Duration.ofSeconds(60)
+            Duration.ofSeconds(20)
         );
 
         assertThat(finishedRestartedExecution).isNotNull();

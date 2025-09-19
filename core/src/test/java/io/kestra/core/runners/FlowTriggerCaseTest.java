@@ -4,7 +4,6 @@ import io.kestra.core.models.executions.Execution;
 import io.kestra.core.models.flows.State;
 import io.kestra.core.models.flows.State.Type;
 import io.kestra.core.queues.QueueException;
-import io.kestra.core.repositories.ExecutionRepositoryInterface;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -20,9 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FlowTriggerCaseTest {
 
     public static final String NAMESPACE = "io.kestra.tests.trigger";
-
-    @Inject
-    private ExecutionRepositoryInterface executionRepository;
 
     @Inject
     protected TestRunnerUtils runnerUtils;
