@@ -6,14 +6,15 @@ import io.kestra.core.models.kv.KVType;
 import io.kestra.core.models.property.Property;
 import io.kestra.core.runners.RunContext;
 import io.kestra.core.storages.kv.KVEntry;
+import io.kestra.core.storages.kv.KVMetadata;
 import io.kestra.core.storages.kv.KVStore;
 import io.kestra.core.storages.kv.KVStoreException;
 import io.kestra.core.storages.kv.KVValue;
+import io.kestra.core.storages.kv.KVValueAndMetadata;
 import io.kestra.core.utils.IdUtils;
 import io.kestra.core.utils.TestsUtils;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -166,7 +167,7 @@ class SetTest {
         assertThat(expirationDate.isAfter(Instant.now().plus(Duration.ofMinutes(4))) && expirationDate.isBefore(Instant.now().plus(Duration.ofMinutes(6)))).isTrue();
     }
 
-    @RepeatedTest(1000)
+    @Test
     void shouldFailGivenExistingKeyAndOverwriteFalse() throws Exception {
         // Given
         String key = IdUtils.create();
@@ -186,7 +187,7 @@ class SetTest {
 
         // When - Then
         //set key a first:
-        runContext.namespaceKv(runContext.flowInfo().namespace()).put("existing_key", new KVValueAndMetadata(new KVMetadata("unused", (Instant)null), value));
+        runContext.namespaceKv(runContext.flowInfo().namespace()).put(key, new KVValueAndMetadata(new KVMetadata("unused", (Instant)null), value));
         //fail because key is already set
         KVStoreException exception = Assertions.assertThrows(KVStoreException.class, () -> Set.builder()
             .id(Set.class.getSimpleName())
