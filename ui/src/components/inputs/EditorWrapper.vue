@@ -4,7 +4,7 @@
             id="editorWrapper"
             ref="editorRefElement"
             class="flex-1"
-            :model-value="draftSource === undefined ? source : draftSource"
+            :model-value="hasDraft ? draftSource : source"
             :schema-type="isCurrentTabFlow ? 'flow': undefined"
             :lang="extension === undefined ? 'yaml' : undefined"
             :extension="extension"
@@ -19,7 +19,7 @@
             @execute="execute"
             @mouse-move="(e) => highlightHoveredTask(e.target?.position?.lineNumber)"
             @mouse-leave="() => highlightHoveredTask(-1)"
-            :original="draftSource === undefined ? undefined : source"
+            :original="hasDraft ? source : undefined"
             :diff-side-by-side="false"
         >
             <template #absolute>
@@ -45,7 +45,7 @@
             />
         </Transition>
         <AcceptDecline
-            v-if="draftSource !== undefined"
+            v-if="hasDraft"
             @accept="acceptDraft"
             @reject="declineDraft"
         />
@@ -120,7 +120,7 @@
         const content = await namespacesStore.readFile({namespace: fileNamespace.toString(), path: props.path ?? ""})
         editorStore.setTabContent({path: props.path, content})
     }
-    
+
 
     onMounted(() => {
         loadPluginsHash();
@@ -162,13 +162,13 @@
             hash.value = config.pluginsHash;
         });
     }
-    
+
     function editorUpdate(newValue: string){
         if (editorContent.value === newValue) {
             return;
         }
         if (isCurrentTabFlow.value) {
-            if (draftSource.value !== undefined) {
+            if (hasDraft.value) {
                 draftSource.value = newValue;
             } else {
                 flowStore.flowYaml = newValue;
@@ -291,6 +291,8 @@
         draftSource.value = undefined;
         aiAgentOpened.value = true;
     }
+
+    const hasDraft = computed(() => draftSource.value !== undefined);
 
     const {
         playgroundStore,
