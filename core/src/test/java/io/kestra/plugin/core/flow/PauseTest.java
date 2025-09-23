@@ -8,8 +8,6 @@ import io.kestra.core.models.executions.Execution;
 import io.kestra.core.models.flows.Flow;
 import io.kestra.core.models.flows.State;
 import io.kestra.core.queues.QueueException;
-import io.kestra.core.queues.QueueFactoryInterface;
-import io.kestra.core.queues.QueueInterface;
 import io.kestra.core.repositories.FlowRepositoryInterface;
 import io.kestra.core.runners.TestRunnerUtils;
 import io.kestra.core.services.ExecutionService;
@@ -23,13 +21,10 @@ import io.micronaut.http.server.netty.multipart.NettyCompletedFileUpload;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.multipart.*;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -157,10 +152,6 @@ public class PauseTest {
         @Inject
         StorageInterface storageInterface;
 
-        @Inject
-        @Named(QueueFactoryInterface.EXECUTION_NAMED)
-        protected QueueInterface<Execution> executionQueue;
-
         public void run(TestRunnerUtils runnerUtils) throws Exception {
             Execution execution = runnerUtils.runOneUntilPaused(MAIN_TENANT, "io.kestra.tests", "pause-test", null, null, Duration.ofSeconds(30));
             String executionId = execution.getId();
@@ -179,8 +170,7 @@ public class PauseTest {
 
             execution = runnerUtils.emitAndAwaitExecution(
                 e -> e.getId().equals(executionId) && e.getState().getCurrent() == State.Type.SUCCESS,
-                restarted,
-                Duration.ofSeconds(5)
+                restarted
             );
 
             assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
@@ -196,8 +186,7 @@ public class PauseTest {
             execution = runnerUtils.awaitExecution(
                 e ->
                     e.getId().equals(executionId) && e.getState().getCurrent() == State.Type.SUCCESS,
-                execution,
-                Duration.ofSeconds(20)
+                execution
             );
 
             assertThat(execution.getTaskRunList().getFirst().getState().getHistories().stream().filter(history -> history.getState() == State.Type.PAUSED).count()).isEqualTo(1L);
@@ -215,8 +204,7 @@ public class PauseTest {
             execution = runnerUtils.awaitExecution(
                 e ->
                     e.getId().equals(executionId) && e.getState().getCurrent() == State.Type.SUCCESS,
-                execution,
-                Duration.ofSeconds(20)
+                execution
             );
 
             assertThat(execution.getTaskRunList().getFirst().getState().getHistories().stream().filter(history -> history.getState() == State.Type.PAUSED).count()).isEqualTo(1L);
@@ -240,9 +228,7 @@ public class PauseTest {
 
             execution = runnerUtils.awaitExecution(
                 e -> e.getId().equals(executionId) && e.getState().getCurrent() == State.Type.FAILED,
-//                () -> {},
-                execution,
-                Duration.ofSeconds(5)
+                execution
             );
 
             assertThat(execution.getTaskRunList().getFirst().getState().getHistories().stream().filter(history -> history.getState() == State.Type.PAUSED).count()).as("Task runs were: " + execution.getTaskRunList().toString()).isEqualTo(1L);
@@ -260,9 +246,7 @@ public class PauseTest {
 
             execution = runnerUtils.awaitExecution(
                 e -> e.getId().equals(executionId) && e.getState().getCurrent() == State.Type.WARNING,
-//                () -> {},
-                execution,
-                Duration.ofSeconds(5)
+                execution
             );
 
             assertThat(execution.getTaskRunList().getFirst().getState().getHistories().stream().filter(history -> history.getState() == State.Type.PAUSED).count()).as("Task runs were: " + execution.getTaskRunList().toString()).isEqualTo(1L);
@@ -289,8 +273,7 @@ public class PauseTest {
 
             execution = runnerUtils.emitAndAwaitExecution(
                 e -> e.getId().equals(executionId) && e.getState().getCurrent() == State.Type.SUCCESS,
-                restarted,
-                Duration.ofSeconds(10)
+                restarted
             );
 
             assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
@@ -322,8 +305,7 @@ public class PauseTest {
 
             execution = runnerUtils.emitAndAwaitExecution(
                 e -> e.getId().equals(executionId) && e.getState().getCurrent() == State.Type.SUCCESS,
-                restarted,
-                Duration.ofSeconds(10)
+                restarted
             );
 
             assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
@@ -360,8 +342,7 @@ public class PauseTest {
 
             execution = runnerUtils.emitAndAwaitExecution(
                 e -> e.getId().equals(executionId) && e.getState().getCurrent() == State.Type.SUCCESS,
-                restarted,
-                Duration.ofSeconds(10)
+                restarted
             );
 
             assertThat(execution.getState().getCurrent()).isEqualTo(State.Type.SUCCESS);
@@ -379,9 +360,7 @@ public class PauseTest {
 
             execution = runnerUtils.awaitExecution(
                 e -> e.getId().equals(executionId) && e.getState().getCurrent().isTerminated(),
-//                () -> {},
-                execution,
-                Duration.ofSeconds(5)
+                execution
             );
 
             State.Type finalState = behavior == Pause.Behavior.RESUME ? State.Type.SUCCESS : behavior.mapToState();

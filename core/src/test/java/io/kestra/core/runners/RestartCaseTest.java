@@ -5,29 +5,18 @@ import io.kestra.core.models.executions.TaskRun;
 import io.kestra.core.models.flows.Flow;
 import io.kestra.core.models.flows.State;
 import io.kestra.core.models.flows.State.Type;
-import io.kestra.core.queues.QueueException;
-import io.kestra.core.queues.QueueFactoryInterface;
-import io.kestra.core.queues.QueueInterface;
 import io.kestra.core.repositories.FlowRepositoryInterface;
 import io.kestra.core.services.ExecutionService;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicReference;
 
-import io.kestra.core.utils.TestsUtils;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import reactor.core.publisher.Flux;
 
 import static io.kestra.core.tenant.TenantService.MAIN_TENANT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static io.kestra.core.utils.Rethrow.throwRunnable;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Singleton
@@ -40,10 +29,6 @@ public class RestartCaseTest {
 
     @Inject
     private ExecutionService executionService;
-
-//    @Inject
-//    @Named(QueueFactoryInterface.EXECUTION_NAMED)
-//    private QueueInterface<Execution> executionQueue;
 
     public void restartFailedThenSuccess() throws Exception {
         Flow flow = flowRepository.findById(MAIN_TENANT, "io.kestra.tests", "restart_last_failed").orElseThrow();
@@ -63,8 +48,7 @@ public class RestartCaseTest {
         assertThat(restartedExec.getState().getCurrent()).isEqualTo(State.Type.RESTARTED);
         Execution finishedRestartedExecution = runnerUtils.emitAndAwaitExecution(
             execution -> execution.getState().getCurrent() == State.Type.SUCCESS && execution.getId().equals(firstExecution.getId()),
-            restartedExec,
-            Duration.ofSeconds(60)
+            restartedExec
         );
 
         assertThat(finishedRestartedExecution).isNotNull();
@@ -100,8 +84,7 @@ public class RestartCaseTest {
         assertThat(restartedExec.getState().getCurrent()).isEqualTo(State.Type.RESTARTED);
         Execution finishedRestartedExecution = runnerUtils.emitAndAwaitExecution(
             execution -> execution.getState().getCurrent() == State.Type.FAILED && execution.getTaskRunList().getFirst().getAttempts().size() == 2,
-            restartedExec,
-            Duration.ofSeconds(60)
+            restartedExec
         );
 
         assertThat(finishedRestartedExecution).isNotNull();
@@ -133,8 +116,7 @@ public class RestartCaseTest {
         assertThat(restartedExec.getState().getCurrent()).isEqualTo(State.Type.RESTARTED);
         Execution finishedRestartedExecution = runnerUtils.emitAndAwaitExecution(
             execution -> execution.getState().getCurrent() == State.Type.FAILED && execution.findTaskRunsByTaskId("failStep").stream().findFirst().get().getAttempts().size() == 2,
-            restartedExec,
-            Duration.ofSeconds(60)
+            restartedExec
         );
 
         assertThat(finishedRestartedExecution).isNotNull();
@@ -190,7 +172,7 @@ public class RestartCaseTest {
         Execution restartEnded = runnerUtils.emitAndAwaitExecution(
             e -> e.getState().getCurrent() == State.Type.FAILED,
             restart,
-            Duration.ofSeconds(120)
+            Duration.ofSeconds(60)
         );
 
         assertThat(restartEnded.getState().getCurrent()).isEqualTo(State.Type.FAILED);
@@ -200,7 +182,7 @@ public class RestartCaseTest {
         restartEnded = runnerUtils.emitAndAwaitExecution(
             e -> e.getState().getCurrent() == State.Type.FAILED,
             newRestart,
-            Duration.ofSeconds(120)
+            Duration.ofSeconds(60)
         );
 
         assertThat(restartEnded.getState().getCurrent()).isEqualTo(State.Type.FAILED);

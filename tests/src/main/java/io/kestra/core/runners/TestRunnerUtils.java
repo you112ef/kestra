@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -133,12 +134,12 @@ public class TestRunnerUtils {
     }
 
     public Execution runOneUntilRunning(String tenantId, String namespace, String flowId)
-        throws TimeoutException, QueueException {
+        throws QueueException {
         return this.runOneUntilRunning(tenantId, namespace, flowId, null, null, null);
     }
 
     public Execution runOneUntilRunning(String tenantId, String namespace, String flowId, Integer revision, BiFunction<FlowInterface, Execution, Map<String, Object>> inputs, Duration duration)
-        throws TimeoutException, QueueException {
+        throws QueueException {
         return this.runOneUntilRunning(
             flowRepository
                 .findById(tenantId, namespace, flowId, revision != null ? Optional.of(revision) : Optional.empty())
@@ -159,13 +160,20 @@ public class TestRunnerUtils {
         return this.emitAndAwaitExecution(isRunningExecution(execution), execution, duration);
     }
 
-    @VisibleForTesting
+    public Execution emitAndAwaitExecution(Predicate<Execution> predicate, Execution execution) throws QueueException {
+        return emitAndAwaitExecution(predicate, execution, Duration.ofSeconds(20));
+    }
+
     public Execution emitAndAwaitExecution(Predicate<Execution> predicate, Execution execution, Duration duration)
         throws QueueException {
 
         this.executionQueue.emit(execution);
 
         return awaitExecution(predicate, execution, duration);
+    }
+
+    public Execution awaitExecution(Predicate<Execution> predicate, Execution execution) {
+        return awaitExecution(predicate, execution, Duration.ofSeconds(20));
     }
 
     public Execution awaitExecution(Predicate<Execution> predicate, Execution execution, Duration duration) {
@@ -200,6 +208,14 @@ public class TestRunnerUtils {
         }
     }
 
+    /**
+     * This method will return the last created execution
+     * @param predicate
+     * @param tenantId
+     * @param namespace
+     * @param flowId
+     * @return
+     */
     public Execution awaitFlowExecution(Predicate<Execution> predicate, String tenantId, String namespace, String flowId) {
         return awaitFlowExecution(predicate, tenantId, namespace, flowId, null);
     }
@@ -215,7 +231,10 @@ public class TestRunnerUtils {
                 ArrayListTotal<Execution> byFlowId = executionRepository.findByFlowId(
                     tenantId, namespace, flowId, Pageable.UNPAGED);
                 if (!byFlowId.isEmpty()) {
-                    testExecution(predicate, receive, byFlowId.getLast());
+                    Execution first = byFlowId.stream()
+                        .sorted(Comparator.comparing(e -> e.getMetadata().getOriginalCreatedDate()))
+                        .toList().getLast();
+                    testExecution(predicate, receive, first);
                     return receive.get() != null;
                 }
                 return false;

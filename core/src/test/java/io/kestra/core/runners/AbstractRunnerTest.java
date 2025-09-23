@@ -1,7 +1,6 @@
 package io.kestra.core.runners;
 
 import io.kestra.core.junit.annotations.ExecuteFlow;
-import io.kestra.core.junit.annotations.FlakyTest;
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.junit.annotations.LoadFlows;
 import io.kestra.core.models.executions.Execution;
@@ -69,10 +68,10 @@ public abstract class AbstractRunnerTest {
     protected LoopUntilCaseTest loopUntilTestCaseTest;
 
     @Inject
-    private FlowConcurrencyCaseTest flowConcurrencyCaseTest;
+    protected FlowConcurrencyCaseTest flowConcurrencyCaseTest;
 
     @Inject
-    private ScheduleDateCaseTest scheduleDateCaseTest;
+    protected ScheduleDateCaseTest scheduleDateCaseTest;
 
     @Inject
     protected FlowInputOutput flowIO;
@@ -81,7 +80,7 @@ public abstract class AbstractRunnerTest {
     private SLATestCase slaTestCase;
 
     @Inject
-    private ChangeStateTestCase changeStateTestCase;
+    protected ChangeStateTestCase changeStateTestCase;
 
     @Inject
     private AfterExecutionTestCase afterExecutionTestCase;
@@ -354,7 +353,6 @@ public abstract class AbstractRunnerTest {
         skipExecutionCaseTest.skipExecution();
     }
 
-    @Disabled
     @Test
     @LoadFlows({"flows/valids/for-each-item-subflow.yaml",
         "flows/valids/for-each-item.yaml"})
@@ -368,7 +366,6 @@ public abstract class AbstractRunnerTest {
         forEachItemCaseTest.forEachItemEmptyItems(TENANT_1);
     }
 
-    @Disabled
     @Test
     @LoadFlows({"flows/valids/for-each-item-subflow-failed.yaml",
         "flows/valids/for-each-item-failed.yaml"})
@@ -439,7 +436,6 @@ public abstract class AbstractRunnerTest {
         flowConcurrencyCaseTest.flowConcurrencyWithForEachItem(TENANT_1);
     }
 
-    @Disabled
     @Test
     @LoadFlows({"flows/valids/flow-concurrency-queue-fail.yml"})
     protected void concurrencyQueueRestarted() throws Exception {
