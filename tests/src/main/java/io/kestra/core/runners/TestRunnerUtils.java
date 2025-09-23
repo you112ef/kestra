@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import static io.kestra.core.utils.TestsUtils.stringify;
+
 @Singleton
 public class TestRunnerUtils {
     public static final Duration DEFAULT_MAX_WAIT_DURATION = Duration.ofSeconds(15);
@@ -192,7 +194,7 @@ public class TestRunnerUtils {
             Optional<Execution> byId = executionRepository.findById(execution.getTenantId(), execution.getId());
             if (byId.isPresent()) {
                 Execution exec = byId.get();
-                throw new RuntimeException("Execution %s is currently at the status %s which is not the awaited one".formatted(exec.getId(), exec.getState().getCurrent()));
+                throw new RuntimeException("Execution %s is currently at the status %s which is not the awaited one, full execution object:\n%s".formatted(exec.getId(), exec.getState().getCurrent(), stringify(exec)));
             } else {
                 throw new RuntimeException("Execution %s doesn't exist in the database".formatted(execution.getId()));
             }
