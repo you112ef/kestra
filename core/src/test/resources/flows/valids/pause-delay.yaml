@@ -4,7 +4,10 @@ namespace: io.kestra.tests
 tasks:
   - id: pause
     type: io.kestra.plugin.core.flow.Pause
-    delay: PT1S
+    delay: PT0.5S
+  - id: pause1
+    type: io.kestra.plugin.core.flow.Pause
+    delay: PT0.5S
     tasks:
       - id: subtask
         type: io.kestra.plugin.core.log.Log
