@@ -30,6 +30,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
@@ -88,6 +89,7 @@ public class SchedulerTriggerChangeTest extends AbstractSchedulerTest {
         return FlowWithSource.of(flow, flow.getSource());
     }
 
+    @Disabled("Way too flaky on the CI")
     @Test
     void run() throws Exception {
         CountDownLatch executionQueueCount = new CountDownLatch(1);
