@@ -232,7 +232,7 @@
                 return this.kvs?.filter(kv =>
                     !this.searchQuery ||
                     kv.key.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                    kv.description.toLowerCase().includes(this.searchQuery.toLowerCase())
+                    kv.description?.toLowerCase().includes(this.searchQuery.toLowerCase())
                 );
             },
             kvModalTitle() {
