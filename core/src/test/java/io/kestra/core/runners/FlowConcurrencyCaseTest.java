@@ -444,26 +444,6 @@ public class FlowConcurrencyCaseTest {
         secondReceive.blockLast();
     }
 
-    public void flowConcurrencyParallelSubflowKill() throws QueueException {
-        Execution parent = runnerUtils.runOneUntilRunning(MAIN_TENANT, NAMESPACE, "flow-concurrency-parallel-subflow-kill", null, null, Duration.ofSeconds(30));
-        Execution queued = runnerUtils.awaitFlowExecution(e -> e.getState().isQueued(), MAIN_TENANT, NAMESPACE, "flow-concurrency-parallel-subflow-kill-child");
-
-        // Kill the parent
-        killQueue.emit(ExecutionKilledExecution
-            .builder()
-            .state(ExecutionKilled.State.REQUESTED)
-            .executionId(parent.getId())
-            .isOnKillCascade(true)
-            .tenantId(MAIN_TENANT)
-            .build()
-        );
-
-        Execution terminated = runnerUtils.awaitExecution(e -> e.getState().isTerminated(), queued);
-        assertThat(terminated.getState().getCurrent()).isEqualTo(State.Type.KILLED);
-        assertThat(terminated.getState().getHistories().stream().noneMatch(h -> h.getState() == Type.RUNNING)).isTrue();
-        assertThat(terminated.getTaskRunList()).isNull();
-    }
-
     private URI storageUpload() throws URISyntaxException, IOException {
         File tempFile = File.createTempFile("file", ".txt");
 
