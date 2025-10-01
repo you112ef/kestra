@@ -81,7 +81,6 @@
                                     :key="index"
                                     :level="level"
                                     :log="item"
-
                                     :exclude-metas="excludeMetas"
                                     v-else-if="filter === '' || item.message?.toLowerCase().includes(filter.toLowerCase())"
                                 />
