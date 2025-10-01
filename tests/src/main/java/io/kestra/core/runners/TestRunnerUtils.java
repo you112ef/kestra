@@ -18,10 +18,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.time.Duration;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
@@ -192,7 +189,14 @@ public class TestRunnerUtils {
 
     public Execution awaitExecution(Predicate<Execution> predicate, Execution execution, Duration duration) {
         try {
+            if(Arrays.stream(executionRepository.getClass().getClasses()).anyMatch(c -> c.getName().equals("ElasticSearchExecutionRepository"))) {
+                try {
 
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             if (duration == null){
                 duration = Duration.ofSeconds(20);
             }
