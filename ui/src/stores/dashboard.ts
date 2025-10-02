@@ -79,7 +79,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
             return response.data;
         }
 
-        async function validateChart(source: Chart["source"]) {
+        async function validateChart(source: string) {
             const response = await axios.post(`${apiUrl()}/dashboards/validate/chart`, source, header);
             setChartErrors(response.data);
             return response.data;
