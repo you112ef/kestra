@@ -69,7 +69,6 @@
                     v-if="currentView === views.DOC"
                     class="combined-right-view enhance-readability"
                     :overrideIntro="intro"
-                    :plugin="pluginsStore.editorPlugin"
                     absolute
                 />
                 <div
