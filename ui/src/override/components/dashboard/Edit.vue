@@ -1,16 +1,13 @@
 <template>
     <TopNavBar :title="header.title" :breadcrumb="header.breadcrumb" />
     <section class="full-container">
-        <Editor
-            v-if="dashboard?.sourceCode"
-            :initialSource="dashboard.sourceCode"
-            @save="save"
-        />
+        <MultiPanelDashboardEditorView @save="save" />
     </section>
 </template>
 
 <script setup lang="ts">
     import {onMounted, computed, ref} from "vue";
+    import MultiPanelDashboardEditorView from "../../../components/dashboard/components/MultiPanelDashboardEditorView.vue";
 
     import {useRoute} from "vue-router";
 
@@ -29,7 +26,6 @@
     const toast = useToast();
 
     import TopNavBar from "../../../components/layout/TopNavBar.vue";
-    import Editor from "../../../components/dashboard/components/Editor.vue";
 
     import type {Dashboard} from "../../../components/dashboard/composables/useDashboards";
 
@@ -58,5 +54,6 @@
     const routeInfo = computed(() => ({title: t("dashboards.edition.label")}));
 
     import useRouteContext from "../../../composables/useRouteContext";
+
     useRouteContext(routeInfo);
 </script>

@@ -22,7 +22,7 @@ import {useAxios} from "../utils/axios";
 
 
 export const useDashboardStore = defineStore("dashboard", () => {
-
+        const selectedChart = ref<Chart>();
         const dashboard = ref<Dashboard>();
         const chartErrors = ref<string[]>([]);
 
@@ -106,6 +106,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
         return {
             dashboard,
             chartErrors,
+            selectedChart,
             setDashboard,
             setChartErrors,
             list,
