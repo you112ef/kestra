@@ -29,13 +29,12 @@
     const toast = useToast();
 
     import TopNavBar from "../../../components/layout/TopNavBar.vue";
-    // @ts-expect-error - Component not typed
     import Editor from "../../../components/dashboard/components/Editor.vue";
 
     import type {Dashboard} from "../../../components/dashboard/composables/useDashboards";
 
     const dashboard = ref<Dashboard>({id: "", charts: []});
-    const save = async (source: string) => {
+    const save = async (source?: string) => {
         const response = await dashboardStore.update({id: route.params.dashboard.toString(), source});
 
         dashboard.value.sourceCode = source;
