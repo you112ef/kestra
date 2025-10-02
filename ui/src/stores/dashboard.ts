@@ -28,14 +28,6 @@ export const useDashboardStore = defineStore("dashboard", () => {
 
         const axios = useAxios();
 
-        function setDashboard(dashboard: Dashboard) {
-            dashboard.value = dashboard;
-        }
-
-        function setChartErrors(errors: string[]) {
-            chartErrors.value = errors;
-        }
-
         async function list(options: Record<string, any>) {
             const {sort, ...params} = options;
             const response = await axios.get(`${apiUrl()}/dashboards?size=100${sort ? `&sort=${sort}` : ""}`, {params});
@@ -45,13 +37,14 @@ export const useDashboardStore = defineStore("dashboard", () => {
 
         async function load(id: Dashboard["id"]) {
             const response = await axios.get(`${apiUrl()}/dashboards/${id}`, {validateStatus});
-            let dashboard;
+            let dashboardLoaded: Dashboard;
 
-            if (response.status === 200) dashboard = response.data;
-            else dashboard = {title: "Default", id};
+            if (response.status === 200) dashboardLoaded = response.data;
+            else dashboardLoaded = {title: "Default", id, charts: [], sourceCode: ""};
 
-            setDashboard(dashboard);
-            return dashboard;
+            dashboard.value = dashboardLoaded;
+
+            return dashboardLoaded;
         }
 
         async function create(source: Dashboard["sourceCode"]) {
@@ -81,7 +74,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
 
         async function validateChart(source: string) {
             const response = await axios.post(`${apiUrl()}/dashboards/validate/chart`, source, header);
-            setChartErrors(response.data);
+            chartErrors.value = response.data;
             return response.data;
         }
 
@@ -107,8 +100,6 @@ export const useDashboardStore = defineStore("dashboard", () => {
             dashboard,
             chartErrors,
             selectedChart,
-            setDashboard,
-            setChartErrors,
             list,
             load,
             create,
