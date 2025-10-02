@@ -35,3 +35,9 @@
         return props.warnings ? "warning" : "primary";
     });
 </script>
+<style lang="scss" scoped>
+    .button-top {
+        background: none;
+        border: none;
+    }
+</style>

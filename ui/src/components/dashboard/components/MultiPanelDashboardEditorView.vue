@@ -2,11 +2,9 @@
     <div v-bind="$attrs" class="main-editor">
         <div class="editor-header">
             <MultiPanelEditorTabs :tabs="DASHBOARD_EDITOR_ELEMENTS" @update:tabs="setTabValue" :openTabs="openTabs" />
-            <div class="editor-actions">
-                <DashboardEditorButtons
-                    @save="onSave"
-                />
-            </div>
+            <DashboardEditorButtons
+                @save="onSave"
+            />
         </div>
         <div class="editor-wrapper">
             <MultiPanelTabs v-model="panels" />
