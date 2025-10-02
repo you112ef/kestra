@@ -1,0 +1,25 @@
+export interface Tab {
+    button: {
+        icon: any,
+        label: string
+    },
+    potential?: boolean
+    fromPanel?: boolean
+    value: string,
+    dirty?: boolean,
+    component: any
+}
+
+export interface EditorElement {
+    button: {
+        icon: any,
+        label: string
+    },
+    value: string,
+    component: any,
+    deserialize?: (value: string, allowCreate: boolean) => Tab | undefined
+}
+
+export interface DeserializableEditorElement extends EditorElement {
+    deserialize: (value: string, allowCreate: boolean) => Tab | undefined
+}

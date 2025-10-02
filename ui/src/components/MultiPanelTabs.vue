@@ -193,6 +193,7 @@
 
     import {useEditorStore} from "../stores/editor";
     import {trackTabOpen, trackTabClose} from "../utils/tabTracking";
+    import {Tab} from "../utils/multiPanelTypes";
 
     const {t} = useI18n();
     const {showKeyShortcuts} = useKeyShortcuts();
@@ -208,18 +209,6 @@
                 }, limit);
             }
         }
-    }
-
-    export interface Tab {
-        button: {
-            icon: any,
-            label: string
-        },
-        potential?: boolean
-        fromPanel?: boolean
-        value: string,
-        dirty?: boolean,
-        component: any
     }
 
     interface TabInfo {
