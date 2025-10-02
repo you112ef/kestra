@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-    import {computed, ref} from "vue";
+    import {computed} from "vue";
     import {useStorage} from "@vueuse/core";
     import MultiPanelEditorTabs from "../../MultiPanelEditorTabs.vue";
 
@@ -108,7 +108,7 @@
         }
     );
 
-    const openTabs = ref<string[]>([]);
+    const openTabs = computed(() => panels.value.flatMap(p => p.tabs.map(t => t.value)));
 
     const emit = defineEmits<{
         (e: "save", source?: string): void;
@@ -118,3 +118,34 @@
         emit("save", dashboardStore.dashboard?.sourceCode);
     }
 </script>
+
+<style lang="scss" scoped>
+    .main-editor{
+        display: grid;
+        grid-template-rows: auto 1fr;
+        height: 100%;
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--ks-border-primary);
+
+            .editor-actions {
+                display: flex;
+                align-items: center;
+                padding-right: 0.5rem;
+            }
+        }
+
+        .editor-wrapper {
+            position: relative;
+            height: 100%;
+        }
+
+        :deep(.tabs-wrapper) {
+            background: none !important;
+            border: none !important;
+        }
+    }
+</style>
