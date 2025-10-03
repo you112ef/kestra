@@ -14,6 +14,7 @@ import io.kestra.core.models.tasks.ExecutableTask;
 import io.kestra.core.models.tasks.Task;
 import io.kestra.core.models.tasks.WorkerGroup;
 import io.kestra.core.models.topologies.FlowTopology;
+import io.kestra.core.models.triggers.multipleflows.MultipleCondition;
 import io.kestra.core.models.triggers.multipleflows.MultipleConditionStorageInterface;
 import io.kestra.core.queues.QueueException;
 import io.kestra.core.queues.QueueFactoryInterface;
@@ -115,6 +116,10 @@ public class JdbcExecutor implements ExecutorInterface, Service {
     @Inject
     @Named(QueueFactoryInterface.CLUSTER_EVENT_NAMED)
     private Optional<QueueInterface<ClusterEvent>> clusterEventQueue;
+
+    @Inject
+    @Named(QueueFactoryInterface.MULTIPLE_CONDITION_EVENT_NAMED)
+    private QueueInterface<MultipleConditionEvent> multipleConditionEventQueue;
 
     @Inject
     private RunContextFactory runContextFactory;
@@ -282,6 +287,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
         this.receiveCancellations.addFirst(this.killQueue.receive(Executor.class, this::killQueue));
         this.receiveCancellations.addFirst(this.subflowExecutionResultQueue.receive(Executor.class, this::subflowExecutionResultQueue));
         this.receiveCancellations.addFirst(this.subflowExecutionEndQueue.receive(Executor.class, this::subflowExecutionEndQueue));
+        this.receiveCancellations.addFirst(this.multipleConditionEventQueue.receive(Executor.class, this::multipleConditionEventQueue));
         this.clusterEventQueue.ifPresent(clusterEventQueueInterface -> this.receiveCancellations.addFirst(clusterEventQueueInterface.receive(this::clusterEventQueue)));
 
         ScheduledFuture<?> scheduledDelayFuture = scheduledDelay.scheduleAtFixedRate(
@@ -377,6 +383,24 @@ public class JdbcExecutor implements ExecutorInterface, Service {
             setState(ServiceState.RUNNING);
         }
         log.info("Executor started with {} thread(s)", numberOfThreads);
+    }
+
+    private void multipleConditionEventQueue(Either<MultipleConditionEvent, DeserializationException> either) {
+        if (either.isRight()) {
+            log.error("Unable to deserialize a multiple condition event: {}", either.getRight().getMessage());
+            return;
+        }
+
+        MultipleConditionEvent multipleConditionEvent = either.getLeft();
+
+        flowTriggerService.computeExecutionsFromFlowTriggers(multipleConditionEvent.execution(), List.of(multipleConditionEvent.flow()), Optional.of(multipleConditionStorage))
+            .forEach(exec -> {
+                try {
+                    executionQueue.emit(exec);
+                } catch (QueueException e) {
+                    log.error("Unable to emit the execution {}", exec.getId(), e);
+                }
+            });
     }
 
     private void clusterEventQueue(Either<ClusterEvent, DeserializationException> either) {
@@ -1010,8 +1034,7 @@ public class JdbcExecutor implements ExecutorInterface, Service {
             Execution execution = executor.getExecution();
             // handle flow triggers on state change
             if (!execution.getState().getCurrent().equals(executor.getOriginalState())) {
-                flowTriggerService.computeExecutionsFromFlowTriggers(execution, allFlows.stream().map(flow -> flow.toFlow()).toList(), Optional.of(multipleConditionStorage))
-                    .forEach(throwConsumer(executionFromFlowTrigger -> this.executionQueue.emit(executionFromFlowTrigger)));
+                processFlowTriggers(execution);
             }
 
             // handle actions on terminated state
@@ -1078,6 +1101,20 @@ public class JdbcExecutor implements ExecutorInterface, Service {
                 });
             }
         }
+    }
+
+    private void processFlowTriggers(Execution execution) throws QueueException {
+        // directly process simple conditions
+        flowTriggerService.withFlowTriggersOnly(allFlows.stream())
+            .filter(f ->ListUtils.emptyOnNull(f.getTrigger().getConditions()).stream().noneMatch(c -> c instanceof MultipleCondition) && f.getTrigger().getPreconditions() == null)
+            .flatMap(f -> flowTriggerService.computeExecutionsFromFlowTriggers(execution, List.of(f.getFlow()), Optional.empty()).stream())
+            .forEach(throwConsumer(exec -> executionQueue.emit(exec)));
+
+        // send multiple conditions to the multiple condition queue for later processing
+        flowTriggerService.withFlowTriggersOnly(allFlows.stream())
+            .filter(f -> ListUtils.emptyOnNull(f.getTrigger().getConditions()).stream().anyMatch(c -> c instanceof MultipleCondition) || f.getTrigger().getPreconditions() != null)
+            .map(f -> new MultipleConditionEvent(f.getFlow(), execution))
+            .forEach(throwConsumer(multipleCondition -> multipleConditionEventQueue.emit(multipleCondition)));
     }
 
     private FlowWithSource transform(FlowWithSource flow, Execution execution) {

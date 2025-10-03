@@ -160,4 +160,11 @@ public class MysqlQueueFactory implements QueueFactoryInterface {
     public QueueInterface<SubflowExecutionEnd> subflowExecutionEnd() {
         return new MysqlQueue<>(SubflowExecutionEnd.class, applicationContext);
     }
+    @Override
+    @Singleton
+    @Named(QueueFactoryInterface.MULTIPLE_CONDITION_EVENT_NAMED)
+    @Bean(preDestroy = "close")
+    public QueueInterface<MultipleConditionEvent> multipleConditionEvent() {
+        return new MysqlQueue<>(MultipleConditionEvent.class, applicationContext);
+    }
 }
