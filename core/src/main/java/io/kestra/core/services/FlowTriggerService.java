@@ -33,7 +33,6 @@ public class FlowTriggerService {
     @Inject
     private FlowService flowService;
 
-    // used in EE only
     public Stream<FlowWithFlowTrigger> withFlowTriggersOnly(Stream<FlowWithSource> allFlows) {
         return allFlows
             .filter(flow -> !flow.isDisabled())
