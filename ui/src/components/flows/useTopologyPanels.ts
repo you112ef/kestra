@@ -1,6 +1,8 @@
 import {ref, Ref, provide, watch} from "vue";
 import * as YAML_UTILS from "@kestra-io/ui-libs/flow-yaml-utils";
 import {useStore} from "vuex"
+import {usePluginsStore} from "../../stores/plugins";
+import {useNoCodePanels} from "./useNoCodePanels";
 
 import {TOPOLOGY_CLICK_INJECTION_KEY} from "../code/injectionKeys";
 import {TopologyClickParams} from "../code/utils/types";
@@ -8,11 +10,12 @@ import {Panel} from "../MultiPanelTabs.vue";
 
 export function useTopologyPanels(
     panels: Ref<Panel[]>,
-    openAddTaskTab: any,
-    openEditTaskTab: any,
+    openAddTaskTab: ReturnType<typeof useNoCodePanels>["openAddTaskTab"],
+    openEditTaskTab: ReturnType<typeof useNoCodePanels>["openEditTaskTab"],
 ) {
     const topologyClick = ref<TopologyClickParams | undefined>(undefined);
     const store = useStore();
+    const pluginsStore = usePluginsStore();
     provide(TOPOLOGY_CLICK_INJECTION_KEY, topologyClick);
 
     function findTopologyIndexes(arr: { tabs: { value: string }[] }[]): {
@@ -62,12 +65,14 @@ export function useTopologyPanels(
             return
         }
 
+        const blockSchemaPath = [pluginsStore.flowSchema?.$ref, "properties", params.section, "items"].join("/");
+
         if (action === "create"){
             const refLength = (refPath.toString().length + 2)
                 + (fieldName ? fieldName.length + 1 : 0); // -2 for the [ and ] characters an 1 for the .
 
             const parentPath = path.slice(0, - refLength); // remove the [refPath] part and the fieldName if necessary
-            openAddTaskTab(target, params.section, parentPath, refPath, params.position, undefined, fieldName);
+            openAddTaskTab(target, parentPath, blockSchemaPath, refPath, params.position, undefined, fieldName);
         } else if( action === "edit" && fieldName === undefined) {
             // if the fieldName is undefined, editing a task directly in an array
             // we need the parent path and the refPath
