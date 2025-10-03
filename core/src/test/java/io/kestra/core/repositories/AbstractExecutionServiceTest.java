@@ -114,7 +114,8 @@ public abstract class AbstractExecutionServiceTest {
             flow.getId(),
             null,
             ZonedDateTime.now(),
-            null
+            null,
+            100
         );
 
         assertThat(purge.getExecutionsCount(), is(1));
@@ -132,7 +133,8 @@ public abstract class AbstractExecutionServiceTest {
             flow.getId(),
             null,
             ZonedDateTime.now(),
-            null
+            null,
+            100
         );
 
         assertThat(purge.getExecutionsCount(), is(0));

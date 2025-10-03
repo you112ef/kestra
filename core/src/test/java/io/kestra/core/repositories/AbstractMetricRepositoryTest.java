@@ -1,6 +1,7 @@
 package io.kestra.core.repositories;
 
 import com.devskiller.friendly_id.FriendlyId;
+import io.kestra.core.models.executions.Execution;
 import io.kestra.core.models.executions.MetricEntry;
 import io.kestra.core.models.executions.TaskRun;
 import io.kestra.core.models.executions.metrics.Counter;
@@ -10,6 +11,7 @@ import io.micronaut.data.model.Pageable;
 import io.kestra.core.junit.annotations.KestraTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.slf4j.event.Level;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -107,6 +109,17 @@ public abstract class AbstractMetricRepositoryTest {
 
         List<MetricEntry> results = metricRepository.findAllAsync(null).collectList().block();
         assertThat(results, hasSize(2));
+    }
+
+    @Test
+    void purge() {
+        metricRepository.save(MetricEntry.of(taskRun("execution1", "task"), counter("counter1")));
+        metricRepository.save(MetricEntry.of(taskRun("execution1", "task"), counter("counter2")));
+        metricRepository.save(MetricEntry.of(taskRun("execution2", "task"), counter("counter1")));
+        metricRepository.save(MetricEntry.of(taskRun("execution2", "task"), counter("counter2")));
+
+        var result = metricRepository.purge(List.of(Execution.builder().id("execution1").build(), Execution.builder().id("execution2").build()));
+        assertThat(result, is(4));
     }
 
     private Counter counter(String metricName) {

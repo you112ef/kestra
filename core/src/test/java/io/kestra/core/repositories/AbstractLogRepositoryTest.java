@@ -8,6 +8,8 @@ import io.kestra.core.models.executions.Execution;
 import io.kestra.core.models.executions.LogEntry;
 import io.kestra.core.models.executions.statistics.LogStatistics;
 import io.kestra.core.utils.IdUtils;
+import io.kestra.core.utils.TestsUtils;
+import io.kestra.plugin.core.dashboard.data.Executions;
 import io.kestra.plugin.core.dashboard.data.Logs;
 import io.micronaut.data.model.Pageable;
 import io.kestra.core.junit.annotations.KestraTest;
@@ -35,11 +37,15 @@ public abstract class AbstractLogRepositoryTest {
     protected LogRepositoryInterface logRepository;
 
     private static LogEntry.LogEntryBuilder logEntry(Level level) {
+        return logEntry(level, IdUtils.create());
+    }
+
+    private static LogEntry.LogEntryBuilder logEntry(Level level, String executionId) {
         return LogEntry.builder()
             .flowId("flowId")
             .namespace("io.kestra.unittest")
             .taskId("taskId")
-            .executionId(IdUtils.create())
+            .executionId(executionId)
             .taskRunId(IdUtils.create())
             .attemptNumber(0)
             .timestamp(Instant.now())
@@ -271,5 +277,16 @@ public abstract class AbstractLogRepositoryTest {
             null);
 
         assertThat(results, hasSize(1));
+    }
+
+    @Test
+    void purge() {
+        logRepository.save(logEntry(Level.INFO, "execution1").build());
+        logRepository.save(logEntry(Level.INFO, "execution1").build());
+        logRepository.save(logEntry(Level.INFO, "execution2").build());
+        logRepository.save(logEntry(Level.INFO, "execution2").build());
+
+        var result = logRepository.purge(List.of(Execution.builder().id("execution1").build(), Execution.builder().id("execution2").build()));
+        assertThat(result, is(4));
     }
 }
