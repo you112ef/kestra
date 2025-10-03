@@ -34,7 +34,6 @@ public class FlowTriggerService {
         this.flowService = flowService;
     }
 
-    // used in EE only
     public Stream<FlowWithFlowTrigger> withFlowTriggersOnly(Stream<FlowWithSource> allFlows) {
         return allFlows
             .filter(flow -> !flow.isDisabled())
