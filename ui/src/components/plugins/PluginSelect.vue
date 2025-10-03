@@ -5,7 +5,7 @@
         filterable
     >
         <el-option
-            v-for="item in taskModels.sort()"
+            v-for="item in taskModels"
             :key="item"
             :label="item"
             :value="item"
@@ -89,7 +89,7 @@
             return models;
         }
 
-        return allRefs.value.reduce((acc: Set<string>, item: string) => {
+        return allRefs.value.reduce((acc: Set<any>, item: string) => {
             const def = rootDefinitions.value?.[item]
 
             if (!def || def.$deprecated) {
@@ -107,7 +107,7 @@
         }, new Set<string>());
     })
 
-    const taskModels = computed(() => Array.from(taskModelsSets.value).sort());
+    const taskModels = computed(() => Array.from(taskModelsSets.value).sort() as string[]);
 
     const hasIcons = computed(() => {
         return pluginsStore.icons && Object.keys(pluginsStore.icons).filter(plugin => taskModels.value.includes(plugin)).length > 0;
