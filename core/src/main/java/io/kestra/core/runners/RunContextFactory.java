@@ -40,7 +40,7 @@ public class RunContextFactory {
     protected PluginConfigurations pluginConfigurations;
 
     @Inject
-    protected VariableRenderer variableRenderer;
+    protected VariableRendererFactory variableRendererFactory;
 
     @Inject
     protected StorageInterface storageInterface;
@@ -82,22 +82,33 @@ public class RunContextFactory {
     public RunContext of(FlowInterface flow, Execution execution) {
         return of(flow, execution, Function.identity());
     }
+    
+    public RunContext of(FlowInterface flow, Execution execution, boolean decryptVariable) {
+        return of(flow, execution, Function.identity(), decryptVariable);
+    }
 
     public RunContext of(FlowInterface flow, Execution execution, Function<RunVariables.Builder, RunVariables.Builder> runVariableModifier) {
+        return of(flow, execution, runVariableModifier, true);
+    }
+    
+    public RunContext of(FlowInterface flow, Execution execution, Function<RunVariables.Builder, RunVariables.Builder> runVariableModifier, boolean decryptVariables) {
         RunContextLogger runContextLogger = runContextLoggerFactory.create(execution);
-
+        
+        VariableRenderer variableRenderer = decryptVariables ? variableRendererFactory.getDefault() : variableRendererFactory.createWithMaskedSecrets();
+        
         return newBuilder()
             // Logger
             .withLogger(runContextLogger)
             // Execution
             .withPluginConfiguration(Map.of())
             .withStorage(new InternalStorage(runContextLogger.logger(), StorageContext.forExecution(execution), storageInterface, flowService))
+            .withVariableRenderer(variableRenderer)
             .withVariables(runVariableModifier.apply(
-                newRunVariablesBuilder()
-                    .withFlow(flow)
-                    .withExecution(execution)
-                    .withDecryptVariables(true)
-                    .withSecretInputs(secretInputsFromFlow(flow))
+                    newRunVariablesBuilder()
+                        .withFlow(flow)
+                        .withExecution(execution)
+                        .withDecryptVariables(decryptVariables)
+                        .withSecretInputs(secretInputsFromFlow(flow))
                 )
                 .build(runContextLogger, PropertyContext.create(variableRenderer)))
             .withSecretInputs(secretInputsFromFlow(flow))
@@ -109,7 +120,7 @@ public class RunContextFactory {
     }
 
     public RunContext of(FlowInterface flow, Task task, Execution execution, TaskRun taskRun, boolean decryptVariables) {
-        return this.of(flow, task, execution, taskRun, decryptVariables, variableRenderer);
+        return this.of(flow, task, execution, taskRun, decryptVariables, variableRendererFactory.getDefault());
     }
 
     public RunContext of(FlowInterface flow, Task task, Execution execution, TaskRun taskRun, boolean decryptVariables, VariableRenderer variableRenderer) {
@@ -147,7 +158,7 @@ public class RunContextFactory {
                 .withFlow(flow)
                 .withTrigger(trigger)
                 .withSecretInputs(secretInputsFromFlow(flow))
-                .build(runContextLogger, PropertyContext.create(variableRenderer))
+                .build(runContextLogger, PropertyContext.create(variableRendererFactory.getDefault()))
             )
             .withSecretInputs(secretInputsFromFlow(flow))
             .withTrigger(trigger)
@@ -226,7 +237,7 @@ public class RunContextFactory {
             // inject mandatory services and config
             .withApplicationContext(applicationContext) // TODO - ideally application should not be injected here
             .withMeterRegistry(metricRegistry)
-            .withVariableRenderer(variableRenderer)
+            .withVariableRenderer(variableRendererFactory.getDefault())
             .withStorageInterface(storageInterface)
             .withSecretKey(secretKey)
             .withWorkingDir(workingDirFactory.createWorkingDirectory())
