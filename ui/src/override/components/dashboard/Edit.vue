@@ -1,5 +1,5 @@
 <template>
-    <TopNavBar :title="header.title" :breadcrumb="header.breadcrumb" />
+    <TopNavBar v-bind="header" />
     <section class="full-container">
         <MultiPanelDashboardEditorView @save="save" />
     </section>

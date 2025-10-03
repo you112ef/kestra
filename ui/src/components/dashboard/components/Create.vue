@@ -1,12 +1,7 @@
 <template>
-    <TopNavBar :title="header.title" :breadcrumb="header.breadcrumb" />
+    <TopNavBar v-bind="header" />
     <section class="full-container">
-        <Editor
-            v-if="dashboard.sourceCode"
-            :initialSource="dashboard.sourceCode"
-            allowSaveUnchanged
-            @save="save"
-        />
+        <MultiPanelDashboardEditorView @save="save" />
     </section>
 </template>
 
@@ -22,12 +17,12 @@
     import type {Dashboard} from "../../../components/dashboard/composables/useDashboards"
     import {getDashboard, processFlowYaml} from "../../../components/dashboard/composables/useDashboards"
     import TopNavBar from "../../../components/layout/TopNavBar.vue"
-    import Editor from "../../../components/dashboard/components/Editor.vue"
     import useRouteContext from "../../../composables/useRouteContext"
 
     import YAML_MAIN from "../assets/default_main_definition.yaml?raw"
     import YAML_FLOW from "../assets/default_flow_definition.yaml?raw"
     import YAML_NAMESPACE from "../assets/default_namespace_definition.yaml?raw"
+    import MultiPanelDashboardEditorView from "./MultiPanelDashboardEditorView.vue"
 
     const route = useRoute()
     const router = useRouter()

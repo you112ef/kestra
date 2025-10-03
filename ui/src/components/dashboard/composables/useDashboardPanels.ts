@@ -1,6 +1,6 @@
 import {markRaw, h} from "vue";
 import CodeTagsIcon from "vue-material-design-icons/CodeTags.vue";
-// import DotsSquareIcon from "vue-material-design-icons/DotsSquare.vue";
+import DotsSquareIcon from "vue-material-design-icons/DotsSquare.vue";
 import FileDocumentIcon from "vue-material-design-icons/FileDocument.vue";
 import ChartBarIcon from "vue-material-design-icons/ChartBar.vue";
 import ViewDashboardIcon from "vue-material-design-icons/ViewDashboard.vue";
@@ -10,7 +10,8 @@ import ChartViewWrapper from "../components/ChartViewWrapper.vue";
 import PreviewDashboardWrapper from "../components/PreviewDashboardWrapper.vue";
 
 import intro from "../../../assets/docs/dashboard_home.md?raw";
-import {Tab} from "../../MultiPanelTabs.vue";
+import DashboardNoCodeEditor from "../components/DashboardNoCodeEditor.vue";
+import {Tab} from "../../../utils/multiPanelTypes";
 
 interface EditorElement {
     button: {
@@ -38,14 +39,14 @@ export const DASHBOARD_EDITOR_ELEMENTS = [
         value: "code",
         component: markRaw(DashboardCodeEditor),
     },
-    // {
-    //     button: {
-    //         icon: markRaw(DotsSquareIcon),
-    //         label: "No Code"
-    //     },
-    //     value: "nocode",
-    //     component: () => h("div"),
-    // },
+    {
+        button: {
+            icon: markRaw(DotsSquareIcon),
+            label: "No Code"
+        },
+        value: "nocode",
+        component: markRaw(DashboardNoCodeEditor),
+    },
     {
         button: {
             icon: markRaw(FileDocumentIcon),

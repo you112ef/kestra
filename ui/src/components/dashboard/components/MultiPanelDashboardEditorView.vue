@@ -1,5 +1,6 @@
 <template>
     <MultiPanelGenericEditorView
+        ref="editorView"
         :editorElements="DASHBOARD_EDITOR_ELEMENTS"
         :defaultActiveTabs="DEFAULT_ACTIVE_TABS"
         :saveKey="`ks-dashboard-${dashboardStore.dashboard?.id}`"
@@ -11,6 +12,7 @@
 </template>
 
 <script lang="ts" setup>
+    import {computed, markRaw, useTemplateRef} from "vue";
     import {DASHBOARD_EDITOR_ELEMENTS, DEFAULT_ACTIVE_TABS} from "../composables/useDashboardPanels";
     import {useDashboardStore} from "../../../stores/dashboard";
     import MultiPanelGenericEditorView from "../../MultiPanelGenericEditorView.vue";
@@ -25,4 +27,15 @@
     function onSave(){
         emit("save", dashboardStore.dashboard?.sourceCode);
     }
+
+    import DashboardNoCodeEditor from "./DashboardNoCodeEditor.vue";
+    const editorView = useTemplateRef<InstanceType<typeof MultiPanelGenericEditorView>>("editorView");
+
+    import {useNoCodePanelsFull} from "../../flows/useNoCodePanels";
+    useNoCodePanelsFull({
+        RawNoCode: markRaw(DashboardNoCodeEditor),
+        editorView,
+        editorElements: DASHBOARD_EDITOR_ELEMENTS,
+        source: computed(() => dashboardStore.dashboard?.sourceCode ?? ""),
+    });
 </script>
