@@ -1,0 +1,19 @@
+# Dockerfile specifically optimized for Render.com deployment
+FROM kestra/kestra:latest
+
+# Set environment variables for proper startup
+ENV KESTRA_SERVER_PORT=8080
+ENV KESTRA_SERVER_HOST=0.0.0.0
+ENV KESTRA_REPOSITORY_TYPE=h2
+ENV KESTRA_STORAGE_TYPE=local
+ENV KESTRA_STORAGE_LOCAL_BASEPATH=/app/storage
+
+# Expose the port explicitly
+EXPOSE 8080
+
+# Use a startup script to ensure proper binding
+RUN echo '#!/bin/bash\nset -e\necho "Starting Kestra server..."\necho "Port: $PORT"\necho "Host: 0.0.0.0"\n\n# Use PORT environment variable if set (Render.com requirement)\nif [ -n "$PORT" ]; then\n  echo "Using PORT from environment: $PORT"\n  exec /app/kestra server local --server.port=$PORT --server.host=0.0.0.0\nelse\n  echo "Using default port 8080"\n  exec /app/kestra server local --server.port=8080 --server.host=0.0.0.0\nfi' > /app/start.sh && \
+    chmod +x /app/start.sh
+
+# Use the startup script
+CMD ["/app/start.sh"]

@@ -1,0 +1,12 @@
+# Dockerfile for Render.com with PORT environment variable support
+FROM kestra/kestra:latest
+
+# Create startup script that uses Render's PORT environment variable
+RUN echo '#!/bin/bash\nset -e\n\n# Get port from Render.com environment variable or use default\nPORT=${PORT:-8080}\nHOST=${HOST:-0.0.0.0}\n\necho "Starting Kestra server on $HOST:$PORT"\n\n# Start Kestra with the specified port and host\nexec /app/kestra server local --server.port=$PORT --server.host=$HOST' > /app/start.sh && \
+    chmod +x /app/start.sh
+
+# Expose port (Render.com will override this with PORT env var)
+EXPOSE 8080
+
+# Use the startup script
+CMD ["/app/start.sh"]
