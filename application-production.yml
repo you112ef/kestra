@@ -1,0 +1,54 @@
+# إعدادات الإنتاج لـ Kestra
+kestra:
+  # إعدادات الخادم
+  server:
+    port: 8080
+    host: 0.0.0.0
+    
+  # إعدادات قاعدة البيانات
+  repository:
+    type: h2
+    
+  # إعدادات التخزين
+  storage:
+    type: local
+    local:
+      basePath: "/app/storage"
+      
+  # إعدادات المهام
+  tasks:
+    tmpDir:
+      path: /tmp/kestra-wd/tmp
+      
+  # إعدادات التقارير
+  anonymous-usage-report:
+    enabled: false
+    
+  # إعدادات URL
+  url: "https://kestra.onrender.com/"
+
+# إعدادات Micronaut
+micronaut:
+  server:
+    cors:
+      enabled: true
+      configurations:
+        all:
+          allowedOrigins:
+            - "https://kestra.onrender.com"
+            - "http://localhost:5173"
+          allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          allowedHeaders:
+            - "*"
+          allowCredentials: true
+
+# إعدادات السجلات
+logging:
+  level:
+    io.kestra: INFO
+    root: WARN

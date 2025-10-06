@@ -1,4 +1,4 @@
-# Dockerfile محسن للإنتاج على Render.com
+# Dockerfile بسيط ومضمون للعمل على Render.com
 FROM kestra/kestra:latest
 
 # إنشاء مجلدات مطلوبة

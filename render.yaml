@@ -1,24 +1,43 @@
 services:
   - type: web
-    name: kestra
+    name: kestra-production
     env: docker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./Dockerfile.render-production
     dockerContext: .
     plan: starter
     region: oregon
-    envVars:
-      - key: KESTRA_CONFIGURATION
-        value: |
-          kestra:
-            repository:
-              type: h2
-            storage:
-              type: local
-              local:
-                basePath: "/app/storage"
-            url: https://kestra.onrender.com/
-      - key: KESTRA_CORS_ENABLED
-        value: "true"
-      - key: KESTRA_CORS_ALLOWED_ORIGINS
-        value: "https://kestra.onrender.com"
     healthCheckPath: /api/v1/health
+    envVars:
+      # إعدادات الخادم
+      - key: KESTRA_SERVER_PORT
+        value: "8080"
+      - key: KESTRA_SERVER_HOST
+        value: "0.0.0.0"
+      
+      # إعدادات قاعدة البيانات
+      - key: KESTRA_REPOSITORY_TYPE
+        value: "h2"
+      
+      # إعدادات التخزين
+      - key: KESTRA_STORAGE_TYPE
+        value: "local"
+      - key: KESTRA_STORAGE_LOCAL_BASEPATH
+        value: "/app/storage"
+      
+      # إعدادات CORS
+      - key: MICRONAUT_SERVER_CORS_ENABLED
+        value: "true"
+      - key: MICRONAUT_SERVER_CORS_CONFIGURATIONS_ALL_ALLOWEDORIGINS
+        value: "https://kestra.onrender.com,http://localhost:5173"
+      
+      # إعدادات إضافية
+      - key: KESTRA_ANONYMOUS_USAGE_REPORT_ENABLED
+        value: "false"
+      - key: KESTRA_TASKS_TMPDIR_PATH
+        value: "/tmp/kestra-wd/tmp"
+      
+      # إعدادات البيئة
+      - key: JAVA_OPTS
+        value: "-Xmx512m -Xms256m"
+      - key: TZ
+        value: "UTC"

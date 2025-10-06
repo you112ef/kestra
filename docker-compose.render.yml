@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  kestra:
+    build:
+      context: .
+      dockerfile: Dockerfile.simple-render
+    ports:
+      - "8080:8080"
+    environment:
+      # إعدادات الخادم
+      - KESTRA_SERVER_PORT=8080
+      - KESTRA_SERVER_HOST=0.0.0.0
+      
+      # إعدادات قاعدة البيانات
+      - KESTRA_REPOSITORY_TYPE=h2
+      
+      # إعدادات التخزين
+      - KESTRA_STORAGE_TYPE=local
+      - KESTRA_STORAGE_LOCAL_BASEPATH=/app/storage
+      
+      # إعدادات CORS
+      - MICRONAUT_SERVER_CORS_ENABLED=true
+      - MICRONAUT_SERVER_CORS_CONFIGURATIONS_ALL_ALLOWEDORIGINS=http://localhost:8080,http://localhost:5173
+      
+      # إعدادات إضافية
+      - KESTRA_ANONYMOUS_USAGE_REPORT_ENABLED=false
+      - JAVA_OPTS=-Xmx512m -Xms256m
+    volumes:
+      - kestra-storage:/app/storage
+      - kestra-tmp:/tmp/kestra-wd
+    restart: unless-stopped
+
+volumes:
+  kestra-storage:
+  kestra-tmp:

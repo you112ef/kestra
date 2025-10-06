@@ -1,0 +1,31 @@
+# Dockerfile محسن للإنتاج على Render.com
+FROM kestra/kestra:latest
+
+# إعداد متغيرات البيئة الأساسية
+ENV KESTRA_SERVER_PORT=8080
+ENV KESTRA_SERVER_HOST=0.0.0.0
+ENV KESTRA_REPOSITORY_TYPE=h2
+ENV KESTRA_STORAGE_TYPE=local
+ENV KESTRA_STORAGE_LOCAL_BASEPATH=/app/storage
+ENV KESTRA_URL=https://kestra.onrender.com/
+
+# إعدادات CORS للواجهة الأمامية
+ENV MICRONAUT_SERVER_CORS_ENABLED=true
+ENV MICRONAUT_SERVER_CORS_CONFIGURATIONS_ALL_ALLOWEDORIGINS=https://kestra.onrender.com,http://localhost:5173
+
+# إعدادات إضافية للإنتاج
+ENV KESTRA_ANONYMOUS_USAGE_REPORT_ENABLED=false
+ENV KESTRA_TASKS_TMPDIR_PATH=/tmp/kestra-wd/tmp
+
+# إنشاء مجلدات مطلوبة
+RUN mkdir -p /app/storage /tmp/kestra-wd/tmp
+
+# إنشاء سكريبت بدء التشغيل المحسن
+RUN echo '#!/bin/bash\nset -e\n\n# الحصول على المنفذ من متغير البيئة أو استخدام الافتراضي\nPORT=${PORT:-8080}\nHOST=${HOST:-0.0.0.0}\n\n# طباعة معلومات البدء\necho "==========================================="\necho "بدء تشغيل Kestra Server"\necho "==========================================="\necho "المنفذ: $PORT"\necho "العنوان: $HOST"\necho "نوع قاعدة البيانات: H2"\necho "نوع التخزين: Local"\necho "==========================================="\n\n# بدء Kestra مع الإعدادات المحددة\necho "بدء تشغيل Kestra..."\nexec /app/kestra server local --server.port=$PORT --server.host=$HOST' > /app/start.sh && \
+    chmod +x /app/start.sh
+
+# فتح المنفذ
+EXPOSE 8080
+
+# استخدام سكريبت البدء
+CMD ["/app/start.sh"]
