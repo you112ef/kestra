@@ -1,0 +1,14 @@
+# Dockerfile بديل يستخدم نهج مختلف
+FROM kestra/kestra:latest
+
+# إنشاء مجلدات مطلوبة
+RUN mkdir -p /app/storage /tmp/kestra-wd/tmp
+
+# إنشاء ملف إعدادات
+RUN echo 'kestra:\n  server:\n    port: 8080\n    host: 0.0.0.0\n  repository:\n    type: h2\n  storage:\n    type: local\n    local:\n      basePath: "/app/storage"\n  tasks:\n    tmpDir:\n      path: /tmp/kestra-wd/tmp\n  anonymous-usage-report:\n    enabled: false\n\nmicronaut:\n  server:\n    cors:\n      enabled: true\n      configurations:\n        all:\n          allowedOrigins:\n            - "https://*.onrender.com"\n            - "http://localhost:5173"' > /app/confs/application-override.yml
+
+# فتح المنفذ
+EXPOSE 8080
+
+# بدء Kestra مع ملف الإعدادات
+CMD ["/app/kestra", "server", "local", "--config", "/app/confs/application-override.yml"]

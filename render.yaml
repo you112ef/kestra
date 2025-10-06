@@ -2,7 +2,7 @@ services:
   - type: web
     name: kestra-production
     env: docker
-    dockerfilePath: ./Dockerfile.render-production
+    dockerfilePath: ./Dockerfile.simple-working
     dockerContext: .
     plan: starter
     region: oregon
@@ -24,20 +24,14 @@ services:
       - key: KESTRA_STORAGE_LOCAL_BASEPATH
         value: "/app/storage"
       
-      # إعدادات CORS
-      - key: MICRONAUT_SERVER_CORS_ENABLED
-        value: "true"
-      - key: MICRONAUT_SERVER_CORS_CONFIGURATIONS_ALL_ALLOWEDORIGINS
-        value: "https://kestra.onrender.com,http://localhost:5173"
-      
       # إعدادات إضافية
       - key: KESTRA_ANONYMOUS_USAGE_REPORT_ENABLED
         value: "false"
       - key: KESTRA_TASKS_TMPDIR_PATH
         value: "/tmp/kestra-wd/tmp"
       
-      # إعدادات البيئة
+      # إعدادات Java
       - key: JAVA_OPTS
-        value: "-Xmx512m -Xms256m"
+        value: "-Xmx512m -Xms256m -Djava.security.egd=file:/dev/./urandom"
       - key: TZ
         value: "UTC"
