@@ -2,9 +2,30 @@
 
 This guide explains how to deploy Kestra to various platforms, including fixing the common Docker deployment issue.
 
+## 🚀 Quick Start (Recommended)
+
+**For immediate deployment, use the official image approach:**
+
+```bash
+# Build and run (fastest, most reliable)
+docker build -f Dockerfile -t kestra-app .
+docker run -p 8080:8080 kestra-app
+```
+
+This approach:
+- ✅ Uses official Kestra image (no Gradle build issues)
+- ✅ Builds in ~30 seconds
+- ✅ Includes all features
+- ✅ Works on all platforms (Render.com, Docker, etc.)
+
 ## Problem Analysis
 
-The error `/app/kestra: not found` occurs because the Docker container doesn't contain the built Kestra executable. The original Dockerfile expects a pre-built distribution, but we need to build the application first.
+The error `/app/kestra: not found` occurs because the Docker container doesn't contain the built Kestra executable. Additionally, Gradle builds often fail in Docker environments due to resource constraints and environment differences.
+
+**Root Causes:**
+1. Missing Kestra executable in container
+2. Gradle build failures in Docker (memory, daemon, environment issues)
+3. Complex multi-stage builds with dependency issues
 
 ## Solution
 

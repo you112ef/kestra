@@ -1,80 +1,36 @@
-# Multi-stage build for Kestra
-FROM eclipse-temurin:21-jdk-jammy AS builder
+# Use official Kestra image with our configuration (most reliable approach)
+FROM kestra/kestra:latest
 
-# Set working directory
-WORKDIR /workspace
+# Set environment variables for our configuration
+ENV KESTRA_CONFIGURATION='{
+  "kestra": {
+    "repository": {
+      "type": "h2"
+    },
+    "storage": {
+      "type": "local",
+      "local": {
+        "basePath": "/app/storage"
+      }
+    },
+    "url": "http://localhost:8080/"
+  },
+  "micronaut": {
+    "server": {
+      "cors": {
+        "enabled": true,
+        "configurations": {
+          "all": {
+            "allowedOrigins": ["http://localhost:5173", "https://*.onrender.com"]
+          }
+        }
+      }
+    }
+  }
+}'
 
-# Install necessary tools
-RUN apt-get update && apt-get install -y \
-    curl \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
+# Expose the port
+EXPOSE 8080
 
-# Copy Gradle wrapper and build files first (for better caching)
-COPY gradlew .
-COPY gradle gradle
-COPY build.gradle .
-COPY settings.gradle .
-COPY gradle.properties .
-
-# Make gradlew executable
-RUN chmod +x gradlew
-
-# Copy source code
-COPY . .
-
-# Set Gradle options for Docker environment
-ENV GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2 -Xmx2g"
-
-# Build the application with better error handling
-RUN ./gradlew clean build -x test --no-daemon --stacktrace || \
-    (echo "Build failed, trying with more memory..." && \
-     GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Xmx4g" ./gradlew clean build -x test --no-daemon --stacktrace)
-
-# Verify the build artifacts
-RUN ls -la build/scriptsShadow/ && \
-    ls -la build/libs/ && \
-    test -f build/scriptsShadow/kestra && \
-    chmod +x build/scriptsShadow/kestra
-
-# Create the final runtime image
-FROM eclipse-temurin:21-jre-jammy
-
-ARG KESTRA_PLUGINS=""
-ARG APT_PACKAGES=""
-ARG PYTHON_LIBRARIES=""
-
-WORKDIR /app
-
-RUN groupadd kestra && \
-    useradd -m -g kestra kestra
-
-# Copy the built application from builder stage
-COPY --from=builder --chown=kestra:kestra /workspace/build/scriptsShadow/kestra /app/kestra
-COPY --from=builder --chown=kestra:kestra /workspace/build/libs /app/libs
-
-# Copy docker configuration
-COPY --chown=kestra:kestra docker /app
-
-# Install system dependencies and Python tools
-RUN apt-get update -y && \
-    apt-get upgrade -y && \
-    if [ -n "${APT_PACKAGES}" ]; then apt-get install -y --no-install-recommends ${APT_PACKAGES}; fi && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /var/tmp/* /tmp/* && \
-    curl -LsSf https://astral.sh/uv/0.6.17/install.sh | sh && mv /root/.local/bin/uv /bin && mv /root/.local/bin/uvx /bin && \
-    if [ -n "${KESTRA_PLUGINS}" ]; then /app/kestra plugins install ${KESTRA_PLUGINS} && rm -rf /tmp/*; fi && \
-    if [ -n "${PYTHON_LIBRARIES}" ]; then uv pip install --system ${PYTHON_LIBRARIES}; fi && \
-    chown -R kestra:kestra /app
-
-# Make the kestra executable
-RUN chmod +x /app/kestra
-
-# Verify the executable works
-RUN /app/kestra --help
-
-USER kestra
-
-ENTRYPOINT ["docker-entrypoint.sh"]
-
-CMD ["--help"]
+# Use the default entrypoint from the base image
+CMD ["server", "local"]
