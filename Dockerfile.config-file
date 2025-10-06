@@ -1,0 +1,33 @@
+# Use official Kestra image with configuration file
+FROM kestra/kestra:latest
+
+# Create configuration directory
+RUN mkdir -p /app/confs
+
+# Create our configuration file
+COPY <<EOF /app/confs/application-override.yml
+kestra:
+  repository:
+    type: h2
+  storage:
+    type: local
+    local:
+      basePath: "/app/storage"
+  url: "http://localhost:8080/"
+
+micronaut:
+  server:
+    cors:
+      enabled: true
+      configurations:
+        all:
+          allowedOrigins:
+            - "http://localhost:5173"
+            - "https://*.onrender.com"
+EOF
+
+# Expose the port
+EXPOSE 8080
+
+# Use the default entrypoint from the base image
+CMD ["server", "local"]
