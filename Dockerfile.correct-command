@@ -1,17 +1,16 @@
-# Dockerfile بسيط ومضمون للعمل
+# Dockerfile مع الأمر الصحيح لـ Kestra
 FROM kestra/kestra:latest
 
 # إنشاء مجلدات مطلوبة
 RUN mkdir -p /app/storage /tmp/kestra-wd/tmp
 
-# إعداد متغيرات البيئة
+# إعداد متغيرات البيئة الأساسية
 ENV KESTRA_SERVER_PORT=8080
 ENV KESTRA_SERVER_HOST=0.0.0.0
 ENV KESTRA_REPOSITORY_TYPE=h2
 ENV KESTRA_STORAGE_TYPE=local
 ENV KESTRA_STORAGE_LOCAL_BASEPATH=/app/storage
 ENV KESTRA_ANONYMOUS_USAGE_REPORT_ENABLED=false
-ENV JAVA_OPTS="-Xmx512m -Xms256m"
 
 # فتح المنفذ
 EXPOSE 8080

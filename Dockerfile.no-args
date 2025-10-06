@@ -1,4 +1,4 @@
-# Dockerfile بسيط ومضمون للعمل
+# Dockerfile بدون وسائط - يستخدم الإعدادات الافتراضية
 FROM kestra/kestra:latest
 
 # إنشاء مجلدات مطلوبة
@@ -11,10 +11,9 @@ ENV KESTRA_REPOSITORY_TYPE=h2
 ENV KESTRA_STORAGE_TYPE=local
 ENV KESTRA_STORAGE_LOCAL_BASEPATH=/app/storage
 ENV KESTRA_ANONYMOUS_USAGE_REPORT_ENABLED=false
-ENV JAVA_OPTS="-Xmx512m -Xms256m"
 
 # فتح المنفذ
 EXPOSE 8080
 
-# بدء Kestra مع الأمر الصحيح
-CMD ["/app/kestra", "server", "standalone"]
+# بدء Kestra بدون وسائط - يستخدم الإعدادات الافتراضية
+CMD ["/app/kestra"]

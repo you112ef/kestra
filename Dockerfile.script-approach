@@ -1,0 +1,23 @@
+# Dockerfile مع سكريبت بدء تشغيل محسن
+FROM kestra/kestra:latest
+
+# إنشاء مجلدات مطلوبة
+RUN mkdir -p /app/storage /tmp/kestra-wd/tmp
+
+# إعداد متغيرات البيئة
+ENV KESTRA_SERVER_PORT=8080
+ENV KESTRA_SERVER_HOST=0.0.0.0
+ENV KESTRA_REPOSITORY_TYPE=h2
+ENV KESTRA_STORAGE_TYPE=local
+ENV KESTRA_STORAGE_LOCAL_BASEPATH=/app/storage
+ENV KESTRA_ANONYMOUS_USAGE_REPORT_ENABLED=false
+
+# إنشاء سكريبت بدء تشغيل
+RUN echo '#!/bin/bash\nset -e\n\n# الحصول على المنفذ من Render.com أو استخدام 8080\nPORT=${PORT:-8080}\n\necho "بدء تشغيل Kestra على المنفذ $PORT"\necho "التحقق من الأوامر المتاحة:"\n/app/kestra --help\n\necho "محاولة بدء تشغيل Kestra..."\n\n# محاولة أوامر مختلفة\nif /app/kestra server standalone --server.port=$PORT --server.host=0.0.0.0; then\n  echo "Kestra بدأ بنجاح مع server standalone"\nelif /app/kestra server local --server.port=$PORT --server.host=0.0.0.0; then\n  echo "Kestra بدأ بنجاح مع server local"\nelif /app/kestra --server.port=$PORT --server.host=0.0.0.0; then\n  echo "Kestra بدأ بنجاح بدون server"\nelse\n  echo "خطأ في بدء تشغيل Kestra"\n  echo "محاولة بدء تشغيل مع إعدادات افتراضية..."\n  /app/kestra\nfi' > /app/start.sh && \
+    chmod +x /app/start.sh
+
+# فتح المنفذ
+EXPOSE 8080
+
+# استخدام سكريبت البدء
+CMD ["/app/start.sh"]

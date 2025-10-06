@@ -17,5 +17,5 @@ ENV JAVA_OPTS="-Xmx512m -Xms256m -Djava.security.egd=file:/dev/./urandom"
 # فتح المنفذ
 EXPOSE 8080
 
-# بدء Kestra مباشرة مع إعدادات مبسطة
-CMD ["/app/kestra", "server", "local", "--server.port=8080", "--server.host=0.0.0.0"]
+# بدء Kestra مع الأمر الصحيح
+CMD ["/app/kestra", "server", "standalone"]
