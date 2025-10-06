@@ -1,4 +1,4 @@
-# Multi-stage build for Kestra
+# Multi-stage build for Kestra with robust error handling
 FROM eclipse-temurin:21-jdk-jammy AS builder
 
 # Set working directory
