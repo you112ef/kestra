@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: kestra
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    region: oregon
+    envVars:
+      - key: KESTRA_CONFIGURATION
+        value: |
+          kestra:
+            repository:
+              type: h2
+            storage:
+              type: local
+              local:
+                basePath: "/app/storage"
+            url: https://kestra.onrender.com/
+      - key: KESTRA_CORS_ENABLED
+        value: "true"
+      - key: KESTRA_CORS_ALLOWED_ORIGINS
+        value: "https://kestra.onrender.com"
+    healthCheckPath: /api/v1/health

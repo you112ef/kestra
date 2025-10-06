@@ -1,26 +1,3 @@
-# Multi-stage build for Kestra
-FROM eclipse-temurin:21-jdk-jammy AS builder
-
-# Set working directory
-WORKDIR /workspace
-
-# Copy Gradle wrapper and build files
-COPY gradlew .
-COPY gradle gradle
-COPY build.gradle .
-COPY settings.gradle .
-COPY gradle.properties .
-
-# Copy all source code
-COPY . .
-
-# Make gradlew executable
-RUN chmod +x gradlew
-
-# Build the application
-RUN ./gradlew build -x test
-
-# Create the final runtime image
 FROM eclipse-temurin:21-jre-jammy
 
 ARG KESTRA_PLUGINS=""
@@ -32,9 +9,9 @@ WORKDIR /app
 RUN groupadd kestra && \
     useradd -m -g kestra kestra
 
-# Copy the built application from builder stage
-COPY --from=builder --chown=kestra:kestra /workspace/build/scriptsShadow/kestra /app/kestra
-COPY --from=builder --chown=kestra:kestra /workspace/build/libs /app/libs
+# Copy the built application (assuming it's built locally)
+COPY --chown=kestra:kestra build/scriptsShadow/kestra /app/kestra
+COPY --chown=kestra:kestra build/libs /app/libs
 
 # Copy docker configuration
 COPY --chown=kestra:kestra docker /app
