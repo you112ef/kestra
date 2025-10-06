@@ -1,4 +1,4 @@
-# Dockerfile محسن ومقاوم للأخطاء لـ Render.com
+# Dockerfile بسيط جداً بدون مشاكل صيغة
 FROM kestra/kestra:latest
 
 # إنشاء مجلدات مطلوبة
@@ -11,11 +11,9 @@ ENV KESTRA_REPOSITORY_TYPE=h2
 ENV KESTRA_STORAGE_TYPE=local
 ENV KESTRA_STORAGE_LOCAL_BASEPATH=/app/storage
 ENV KESTRA_ANONYMOUS_USAGE_REPORT_ENABLED=false
-ENV KESTRA_TASKS_TMPDIR_PATH=/tmp/kestra-wd/tmp
-ENV JAVA_OPTS="-Xmx512m -Xms256m -Djava.security.egd=file:/dev/./urandom"
 
 # فتح المنفذ
 EXPOSE 8080
 
-# بدء Kestra مباشرة مع إعدادات مبسطة
+# بدء Kestra مباشرة
 CMD ["/app/kestra", "server", "local", "--server.port=8080", "--server.host=0.0.0.0"]

@@ -14,7 +14,7 @@ ENV KESTRA_ANONYMOUS_USAGE_REPORT_ENABLED=false
 ENV KESTRA_TASKS_TMPDIR_PATH=/tmp/kestra-wd/tmp
 
 # إعدادات Java
-ENV JAVA_OPTS=-Xmx512m -Xms256m -Djava.security.egd=file:/dev/./urandom
+ENV JAVA_OPTS="-Xmx512m -Xms256m -Djava.security.egd=file:/dev/./urandom"
 
 # إنشاء سكريبت بدء تشغيل محسن مع معالجة الأخطاء
 RUN echo '#!/bin/bash\nset -e\n\n# الحصول على المنفذ من Render.com أو استخدام 8080\nPORT=${PORT:-8080}\nHOST=${HOST:-0.0.0.0}\n\n# طباعة معلومات البدء\necho "==========================================="\necho "بدء تشغيل Kestra Server"\necho "==========================================="\necho "المنفذ: $PORT"\necho "العنوان: $HOST"\necho "نوع قاعدة البيانات: H2"\necho "نوع التخزين: Local"\necho "==========================================="\n\n# التحقق من وجود الملف التنفيذي\nif [ ! -f "/app/kestra" ]; then\n  echo "خطأ: ملف Kestra التنفيذي غير موجود"\n  exit 1\nfi\n\n# جعل الملف التنفيذي قابل للتنفيذ\nchmod +x /app/kestra\n\n# التحقق من الصلاحيات\nls -la /app/kestra\n\n# بدء Kestra مع معالجة الأخطاء\necho "بدء تشغيل Kestra..."\nif /app/kestra server local --server.port=$PORT --server.host=$HOST; then\n  echo "Kestra بدأ بنجاح"\nelse\n  echo "خطأ في بدء تشغيل Kestra"\n  echo "محاولة بدء تشغيل مع إعدادات مختلفة..."\n  \n  # محاولة بدء تشغيل مع إعدادات مبسطة\n  /app/kestra server local --server.port=$PORT --server.host=$HOST --server.cors.enabled=true\nfi' > /app/start.sh && \
