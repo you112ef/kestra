@@ -10,28 +10,49 @@ The error `/app/kestra: not found` occurs because the Docker container doesn't c
 
 We've created multiple Dockerfile options and build scripts to fix this issue:
 
-### Option 1: Multi-stage Build (Recommended for CI/CD)
+### Option 1: Official Image (Recommended - Fastest)
 
-Use `Dockerfile.deploy` for a complete build process:
+Use the official Kestra image with our configuration:
 
 ```bash
 # Build the Docker image
-docker build -f Dockerfile.deploy -t kestra-app .
+docker build -f Dockerfile.official -t kestra-app .
 
 # Run the container
-docker run -p 8080:8080 kestra-app server local
+docker run -p 8080:8080 kestra-app
 ```
 
 ### Option 2: Pre-built Application
 
-Use `Dockerfile.simple` if you've already built the application locally:
+Use `Dockerfile.prebuilt` if you've already built the application locally:
 
 ```bash
 # First, build the application
 ./build-for-deploy.sh
 
 # Then build the Docker image
-docker build -f Dockerfile.simple -t kestra-app .
+docker build -f Dockerfile.prebuilt -t kestra-app .
+
+# Run the container
+docker run -p 8080:8080 kestra-app server local
+```
+
+### Option 3: Multi-strategy Build (Automated)
+
+Use the multi-strategy build script that tries multiple approaches:
+
+```bash
+# Try multiple build strategies automatically
+./build-docker-multi.sh
+```
+
+### Option 4: Simple Build (Minimal Gradle)
+
+Use `Dockerfile.simple-build` for a minimal Gradle build:
+
+```bash
+# Build with minimal Gradle build
+docker build -f Dockerfile.simple-build -t kestra-app .
 
 # Run the container
 docker run -p 8080:8080 kestra-app server local

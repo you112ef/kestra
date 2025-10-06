@@ -1,0 +1,66 @@
+# Essential Dockerfile - builds only what's needed
+FROM eclipse-temurin:21-jdk-jammy AS builder
+
+WORKDIR /workspace
+
+# Install only essential tools
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Copy only the essential files for a minimal build
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY gradle.properties .
+
+# Copy only the core modules we need
+COPY core core
+COPY cli cli
+COPY model model
+COPY platform platform
+
+# Make gradlew executable
+RUN chmod +x gradlew
+
+# Set minimal Gradle options
+ENV GRADLE_OPTS="-Dorg.gradle.daemon=false -Xmx1g"
+
+# Build only the essential modules
+RUN ./gradlew :core:build :cli:build :model:build :platform:build -x test --no-daemon
+
+# Create a simple executable script
+RUN echo '#!/bin/bash\njava -cp "core/build/libs/*:cli/build/libs/*:model/build/libs/*:platform/build/libs/*" io.kestra.cli.App "$@"' > kestra-simple && \
+    chmod +x kestra-simple
+
+# Final runtime image
+FROM eclipse-temurin:21-jre-jammy
+
+WORKDIR /app
+
+RUN groupadd kestra && useradd -m -g kestra kestra
+
+# Copy the built JARs and script
+COPY --from=builder --chown=kestra:kestra /workspace/kestra-simple /app/kestra
+COPY --from=builder --chown=kestra:kestra /workspace/core/build/libs /app/libs
+COPY --from=builder --chown=kestra:kestra /workspace/cli/build/libs /app/libs
+COPY --from=builder --chown=kestra:kestra /workspace/model/build/libs /app/libs
+COPY --from=builder --chown=kestra:kestra /workspace/platform/build/libs /app/libs
+
+# Copy docker configuration
+COPY --chown=kestra:kestra docker /app
+
+# Install minimal dependencies
+RUN apt-get update && apt-get install -y curl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Make executable
+RUN chmod +x /app/kestra
+
+# Test the executable
+RUN /app/kestra --help
+
+USER kestra
+
+ENTRYPOINT ["/app/kestra"]
+
+CMD ["--help"]

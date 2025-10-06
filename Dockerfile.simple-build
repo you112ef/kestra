@@ -1,0 +1,63 @@
+# Simple build approach - minimal Gradle build
+FROM eclipse-temurin:21-jdk-jammy AS builder
+
+WORKDIR /workspace
+
+# Install only essential tools
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Copy build files
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY gradle.properties .
+
+# Copy source code
+COPY . .
+
+# Make gradlew executable
+RUN chmod +x gradlew
+
+# Set conservative Gradle options
+ENV GRADLE_OPTS="-Dorg.gradle.daemon=false -Xmx1g -Dorg.gradle.parallel=false"
+
+# Try a minimal build first
+RUN ./gradlew :core:build :cli:build -x test --no-daemon || \
+    (echo "Minimal build failed, trying with more memory..." && \
+     GRADLE_OPTS="-Dorg.gradle.daemon=false -Xmx2g" ./gradlew :core:build :cli:build -x test --no-daemon)
+
+# Create a simple launcher
+RUN echo '#!/bin/bash\njava -cp "core/build/libs/*:cli/build/libs/*" io.kestra.cli.App "$@"' > kestra && \
+    chmod +x kestra
+
+# Final runtime image
+FROM eclipse-temurin:21-jre-jammy
+
+WORKDIR /app
+
+RUN groupadd kestra && useradd -m -g kestra kestra
+
+# Copy the built artifacts
+COPY --from=builder --chown=kestra:kestra /workspace/kestra /app/kestra
+COPY --from=builder --chown=kestra:kestra /workspace/core/build/libs /app/libs
+COPY --from=builder --chown=kestra:kestra /workspace/cli/build/libs /app/libs
+
+# Copy docker configuration
+COPY --chown=kestra:kestra docker /app
+
+# Install minimal dependencies
+RUN apt-get update && apt-get install -y curl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Make executable
+RUN chmod +x /app/kestra
+
+# Test the executable
+RUN /app/kestra --help
+
+USER kestra
+
+ENTRYPOINT ["/app/kestra"]
+
+CMD ["--help"]
